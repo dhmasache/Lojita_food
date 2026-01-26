@@ -4,74 +4,97 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: #f4f7f6;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836'); /* Fondo de comida desaturado */
+  background-size: cover;
+  background-position: center;
 }
 
 .register-form {
-  background: white;
-  padding: 3rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95); /* Fondo blanco semi-transparente para el formulario */
+  padding: 3.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15); /* Sombra más pronunciada */
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
   text-align: left;
+  border: 1px solid rgba(220, 220, 220, 0.5);
 }
 
 .register-form h1 {
-  margin-bottom: 2rem;
-  font-size: 2rem;
+  margin-bottom: 2.5rem;
+  font-size: 2.2rem;
   text-align: center;
   color: #333;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.8rem;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.6rem;
   font-weight: 600;
   color: #555;
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
+  padding: 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+  font-size: 1rem;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #28a745; /* Color verde para el foco de registro */
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
 }
 
 .submit-button {
   width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   background-color: #28a745; /* Un color verde para registrar */
   color: white;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, transform 0.2s;
 }
 
 .submit-button:hover {
   background-color: #218838;
+  transform: translateY(-2px);
 }
 
 .register-form .error-message {
-  background-color: #f8d7da;
-  color: #721c24;
-  border: 1px solid #f5c6cb;
-  padding: 0.75rem;
-  border-radius: 5px;
-  margin-top: 1.5rem;
+  background-color: #ffe0e6;
+  color: #c00;
+  border: 1px solid #fcc;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-top: 1.8rem;
   text-align: center;
+  font-size: 0.95rem;
 }
 
 .register-form .sub-text {
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.register-form .sub-text a {
+    color: #28a745; /* Color verde para el enlace */
+    font-weight: 600;
+}
+
+.register-form .sub-text a:hover {
+    text-decoration: underline;
 }
