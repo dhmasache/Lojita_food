@@ -1,9 +1,13 @@
 import { HomePage } from './pages/home.js';
 import { AboutPage } from './pages/about.js';
+import { LoginPage } from './pages/login.js';
+import { RegisterPage } from './pages/register.js';
 
 const routes = {
     '/': HomePage,
     '/about': AboutPage,
+    '/login': LoginPage,
+    '/register': RegisterPage,
     // Aquí puedes añadir más rutas
 };
 

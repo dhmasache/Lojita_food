@@ -1,0 +1,17 @@
+/* Estilos para la página "Acerca de" */
+.about-container {
+  padding: 4rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-container h1 {
+    margin-bottom: 1.5rem;
+}
+
+.about-container p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}

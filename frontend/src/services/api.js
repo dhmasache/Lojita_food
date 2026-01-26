@@ -47,7 +47,7 @@ const api = {
         method: 'POST',
         body: JSON.stringify(credentials),
     }),
-    register: (userData) => request('/usuarios/register', {
+    register: (userData) => request('/usuarios', {
         method: 'POST',
         body: JSON.stringify(userData),
     }),

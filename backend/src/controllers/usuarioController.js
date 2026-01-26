@@ -1,4 +1,37 @@
 const { Usuario } = require('../models');
+const jwt = require('jsonwebtoken');
+
+// Login de usuario
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const usuario = await Usuario.findOne({ where: { email } });
+
+        if (!usuario) {
+            return res.status(404).json({ error: 'Usuario no encontrado' });
+        }
+
+        const esValido = await usuario.validPassword(password);
+
+        if (!esValido) {
+            return res.status(401).json({ error: 'Contraseña incorrecta' });
+        }
+
+        // Generar token
+        // NOTA: Es una mejor práctica guardar el 'secret' en una variable de entorno
+        const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, 'tu_super_secreto', {
+            expiresIn: '8h' // El token expira en 8 horas
+        });
+
+        res.json({
+            mensaje: 'Login exitoso',
+            token: token
+        });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 // Crear un nuevo usuario
 exports.createUsuario = async (req, res) => {
