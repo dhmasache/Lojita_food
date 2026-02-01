@@ -12,14 +12,14 @@
     background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836');
     background-size: cover;
     background-position: center;
-    color: white;
-    min-height: calc(100vh - 70px); /* Ajuste para el header fijo */
+    background-repeat: no-repeat; /* Asegurar que no se repita */
+    height: calc(100vh - 70px); /* Ajuste para el header fijo */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    padding: 2rem 1rem;
+    padding: 0 1rem; /* Sin padding vertical */
     position: relative; /* Para el footer */
 }
 
@@ -76,7 +76,7 @@
 
 /* --- General Section Styling --- */
 .values-section, .featured-restaurants-section, .how-it-works-section {
-    padding: 4rem 1rem;
+    padding: 4rem 2rem; /* Más padding horizontal */
     text-align: center;
     background-color: var(--surface-color);
     border-bottom: 1px solid var(--border-color);
@@ -98,7 +98,9 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
-    padding: 4rem 1rem;
+    padding: 4rem 2rem; /* Más padding horizontal */
+    max-width: 1200px; /* Consistencia con #app */
+    margin: 0 auto;
 }
 
 .value-card {
@@ -106,12 +108,14 @@
     padding: 2rem;
     border-radius: 10px;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color); /* Borde inicial */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .value-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
+    border-color: var(--primary-color); /* Borde cambia a color primario */
 }
 
 .value-card h3 {
@@ -147,12 +151,14 @@
     box-shadow: var(--shadow-sm);
     overflow: hidden;
     text-align: left;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid var(--border-color); /* Borde inicial */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .restaurant-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
+    border-color: var(--primary-color); /* Borde cambia a color primario */
 }
 
 .restaurant-card img {
@@ -210,14 +216,16 @@
     padding: 2rem;
     border-radius: 10px;
     box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden; /* Para el número */
+    border: 1px solid var(--border-color); /* Borde inicial */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .step-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
+    border-color: var(--primary-color); /* Borde cambia a color primario */
 }
 
 .step-card .step-number {
@@ -265,7 +273,10 @@
         font-size: 1rem;
     }
     .values-section, .featured-restaurants-section, .how-it-works-section {
-        padding: 2rem 1rem;
+        padding: 2.5rem 1rem; /* Padding ajustado para móvil */
+    }
+    .values-section {
+        padding: 2.5rem 1rem; /* Padding ajustado para móvil */
     }
 }
 
