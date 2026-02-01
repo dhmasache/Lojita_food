@@ -177,6 +177,19 @@ const api = {
     deleteDeliveryApp: (id) => request(`/deliveries/${id}`, {
         method: 'DELETE',
     }),
+
+    // Solicitudes para ser Propietario
+    createSolicitud: (solicitudData) => request('/solicitudes', {
+        method: 'POST',
+        body: JSON.stringify(solicitudData),
+    }),
+    getSolicitudes: () => request('/solicitudes'),
+    approveSolicitud: (id) => request(`/solicitudes/${id}/aprobar`, {
+        method: 'PUT',
+    }),
+    rejectSolicitud: (id) => request(`/solicitudes/${id}/rechazar`, {
+        method: 'PUT',
+    }),
 };
 
 export default api;

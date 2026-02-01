@@ -18,6 +18,8 @@ const cantonRoutes = require('./src/routes/cantonRoutes');
 const alergiaRoutes = require('./src/routes/alergiaRoutes');
 const deliveryRoutes = require('./src/routes/deliveryRoutes');
 
+const solicitudRoutes = require('./src/routes/solicitudRoutes');
+
 // Endpoint principal
 app.get("/", (req, res) => {
   res.send("API de LojitaFood funcionando correctamente");
@@ -32,6 +34,7 @@ app.use('/api/resenias', reseniaRoutes);
 app.use('/api/cantones', cantonRoutes);
 app.use('/api/alergias', alergiaRoutes);
 app.use('/api/deliveries', deliveryRoutes);
+app.use('/api/solicitudes', solicitudRoutes);
 
 const PORT = process.env.PORT || 3000;
 

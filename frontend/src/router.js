@@ -2,12 +2,18 @@ import { HomePage } from './pages/home.js';
 import { AboutPage } from './pages/about.js';
 import { LoginPage } from './pages/login.js';
 import { RegisterPage } from './pages/register.js';
+import { AdminDashboardPage } from './pages/adminDashboard.js';
+import { PropietarioDashboardPage } from './pages/propietarioDashboard.js';
+import { SolicitudPage } from './pages/solicitudPage.js'; // Importar SolicitudPage
 
 const routes = {
     '/': HomePage,
     '/about': AboutPage,
     '/login': LoginPage,
     '/register': RegisterPage,
+    '/admin': AdminDashboardPage,
+    '/mi-restaurante': PropietarioDashboardPage,
+    '/solicitar-propietario': SolicitudPage, // Nueva ruta
     // Aquí puedes añadir más rutas
 };
 

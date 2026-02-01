@@ -7,6 +7,7 @@ const Pedido = require('./Pedido');
 const Resenia = require('./Resenia');
 const DetallePedido = require('./DetallePedido');
 const Canton = require('./Canton');
+const Solicitud = require('./Solicitud'); // Importar nuevo modelo
 
 // Asociaciones
 // Un usuario (propietario) puede tener muchos restaurantes
@@ -28,6 +29,10 @@ Resenia.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 // Un restaurante puede tener muchas reseñas
 Restaurante.hasMany(Resenia, { foreignKey: 'restauranteId' });
 Resenia.belongsTo(Restaurante, { foreignKey: 'restauranteId' });
+
+// Un usuario puede tener muchas solicitudes para ser propietario
+Usuario.hasMany(Solicitud, { foreignKey: 'usuarioId' });
+Solicitud.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 
 // Relación Muchos a Muchos entre Pedidos y Platos a través de DetallePedido
 Pedido.belongsToMany(Plato, {
@@ -51,7 +56,8 @@ const db = {
     Pedido,
     Resenia,
     DetallePedido,
-    Canton
+    Canton,
+    Solicitud // Exportar nuevo modelo
 };
 
 // Sincronizar todos los modelos con la base de datos

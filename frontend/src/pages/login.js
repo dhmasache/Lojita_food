@@ -1,10 +1,10 @@
 import api from '../services/api.js';
+import { router } from '../router.js'; // Importar el router
 
 function LoginPage() {
     const page = document.createElement('div');
     page.className = 'login-container';
     
-    // Usamos .innerHTML para construir la estructura interna
     page.innerHTML = `
         <form id="login-form" class="login-form">
             <h1>Iniciar Sesión</h1>
@@ -29,7 +29,7 @@ function LoginPage() {
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        errorMessage.style.display = 'none'; // Ocultar mensaje de error
+        errorMessage.style.display = 'none';
 
         const email = form.elements.email.value;
         const password = form.elements.password.value;
@@ -37,12 +37,20 @@ function LoginPage() {
         try {
             const data = await api.login({ email, password });
             
-            if (data.token) {
+            if (data.token && data.usuario) {
+                // 1. Guardar token y datos de usuario
                 localStorage.setItem('jwt_token', data.token);
+                localStorage.setItem('lojita_user', JSON.stringify(data.usuario));
+
+                // 2. Navegar a la home y actualizar la vista sin recargar
                 window.history.pushState({}, '', '/');
-                window.location.reload(); // Recargar para reflejar el estado de login
+                router(); // Renderiza el contenido de la nueva ruta
+
+                // 3. Disparar un evento global para que otros componentes (como el header) se actualicen
+                document.dispatchEvent(new CustomEvent('authChange'));
+                
             } else {
-                throw new Error('No se recibió un token del servidor.');
+                throw new Error('Respuesta inválida del servidor.');
             }
 
         } catch (error) {
