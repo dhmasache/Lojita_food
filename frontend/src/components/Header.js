@@ -1,3 +1,5 @@
+import { router } from '../router.js'; // Importar el router
+
 // frontend/src/components/Header.js
 
 function renderHeader(container) {
@@ -40,8 +42,15 @@ function renderHeader(container) {
     container.innerHTML = `
         <header class="main-header">
             <div class="logo">
-                <a href="/" data-link>LojitaFood</a>
+                <a href="/" data-link>
+                    <img src="/Logo_Lojitafood.png" alt="LojitaFood Logo" class="header-logo">
+                </a>
             </div>
+            <button class="menu-toggle" aria-label="Toggle navigation">
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+                <span class="hamburger"></span>
+            </button>
             <nav class="main-nav">
                 <ul class="nav-list">
                     ${navLinks}
@@ -50,22 +59,27 @@ function renderHeader(container) {
         </header>
     `;
 
-    // Añadir funcionalidad al botón de logout si existe
     const logoutButton = container.querySelector('#logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
             localStorage.removeItem('jwt_token');
             localStorage.removeItem('lojita_user');
             
-            // Disparar evento para que la UI se actualice
             document.dispatchEvent(new CustomEvent('authChange'));
 
-            // Redirigir a la home
+            // Redirigir a la home usando el router para una navegación suave
             window.history.pushState({}, '', '/');
-            // Como no tenemos acceso directo al router, recargar es una opción simple aquí,
-            // pero lo ideal sería que el router también escuchara el evento.
-            // Por ahora, el evento authChange se encargará de re-renderizar el header.
-            window.location.pathname = '/'; // Esto dispara el popstate que el router escucha
+            router(); // Usar la función router importada
+        });
+    }
+
+    const menuToggle = container.querySelector('.menu-toggle');
+    const mainNav = container.querySelector('.main-nav');
+
+    if (menuToggle && mainNav) {
+        menuToggle.addEventListener('click', () => {
+            mainNav.classList.toggle('main-nav--open');
+            menuToggle.classList.toggle('is-active'); // Para animar el icono de hamburguesa
         });
     }
 }

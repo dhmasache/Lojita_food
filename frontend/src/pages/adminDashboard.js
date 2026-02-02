@@ -1,3 +1,5 @@
+
+
 // frontend/src/pages/adminDashboard.js
 import api from '../services/api.js';
 import { router } from '../router.js'; // Necesario para posible redirección

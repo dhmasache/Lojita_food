@@ -1,5 +1,5 @@
 import api from '../services/api.js';
-import { router } from './router.js';
+import { router } from '../router.js';
 
 function RegisterPage() {
     const page = document.createElement('div');

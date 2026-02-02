@@ -74,7 +74,7 @@
 .form-group input:focus {
   outline: none;
   border-color: var(--accent-color); /* Usar el color de acento del tema */
-  box-shadow: 0 0 0 3px rgba(235, 203, 139, 0.25); /* Sombra con el color de acento */
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25); /* Sombra con el nuevo color de acento */
 }
 
 .submit-button {

@@ -55,7 +55,7 @@
 }
 
 .home-hero .cta-button:hover {
-    background-color: #FFD54F; /* Tono más claro del acento */
+    background-color: #FFDC8C; /* Tono más claro del nuevo acento */
     transform: translateY(-2px) scale(1.02);
     box-shadow: var(--shadow-lg);
 }
