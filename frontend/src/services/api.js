@@ -27,9 +27,24 @@ async function request(endpoint, options = {}) {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
         if (!response.ok) {
-            const errorData = await response.json();
-            // Puedes manejar diferentes códigos de estado aquí si es necesario
-            throw new Error(errorData.message || `Error en la petición: ${response.status}`);
+            let errorMessage = `Error en la petición: ${response.status}`;
+            try {
+                // Intenta parsear la respuesta como JSON
+                const errorData = await response.json();
+                errorMessage = errorData.error || errorData.message || errorMessage;
+            } catch (e) {
+                // Si falla el parseo JSON, intenta obtener la respuesta como texto
+                const errorText = await response.text();
+                if (errorText) {
+                    errorMessage = errorText;
+                }
+            }
+            throw new Error(errorMessage);
+        }
+
+        // Si la respuesta es 204 No Content, no intentes parsear JSON
+        if (response.status === 204) {
+            return null;
         }
 
         return await response.json();

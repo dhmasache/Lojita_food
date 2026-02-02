@@ -1,19 +1,41 @@
-// frontend/src/pages/home.js
 export function HomePage() {
     const element = document.createElement('div');
-    element.className = 'home-page-container'; // Nuevo contenedor para toda la página
+    element.className = 'home-page-container'; // Contenedor para toda la página
+
+    const user = JSON.parse(localStorage.getItem('lojita_user'));
+
+    let heroContent = '';
+
+    if (user) {
+        // Contenido para un usuario que ha iniciado sesión
+        heroContent = `
+            <h1>¡Hola de nuevo, ${user.nombre}!</h1>
+            <p>
+                Es un gusto tenerte de vuelta en LojitaFood. <br>
+                ¿Qué te apetece descubrir hoy?
+            </p>
+            <a href="#featured-restaurants-section" class="cta-button">
+                Explorar Restaurantes
+            </a>
+        `;
+    } else {
+        // Contenido para un usuario que no ha iniciado sesión
+        heroContent = `
+            <h1>Bienvenido a LojitaFood</h1>
+            <p>
+                Tu portal para descubrir los sabores de Loja. <br>
+                Encuentra los mejores restaurantes, explora menús y vive una experiencia culinaria única.
+            </p>
+            <a href="/login" data-link class="cta-button">
+                Iniciar Sesión
+            </a>
+        `;
+    }
 
     element.innerHTML = `
         <section class="home-hero">
             <main>
-                <h1>Bienvenido a LojitaFood</h1>
-                <p>
-                    Tu portal para descubrir los sabores de Loja. <br>
-                    Encuentra los mejores restaurantes, explora menús y vive una experiencia culinaria única.
-                </p>
-                <a href="/login" data-link class="cta-button">
-                    Iniciar Sesión
-                </a>
+                ${heroContent}
             </main>
             <footer class="home-footer">
                 <p>¿Quieres saber más? <a href="/about" data-link>Acerca de nosotros</a>.</p>
@@ -35,7 +57,7 @@ export function HomePage() {
             </div>
         </section>
 
-        <section class="featured-restaurants-section">
+        <section id="featured-restaurants-section" class="featured-restaurants-section">
             <h2>Restaurantes Destacados</h2>
             <div class="restaurant-cards-grid">
                 <!-- Placeholder para tarjetas de restaurantes -->

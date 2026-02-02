@@ -42,12 +42,22 @@ function LoginPage() {
                 localStorage.setItem('jwt_token', data.token);
                 localStorage.setItem('lojita_user', JSON.stringify(data.usuario));
 
-                // 2. Navegar a la home y actualizar la vista sin recargar
-                window.history.pushState({}, '', '/');
-                router(); // Renderiza el contenido de la nueva ruta
-
-                // 3. Disparar un evento global para que otros componentes (como el header) se actualicen
+                // 2. Disparar un evento global INMEDIATAMENTE para que el header se actualice
                 document.dispatchEvent(new CustomEvent('authChange'));
+
+                // 3. Determinar la ruta de redirección según el rol
+                let redirectPath = '/'; // Ruta por defecto para 'cliente'
+                const userRole = data.usuario.rol;
+
+                if (userRole === 'admin') {
+                    redirectPath = '/admin';
+                } else if (userRole === 'propietario') {
+                    redirectPath = '/mi-restaurante';
+                }
+
+                // 4. Navegar a la ruta correspondiente y actualizar la vista
+                window.history.pushState({}, '', redirectPath);
+                router(); // Renderiza el contenido de la nueva ruta
                 
             } else {
                 throw new Error('Respuesta inválida del servidor.');

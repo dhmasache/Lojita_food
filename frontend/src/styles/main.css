@@ -10,18 +10,22 @@
 
 /* 1. Paleta de Colores (Variables CSS) */
 :root {
-  --primary-color: #7C3AED;   /* Púrpura vibrante */
-  --primary-dark: #6D28D9;    /* Púrpura oscuro para hover */
-  --accent-color: #F97316;    /* Naranja para acentos especiales (sin cambios) */
-  --text-color: #1F2937;      /* Texto principal (gris oscuro/pizarra) */
-  --text-light: #6B7280;      /* Texto secundario (gris medio) */
-  --background-color: #F4F6F8; /* Fondo (gris muy claro) */
-  --surface-color: #FFFFFF;    /* Superficie para tarjetas (blanco) */
-  --border-color: #E5E7EB;     /* Color de borde sutil */
-  --error-color: #D32F2F;      /* Rojo para errores (sin cambios) */
-  --success-color: #16A34A;     /* Verde para éxito (sin cambios) */
+  /* Paleta de colores "Nord" */
+  --primary-color: #88C0D0;   /* Azul Hielo (Frost) */
+  --primary-dark: #81A1C1;    /* Azul más oscuro (Frost) */
+  --accent-color: #EBCB8B;    /* Amarillo/Dorado (Frost) */
+  
+  --text-color: #ECEFF4;      /* Texto principal (Casi blanco - Snow Storm) */
+  --text-light: #D8DEE9;      /* Texto secundario (Gris claro - Snow Storm) */
+  
+  --background-color: #2E3440; /* Fondo (Azul oscuro/gris - Polar Night) */
+  --surface-color: #3B4252;    /* Superficie para tarjetas (Un poco más claro - Polar Night) */
+  --border-color: #4C566A;     /* Borde (Aún más claro - Polar Night) */
 
-  /* Sombras */
+  --error-color: #BF616A;      /* Rojo (Aurora) */
+  --success-color: #A3BE8C;     /* Verde (Aurora) */
+
+  /* Sombras (se mantienen) */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
@@ -46,7 +50,7 @@ html, body {
 
 /* 2. Tipografía */
 body {
-  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Fuente más moderna */
+  font-family: 'Helvetica', Arial, sans-serif; /* Fuente sans-serif limpia para el cuerpo */
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -54,6 +58,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Georgia', serif; /* Fuente serif clásica para títulos */
   margin-top: 0;
   margin-bottom: 0.5em;
   font-weight: 700;
@@ -164,15 +169,15 @@ textarea:focus {
 }
 
 .message.success {
-  background-color: #d4edda;
+  background-color: var(--surface-color);
   color: var(--success-color);
-  border: 1px solid #c3e6cb;
+  border: 1px solid var(--success-color);
 }
 
 .message.error {
-  background-color: #f8d7da;
+  background-color: var(--surface-color);
   color: var(--error-color);
-  border: 1px solid #f5c6cb;
+  border: 1px solid var(--error-color);
 }
 
 
