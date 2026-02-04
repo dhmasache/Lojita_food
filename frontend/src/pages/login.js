@@ -15,9 +15,12 @@ function LoginPage() {
             </div>
             <div class="form-group">
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required autocomplete="current-password">
             </div>
-            <button type="submit" class="submit-button">Ingresar</button>
+            <p class="sub-text forgot-password-link">
+                <a href="/forgot-password" data-link>¿Olvidaste tu contraseña?</a>
+            </p>
+            <button type="submit" class="btn btn-primary">Ingresar</button>
             <p class="sub-text">
                 ¿No tienes una cuenta? <a href="/register" data-link>Regístrate aquí</a>.
             </p>
@@ -46,7 +49,7 @@ function LoginPage() {
                 document.dispatchEvent(new CustomEvent('authChange'));
 
                 // 3. Determinar la ruta de redirección según el rol
-                let redirectPath = '/'; // Ruta por defecto para 'cliente'
+                let redirectPath = '/client-dashboard'; // Ruta por defecto para 'cliente'
                 const userRole = data.usuario.rol;
 
                 if (userRole === 'admin') {

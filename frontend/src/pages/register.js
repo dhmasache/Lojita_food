@@ -26,13 +26,13 @@ function RegisterPage() {
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <div class="password-wrapper">
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" required autocomplete="new-password">
                     <button type="button" class="password-toggle-btn">👁️</button>
                 </div>
                 <span class="error-text" id="password-error" style="display: none;"></span>
             </div>
             
-            <button type="submit" class="submit-button">Crear Cuenta</button>
+            <button type="submit" class="btn btn-primary">Crear Cuenta</button>
             <p class="sub-text">
                 ¿Ya tienes una cuenta? <a href="/login" data-link>Inicia Sesión</a>.
             </p>
@@ -133,13 +133,17 @@ function RegisterPage() {
             const userData = { nombre, email, password };
             await api.register(userData);
             
-            successMessage.textContent = '¡Registro exitoso! Redirigiendo al login...';
+            // Guardar el email en localStorage para la página de verificación
+            localStorage.setItem('registeredEmailForVerification', email);
+
+            successMessage.textContent = '¡Registro exitoso! Se ha enviado un código de verificación a tu correo. Redirigiendo para verificar...';
             successMessage.style.display = 'block';
 
             setTimeout(() => {
-                window.history.pushState({}, '', '/login');
+                window.history.pushState({}, '', '/verify-account');
                 router();
-            }, 2000);
+            }, 3000); // Dar más tiempo para leer el mensaje
+
 
         } catch (error) {
             generalErrorMessage.textContent = error.message || 'Error al registrarse. Inténtalo de nuevo.';

@@ -18,12 +18,10 @@ const Restaurante = sequelize.define('Restaurante', {
     telefono: {
         type: DataTypes.STRING(10),
         allowNull: false,
-        unique: true,
     },
     email: {
         type: DataTypes.STRING(100),
         allowNull: true,
-        unique: true,
         validate: {
             isEmail: true,
         },
@@ -43,6 +41,14 @@ const Restaurante = sequelize.define('Restaurante', {
     esTradicional: {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
+    },
+    imageUrl: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    descripcion: {
+        type: DataTypes.TEXT, // Campo para la descripción del restaurante
+        allowNull: true,
     },
     // propietarioId se definirá en las asociaciones
 }, {

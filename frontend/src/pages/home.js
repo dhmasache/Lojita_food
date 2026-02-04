@@ -1,110 +1,96 @@
-export function HomePage() {
-    const element = document.createElement('div');
-    element.className = 'home-page-container'; // Contenedor para toda la página
+// src/pages/home.js
 
-    const user = JSON.parse(localStorage.getItem('lojita_user'));
+export const HomePage = () => {
+    const pageElement = document.createElement('div');
+    pageElement.className = 'main-container';
 
-    let heroContent = '';
-
-    if (user) {
-        // Contenido para un usuario que ha iniciado sesión
-        heroContent = `
-            <h1>¡Hola de nuevo, ${user.nombre}!</h1>
-            <p>
-                Es un gusto tenerte de vuelta en LojitaFood. <br>
-                ¿Qué te apetece descubrir hoy?
-            </p>
-            <a href="#featured-restaurants-section" class="cta-button">
-                Explorar Restaurantes
-            </a>
-        `;
-    } else {
-        // Contenido para un usuario que no ha iniciado sesión
-        heroContent = `
-            <h1>Bienvenido a LojitaFood</h1>
-            <p>
-                Tu portal para descubrir los sabores de Loja. <br>
-                Encuentra los mejores restaurantes, explora menús y vive una experiencia culinaria única.
-            </p>
-            <a href="/login" data-link class="cta-button">
-                Iniciar Sesión
-            </a>
-        `;
-    }
-
-    element.innerHTML = `
-        <section class="home-hero">
-            <main>
-                ${heroContent}
-            </main>
-            <footer class="home-footer">
-                <p>¿Quieres saber más? <a href="/about" data-link>Acerca de nosotros</a>.</p>
-            </footer>
-        </section>
-
-        <section class="values-section">
-            <div class="value-card">
-                <h3>Calidad Garantizada</h3>
-                <p>Solo los mejores ingredientes y los restaurantes más selectos.</p>
+    // Hero Section
+    const heroSection = document.createElement('section');
+    heroSection.className = 'hero-section';
+    heroSection.innerHTML = `
+        <div class="hero-content">
+            <h1>El Sabor de Loja, a tu Puerta</h1>
+            <p>Descubre los mejores platos de los restaurantes locales y recíbelos en minutos.</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Busca tu plato o restaurante favorito...">
+                <button class="primary">Buscar</button>
             </div>
-            <div class="value-card">
-                <h3>Experiencia Única</h3>
-                <p>Descubre nuevos sabores y promociones exclusivas.</p>
-            </div>
-            <div class="value-card">
-                <h3>Comodidad en Tu Hogar</h3>
-                <p>Pide online y recibe tus platillos favoritos en la puerta.</p>
-            </div>
-        </section>
-
-        <section id="featured-restaurants-section" class="featured-restaurants-section">
-            <h2>Restaurantes Destacados</h2>
-            <div class="restaurant-cards-grid">
-                <!-- Placeholder para tarjetas de restaurantes -->
-                <div class="restaurant-card">
-                    <img src="https://via.placeholder.com/150/FF5733/FFFFFF?text=Rest+A" alt="Restaurante A">
-                    <h3>Sabor Lojano</h3>
-                    <p>Cocina tradicional con un toque moderno.</p>
-                    <button class="view-restaurant-button">Ver Menú</button>
-                </div>
-                <div class="restaurant-card">
-                    <img src="https://via.placeholder.com/150/33FF57/FFFFFF?text=Rest+B" alt="Restaurante B">
-                    <h3>El Jardín del Chef</h3>
-                    <p>Gastronomía fusión en un ambiente único.</p>
-                    <button class="view-restaurant-button">Ver Menú</button>
-                </div>
-                <div class="restaurant-card">
-                    <img src="https://via.placeholder.com/150/3357FF/FFFFFF?text=Rest+C" alt="Restaurante C">
-                    <h3>Pizzería Roma</h3>
-                    <p>Las mejores pizzas artesanales de la ciudad.</p>
-                    <button class="view-restaurant-button">Ver Menú</button>
-                </div>
-            </div>
-        </section>
-
-        <section class="how-it-works-section">
-            <h2>¿Cómo Funciona?</h2>
-            <div class="steps-grid">
-                <div class="step-card">
-                    <span class="step-number">1</span>
-                    <h3>Explora</h3>
-                    <p>Descubre restaurantes y platillos cercanos a ti.</p>
-                </div>
-                <div class="step-card">
-                    <span class="step-number">2</span>
-                    <h3>Pide</h3>
-                    <p>Selecciona tus favoritos y haz tu pedido fácilmente.</p>
-                </div>
-                <div class="step-card">
-                    <span class="step-number">3</span>
-                    <h3>Disfruta</h3>
-                    <p>Recibe tu comida caliente y deliciosa en tu puerta.</p>
-                </div>
-            </div>
-        </section>
+        </div>
     `;
-    
-    return element;
-}
 
+    // Category Section
+    const categorySection = document.createElement('section');
+    categorySection.className = 'category-section';
+    categorySection.innerHTML = `
+        <h2>Explora Categorías</h2>
+        <div class="category-cards">
+            <div class="category-card">
+                <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Almuerzos">
+                <h3>Almuerzos</h3>
+            </div>
+            <div class="category-card">
+                <img src="https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Postres">
+                <h3>Postres</h3>
+            </div>
+            <div class="category-card">
+                <img src="https://images.pexels.com/photos/1279330/pexels-photo-1279330.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Comida Italiana">
+                <h3>Italiana</h3>
+            </div>
+            <div class="category-card">
+                <img src="https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Bebidas">
+                <h3>Bebidas</h3>
+            </div>
+        </div>
+    `;
 
+    // Featured Restaurants Section
+    const featuredSection = document.createElement('section');
+    featuredSection.className = 'featured-section';
+    featuredSection.innerHTML = `
+        <h2>Restaurantes Destacados</h2>
+        <div class="restaurant-cards">
+            <!-- Restaurant Card Example 1 -->
+            <div class="restaurant-card">
+                <img src="https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Restaurant Name">
+                <div class="card-content">
+                    <h3>El Fogón Lojano</h3>
+                    <p>Comida tradicional ecuatoriana con un toque moderno.</p>
+                    <div class="card-footer">
+                        <span>⭐ 4.8</span>
+                        <span>15-25 min</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Restaurant Card Example 2 -->
+            <div class="restaurant-card">
+                <img src="https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Restaurant Name">
+                <div class="card-content">
+                    <h3>Mama Mía Pizzería</h3>
+                    <p>Las mejores pizzas artesanales de la ciudad.</p>
+                    <div class="card-footer">
+                        <span>⭐ 4.9</span>
+                        <span>20-30 min</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Restaurant Card Example 3 -->
+             <div class="restaurant-card">
+                <img src="https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Restaurant Name">
+                <div class="card-content">
+                    <h3>Sabor Oriental</h3>
+                    <p>Auténtica comida asiática para disfrutar en casa.</p>
+                    <div class="card-footer">
+                        <span>⭐ 4.7</span>
+                        <span>25-35 min</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    pageElement.appendChild(heroSection);
+    pageElement.appendChild(categorySection);
+    pageElement.appendChild(featuredSection);
+
+    return pageElement;
+};

@@ -4,7 +4,7 @@ import { router } from '../router.js';
 
 function SolicitudPage() {
     const page = document.createElement('div');
-    page.className = 'solicitud-container';
+    page.className = 'auth-container'; // Usar la clase de contenedor común
     
     // Obtener información del usuario logueado
     const user = JSON.parse(localStorage.getItem('lojita_user'));
@@ -13,15 +13,17 @@ function SolicitudPage() {
 
     if (!user || user.rol !== 'cliente') {
         pageContent = `
-            <h1>Acceso Denegado</h1>
-            <p>Solo los usuarios 'cliente' pueden enviar una solicitud para ser propietario de restaurante.</p>
-            <p>Si eres propietario, tu cuenta ya debería reflejarlo. Si crees que hay un error, contacta al administrador.</p>
-            <a href="/" data-link>Volver al Inicio</a>
+            <div class="auth-card">
+                <h1>Acceso Denegado</h1>
+                <p>Solo los usuarios 'cliente' pueden enviar una solicitud para ser propietario de restaurante.</p>
+                <p>Si eres propietario, tu cuenta ya debería reflejarlo. Si crees que hay un error, contacta al administrador.</p>
+                <a href="/" data-link class="btn btn-primary">Volver al Inicio</a>
+            </div>
         `;
     } else {
         pageContent = `
-            <form id="solicitud-form" class="solicitud-form">
-                <h1>Solicitud para Propietario de Restaurante</h1>
+            <form id="solicitud-form" class="auth-card"> <!-- Usar la clase de tarjeta común -->
+                <h2>Solicitud para Propietario de Restaurante</h2>
                 <p>Completa este formulario para solicitar acceso como propietario de restaurante. Tu solicitud será revisada por un administrador.</p>
                 <div id="solicitud-message" class="message" style="display: none;"></div>
 
@@ -42,7 +44,7 @@ function SolicitudPage() {
                     <textarea id="descripcion" name="descripcion" rows="5"></textarea>
                 </div>
                 
-                <button type="submit" class="submit-button">Enviar Solicitud</button>
+                <button type="submit" class="btn btn-primary">Enviar Solicitud</button>
             </form>
         `;
     }

@@ -4,46 +4,46 @@ import { LoginPage } from './pages/login.js';
 import { RegisterPage } from './pages/register.js';
 import { AdminDashboardPage } from './pages/adminDashboard.js';
 import { PropietarioDashboardPage } from './pages/propietarioDashboard.js';
-import { SolicitudPage } from './pages/solicitudPage.js'; // Importar SolicitudPage
+import { SolicitudPage } from './pages/solicitudPage.js';
+import { VerifyAccountPage } from './pages/verifyAccount.js';
+import { ForgotPasswordPage } from './pages/forgotPassword.js';
+import { ResetPasswordPage } from './pages/resetPassword.js';
+import { ClientDashboardPage } from './pages/clientDashboard.js'; // Nuevo: Importar ClientDashboardPage
 
 const routes = {
     '/': HomePage,
     '/about': AboutPage,
     '/login': LoginPage,
     '/register': RegisterPage,
+    '/verify-account': VerifyAccountPage,
+    '/forgot-password': ForgotPasswordPage,
+    '/reset-password/:token': ResetPasswordPage,
     '/admin': AdminDashboardPage,
     '/mi-restaurante': PropietarioDashboardPage,
-    '/solicitar-propietario': SolicitudPage, // Nueva ruta
-    // Aquí puedes añadir más rutas
+    '/solicitud': SolicitudPage, // Modificado: Ruta a '/solicitud'
+    '/client-dashboard': ClientDashboardPage, // Nuevo: Ruta para el dashboard del cliente
 };
 
-function router() {
+export function router() {
     const path = window.location.pathname;
-    const app = document.querySelector('#app'); // Asume que tienes un div con id="app" en index.html
+    const app = document.getElementById('app');
 
-    app.innerHTML = ''; // Limpia el contenido actual
+    if (!app) {
+        console.error("El elemento #app no se encuentra en el DOM.");
+        return;
+    }
+    
+    // Limpia el contenido anterior
+    app.innerHTML = '';
 
+    // Encuentra el componente para la ruta actual
     const PageComponent = routes[path];
 
     if (PageComponent) {
         app.appendChild(PageComponent());
     } else {
-        app.innerHTML = `<h1>404 Not Found</h1><p>La página ${path} no existe.</p>`;
+        // Página 404
+        app.innerHTML = '<h1>404: Página No Encontrada</h1>';
     }
 }
 
-// Escuchar los clics en los enlaces para la navegación SPA
-document.addEventListener('click', e => {
-    const { target } = e;
-    if (target.matches('[data-link]')) {
-        e.preventDefault(); // Previene la navegación por defecto
-        window.history.pushState({}, '', target.href); // Usa la History API
-        router(); // Llama al router para renderizar la nueva página
-    }
-});
-
-// Escuchar los eventos de popstate (navegación hacia atrás/adelante del navegador)
-window.addEventListener('popstate', router);
-
-// Exportar la función router para que pueda ser llamada en main.js
-export { router };

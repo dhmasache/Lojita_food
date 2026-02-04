@@ -1,0 +1,61 @@
+/* Estilos comunes para las páginas de autenticación (verificación, olvido de contraseña, restablecimiento) */
+
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 70px); /* Ajuste para el header fijo */
+  background-color: var(--background-color);
+  padding: 1rem;
+}
+
+.auth-card {
+  background: var(--surface-color);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 420px;
+  text-align: left;
+  border: 1px solid var(--border-color);
+}
+
+.auth-card h2 {
+  margin-bottom: 2rem;
+  font-size: 2rem;
+  text-align: center;
+  color: var(--primary-dark);
+}
+
+.auth-card p {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.auth-card .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.auth-card .sub-text {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: var(--text-light);
+}
+
+.auth-card .sub-text a {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.auth-card .sub-text a:hover {
+    text-decoration: underline;
+    color: var(--primary-color);
+}
+
+/* Estilos específicos para mensajes, si se necesitan más allá de los globales */
+.auth-card .message {
+    margin-top: 1.5rem;
+    text-align: center;
+}

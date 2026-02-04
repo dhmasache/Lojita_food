@@ -1,121 +1,458 @@
-/* Estilos para el Panel de Administrador */
-.admin-dashboard-container {
-    padding: 2rem;
-    max-width: 1000px;
+/* Estilos para Paneles de Control (Admin y Propietario) */
+.dashboard-container {
+    padding: 2.5rem; /* Un poco más de padding */
+    max-width: 1200px;
     margin: 0 auto;
-    background-color: var(--surface-color);
-    border-radius: 12px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border-color);
     min-height: calc(100vh - 70px - 2rem); /* Ajuste para el header y padding */
+    font-family: var(--font-body); /* Asegurar una fuente de cuerpo */
+    color: var(--text-color);
 }
 
-.admin-dashboard-container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+.dashboard-container h1 {
+    font-size: 2.8rem; /* Tamaño más grande para el título principal */
+    margin-bottom: 1.5rem; /* Más espacio debajo */
     color: var(--primary-dark);
     text-align: center;
+    font-weight: 700; /* Más peso para el título */
 }
 
-.admin-dashboard-container p {
+.dashboard-container p {
     text-align: center;
-    margin-bottom: 2rem;
-    color: var(--text-light);
+    margin-bottom: 2.5rem; /* Más espacio debajo del párrafo principal */
+    color: var(--text-secondary); /* Un color de texto secundario */
+    font-size: 1.1rem; /* Un poco más grande */
+    line-height: 1.6; /* Mejor interlineado */
 }
 
+/* Estilo general para tarjetas dentro de dashboards */
+.dashboard-container .card {
+    margin-bottom: 2rem; /* Separación entre secciones */
+    background-color: var(--background-card);
+    border-radius: 10px;
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+    border: 1px solid var(--border-color); /* Añadir borde para consistencia */
+}
+
+/* Sección de Solicitudes (Específico de Admin) */
 .solicitudes-section {
-    margin-top: 3rem;
+    margin-top: 3.5rem; /* Más margen superior */
     text-align: left;
 }
 
-.solicitudes-section h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
+.solicitudes-section h2, .restaurant-management-section h2 { /* Aplicar a h2 de gestión de restaurantes también */
+    font-size: 2.2rem; /* Tamaño más grande para subtítulos */
+    margin-bottom: 1.8rem; /* Más espacio debajo */
     color: var(--primary-color);
     text-align: center;
+    font-weight: 600;
 }
 
 #solicitudes-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Min-width un poco mayor */
+    gap: 2rem; /* Más espacio entre tarjetas */
     margin-top: 2rem;
 }
 
 .solicitud-item {
-    background-color: var(--background-color);
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
+    background-color: var(--surface-color); /* Usar surface-color */
+    padding: 1.8rem; /* Más padding interno */
+    border-radius: 10px; /* Bordes más redondeados */
+    box-shadow: var(--shadow-md); /* Sombra un poco más pronunciada */
     border: 1px solid var(--border-color);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex; /* Usar flexbox para el contenido interno */
+    flex-direction: column;
+    justify-content: space-between; /* Empujar las acciones hacia abajo */
 }
 
 .solicitud-item:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-5px); /* Efecto hover más pronunciado */
+    box-shadow: var(--shadow-xl); /* Sombra más grande al pasar el ratón */
 }
 
 .solicitud-item h3 {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.5rem; /* Título de solicitud más grande */
+    margin-bottom: 1rem; /* Más espacio debajo del título */
     color: var(--primary-dark);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color-light); /* Separador visual */
+    padding-bottom: 0.8rem;
 }
 
 .solicitud-item p {
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 0.5rem;
-    color: var(--text-color);
-    text-align: left; /* Sobrescribir el text-align: center del padre */
+    font-size: 1rem; /* Tamaño base del texto */
+    line-height: 1.7; /* Mejor interlineado para legibilidad */
+    margin-bottom: 0.7rem; /* Espacio entre párrafos */
+    color: var(--text-secondary);
+    text-align: left;
 }
 
 .solicitud-item strong {
     color: var(--primary-color);
+    font-weight: 600;
 }
 
 .solicitud-item .solicitud-actions {
-    margin-top: 1.5rem;
+    margin-top: 2rem; /* Más espacio encima de las acciones */
     display: flex;
-    gap: 0.8rem;
-    justify-content: flex-end; /* Alinear botones a la derecha */
-}
-
-.solicitud-item .approve-btn {
-    background-color: var(--success-color);
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
-    border-radius: 5px;
-    box-shadow: var(--shadow-sm);
-}
-.solicitud-item .approve-btn:hover {
-    background-color: #218838;
-}
-
-.solicitud-item .reject-btn {
-    background-color: var(--error-color);
-    padding: 0.7rem 1.2rem;
-    font-size: 0.9rem;
-    border-radius: 5px;
-    box-shadow: var(--shadow-sm);
-}
-.solicitud-item .reject-btn:hover {
-    background-color: #b71c1c;
+    gap: 1rem; /* Más espacio entre botones */
+    justify-content: flex-end;
 }
 
 /* Colores de estado */
 .solicitud-item.status-pendiente {
-    border-left: 5px solid var(--accent-color);
+    border-left: 6px solid var(--accent-color); /* Borde más grueso */
 }
 .solicitud-item.status-aprobada {
-    border-left: 5px solid var(--success-color);
+    border-left: 6px solid var(--success-color);
 }
 .solicitud-item.status-rechazada {
-    border-left: 5px solid var(--error-color);
+    border-left: 6px solid var(--error-color);
 }
 
-/* Mensajes del administrador */
-#admin-message {
-    margin-top: 2rem;
+/* Estilos para botones de acción */
+.solicitud-actions .btn {
+    padding: 0.7rem 1.4rem;
+    border-radius: 25px; /* Más redondeado */
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.solicitud-actions .btn-success {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+}
+
+.solicitud-actions .btn-success:hover {
+    background-color: var(--success-color-dark);
+    box-shadow: var(--shadow-button-success);
+}
+
+.solicitud-actions .btn-danger {
+    background-color: var(--error-color);
+    color: white;
+    border: none;
+}
+
+.solicitud-actions .btn-danger:hover {
+    background-color: var(--error-color-dark);
+    box-shadow: var(--shadow-button-error);
+}
+
+
+/* Mensajes del administrador/propietario */
+#admin-message, #propietario-message {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
     text-align: center;
+    font-weight: 500;
+}
+
+#admin-message.success, #propietario-message.success {
+    background-color: var(--success-color-light);
+    color: var(--success-color-dark);
+    border: 1px solid var(--success-color);
+}
+
+#admin-message.error, #propietario-message.error {
+    background-color: var(--error-color-light);
+    color: var(--error-color-dark);
+    border: 1px solid var(--error-color);
+}
+
+/* Sección de Gestión de Restaurantes (Admin) */
+.restaurant-management-section {
+    margin-top: 3.5rem;
+    text-align: center; /* Centrar el botón de agregar */
+}
+
+.restaurant-management-section .btn { /* Estilo para el botón "Agregar Nuevo Restaurante" */
+    margin-bottom: 2.5rem;
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.form-card { /* Aplicar estilo de tarjeta al contenedor del formulario */
+    background-color: var(--background-card);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    margin: 0 auto 2rem auto; /* Centrar y añadir margen inferior */
+    max-width: 700px; /* Ancho máximo para el formulario */
+    text-align: left;
+}
+
+.form-card h3 {
+    font-size: 1.8rem;
+    color: var(--primary-dark);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="time"],
+.form-group input[type="number"],
+.form-group textarea,
+.form-group input[type="file"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color-light);
+    border-radius: 8px;
+    background-color: var(--input-background);
+    color: var(--text-color);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="time"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus,
+.form-group input[type="file"]:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
+    outline: none;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group input[type="file"] {
+    padding: 0.5rem 1rem; /* Ajuste para el file input */
+}
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto; /* Anular el 100% width */
+    transform: scale(1.2); /* Hacer el checkbox un poco más grande */
+}
+
+.checkbox-group label {
+    margin-bottom: 0; /* Reset margin */
+    font-weight: 400;
+}
+
+.form-card button[type="submit"], .form-card button[type="button"] {
+    margin-top: 1.5rem;
+    width: auto;
+    display: inline-block;
+    min-width: 150px;
+}
+
+.form-card button[type="submit"] {
+    margin-right: 1rem;
+}
+
+
+/* Estilos específicos para Propietario Dashboard */
+#restaurant-details-section #restaurant-info img {
+    margin-top: 1.5rem; /* Más margen */
+    max-width: 250px; /* Tamaño un poco más grande */
+    height: auto;
+    border-radius: 12px; /* Más redondeado */
+    box-shadow: var(--shadow-md); /* Sombra más definida */
+    object-fit: cover;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.8rem; /* Más espacio */
+}
+
+@media (min-width: 768px) {
+    .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ajuste de min-width */
+        gap: 2rem;
+    }
+}
+
+/* Listado de Platos */
+#dishes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem; /* Más espacio */
+    margin-top: 2.5rem; /* Más margen */
+}
+
+.dish-item {
+    padding: 1.5rem; /* Más padding */
+    border: 1px solid var(--border-color);
+    border-radius: 10px; /* Más redondeado */
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dish-item:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.dish-item img {
+    max-width: 100%;
+    height: 180px; /* Un poco más alto */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1.2rem; /* Más margen */
+}
+
+.dish-item h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.6rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.dish-item p {
+    font-size: 0.95rem; /* Ajuste de tamaño */
+    color: var(--text-secondary);
+    margin-bottom: 1.2rem; /* Más margen */
+    flex-grow: 1;
+    line-height: 1.6;
+}
+
+.dish-item .dish-actions {
+    margin-top: 1.5rem; /* Más margen */
+    display: flex;
+    gap: 0.8rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.dish-item .dish-actions .btn {
+    margin-top: 0;
+    flex-grow: 1;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
+}
+
+/* Estilos específicos para Client Dashboard */
+.client-dashboard-container {
+    /* Inherits general .dashboard-container styles */
+}
+
+.client-actions-section {
+    text-align: center;
+    margin-top: 3rem;
+    margin-bottom: 3.5rem;
+}
+
+.client-actions-section .btn {
+    padding: 0.8rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.restaurants-exploration-section {
+    margin-top: 3.5rem;
+}
+
+.restaurants-exploration-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1.8rem;
+    color: var(--primary-color);
+    text-align: center;
+    font-weight: 600;
+}
+
+.restaurants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.restaurant-item {
+    background-color: var(--surface-color);
+    padding: 1.8rem;
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.restaurant-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.restaurant-item h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+    color: var(--primary-dark);
+    font-weight: 600;
+    text-align: center;
+}
+
+.restaurant-item p {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    text-align: left;
+}
+
+.restaurant-item strong {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.restaurant-item .restaurant-image {
+    max-width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.restaurant-item .btn {
+    margin-top: 1.5rem;
+    width: 100%;
+    padding: 0.7rem 1.4rem;
+    border-radius: 25px;
+    font-weight: 600;
+    align-self: flex-end; /* Asegura que el botón se alinee al final */
 }

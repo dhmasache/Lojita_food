@@ -4,15 +4,18 @@
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 70px);
-  background-color: var(--background-color); /* Usar el color de fondo del tema */
+  background-image: linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)), url('https://images.unsplash.com/photo-1543353071-873f17b378f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
   padding: 1rem;
+  background-color: #e0f7fa; /* DEBUG: Color temporal para ver si el contenedor se estiliza */
 }
 
 .register-form {
   background: var(--surface-color);
   padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: var(--shadow-lg); /* Sombra más destacada para el tema oscuro */
+  box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 420px;
   text-align: left;
@@ -23,7 +26,7 @@
   margin-bottom: 2rem;
   font-size: 2rem;
   text-align: center;
-  color: var(--text-color); /* Usar el color de texto principal del tema */
+  color: var(--text-color);
 }
 
 /* Estilo para el contenedor del input de contraseña */
@@ -41,10 +44,10 @@
 /* Botón para mostrar/ocultar contraseña */
 .password-toggle-btn {
   position: absolute;
-  right: 1px; /* Pegado al borde del input */
+  right: 1px;
   top: 50%;
   transform: translateY(-50%);
-  height: calc(100% - 2px); /* Altura casi completa */
+  height: calc(100% - 2px);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -62,7 +65,7 @@
   color: var(--error-color);
   font-size: 0.85rem;
   margin-top: 0.25rem;
-  display: block; /* Asegura que el span ocupe su propia línea */
+  display: block;
 }
 
 /* Estilo para inputs con error */
@@ -71,24 +74,6 @@
   box-shadow: 0 0 0 2px rgba(var(--error-color), 0.25);
 }
 
-.form-group input:focus {
-  outline: none;
-  border-color: var(--accent-color); /* Usar el color de acento del tema */
-  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25); /* Sombra con el nuevo color de acento */
-}
-
-.submit-button {
-  width: 100%;
-  background-color: var(--primary-color); /* Color primario del tema */
-}
-
-.submit-button:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-2px);
-}
-
-/* Mensajes de éxito y error ya heredan de main.css */
-/* Solo añadimos un margen superior si es necesario */
 .register-form .message {
   margin-bottom: 1.5rem;
   text-align: center;
@@ -102,7 +87,7 @@
 }
 
 .register-form .sub-text a {
-    color: var(--accent-color); /* Usar el color de acento */
+    color: var(--accent-color);
     font-weight: 600;
 }
 
@@ -110,4 +95,3 @@
     text-decoration: underline;
     color: var(--primary-color);
 }
-

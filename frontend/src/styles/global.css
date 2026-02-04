@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600&display=swap');
+
+/* src/styles/global.css */
+
+:root {
+  /* Paleta de Colores: Tecnológico + Tradicional */
+  --background-main: #f0f2f5; /* Blanco hueso, más cálido que el blanco puro */
+  --background-card: rgba(255, 255, 255, 0.6); /* Base para Glassmorphism */
+  --text-primary: #1a1a1a; /* Negro profundo para alta legibilidad */
+  --text-secondary: #595959;
+  
+  /* Colores de acento tradicionales */
+  --accent-terracotta: #E07A5F;
+  --accent-olive-green: #81B29A;
+  --accent-coffee: #6f4e37;
+
+  /* Nuevas variables basadas en el tema */
+  --surface-color: #ffffff; /* Blanco puro para superficies de tarjetas */
+  --primary-color: var(--accent-terracotta); /* Color principal, mapeado a terracota */
+  --primary-dark: #cc6a4c; /* Una sombra más oscura de terracota */
+  --accent-color: var(--accent-olive-green); /* Color de acento, mapeado a verde oliva */
+  --error-color: #d32f2f; /* Rojo para mensajes de error */
+  --success-color: #388e3c; /* Verde para mensajes de éxito */
+  --info-color: #1976d2; /* Azul para mensajes informativos */
+  --text-light: var(--text-secondary); /* Texto más claro, mapeado a secundario */
+  --background-color: var(--background-main); /* Mapeado al fondo principal */
+  --text-color: var(--text-primary); /* Mapeado al texto principal */
+
+  /* Sutiles bordes y sombras */
+  --border-color: rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-medium: 0 6px 20px rgba(0,0,0,0.1);
+  --shadow-md: var(--shadow-medium); /* Alias para consistencia */
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.15); /* Sombra más grande */
+
+  /* Tipografía */
+  --font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: 'Lora', 'Georgia', serif;
+
+  /* Transiciones */
+  --transition-smooth: all 0.3s ease-in-out;
+
+  /* Estilos generales de botones */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+    margin-top: 1rem;
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+  }
+
+  .btn-success {
+    background-color: var(--success-color);
+    color: white;
+    margin-right: 0.5rem; /* Espacio entre botones */
+  }
+
+  .btn-success:hover {
+    background-color: #2e7d32; /* Un verde más oscuro */
+    transform: translateY(-2px);
+  }
+
+  .btn-danger {
+    background-color: var(--error-color);
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #c62828; /* Un rojo más oscuro */
+    transform: translateY(-2px);
+  }
+
+  /* Estilos para formularios */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="email"],
+  .form-group input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    background-color: var(--background-main);
+    transition: var(--transition-smooth);
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(var(--accent-color), 0.25);
+  }
+
+  /* Mensajes de error/éxito */
+  .message {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .message.error {
+    background-color: rgba(var(--error-color), 0.1);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+  }
+
+  .message.success {
+    background-color: rgba(var(--success-color), 0.1);
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+  }
+
+  /* Clases generales para componentes */
+  .card {
+    background: var(--surface-color);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+  }
+
+  /* Estilos para botones secundarios */
+  .btn-secondary {
+    background-color: #f0f0f0; /* Un gris claro */
+    color: var(--text-primary);
+  }
+
+  .btn-secondary:hover {
+    background-color: #e0e0e0; /* Un gris un poco más oscuro */
+    transform: translateY(-2px);
+  }
+
+  /* Estilos para formularios en grid */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .form-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+  }
+}
+
+body {
+  font-family: var(--font-sans-serif);
+  background-color: var(--background-main);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--accent-coffee);
+}
+
+.main-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}

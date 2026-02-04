@@ -28,6 +28,22 @@ const Usuario = sequelize.define('Usuario', {
         type: DataTypes.ENUM('cliente', 'propietario', 'admin'),
         defaultValue: 'cliente',
     },
+    verificationCode: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+    },
+    passwordResetToken: {
+        type: DataTypes.STRING(255),
+        allowNull: true,
+    },
+    passwordResetExpires: {
+        type: DataTypes.DATE,
+        allowNull: true,
+    },
 }, {
     tableName: 'Usuarios',
     hooks: {

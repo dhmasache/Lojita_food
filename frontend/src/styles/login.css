@@ -11,10 +11,10 @@
 }
 
 .login-form {
-  background: var(--surface-color); /* Fondo blanco */
+  background: var(--surface-color);
   padding: 2.5rem;
   border-radius: 12px;
-  box-shadow: var(--shadow-md); /* Sombra más pronunciada */
+  box-shadow: var(--shadow-md);
   width: 100%;
   max-width: 420px;
   text-align: left;
@@ -26,19 +26,6 @@
   font-size: 2rem;
   text-align: center;
   color: var(--primary-dark);
-}
-
-/* form-group, label, input ya están cubiertos por estilos globales en main.css */
-
-.submit-button {
-  width: 100%;
-  /* El resto de estilos se heredan del global button */
-}
-
-.login-form .message.error {
-  /* Se hereda de .message.error en main.css */
-  margin-top: 1.5rem;
-  text-align: center;
 }
 
 .login-form .sub-text {
@@ -56,4 +43,20 @@
 .login-form .sub-text a:hover {
     text-decoration: underline;
     color: var(--primary-dark);
+}
+
+.login-form .forgot-password-link {
+  margin-top: 1rem;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.login-form .forgot-password-link a {
+  color: var(--accent-color);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-form .forgot-password-link a:hover {
+  text-decoration: underline;
 }

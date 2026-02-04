@@ -9,19 +9,35 @@ const API_BASE_URL = 'http://localhost:3000/api';
  */
 async function request(endpoint, options = {}) {
     const token = localStorage.getItem('jwt_token');
+    
+    // Default headers, will be overridden if body is FormData
     const headers = {
-        'Content-Type': 'application/json',
         ...options.headers,
     };
+
+    const config = {
+        ...options,
+    };
+
+    // Si el cuerpo es FormData, no establecer Content-Type; el navegador lo hará automáticamente
+    // y no stringify el body.
+    if (!(options.body instanceof FormData)) {
+        headers['Content-Type'] = 'application/json';
+        if (options.body) {
+            config.body = JSON.stringify(options.body);
+        }
+    } else {
+        // Si es FormData, el cuerpo ya está listo para ser enviado
+        // y el Content-Type se gestiona automáticamente por el navegador
+        config.body = options.body;
+    }
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const config = {
-        ...options,
-        headers,
-    };
+    config.headers = headers;
+
 
     try {
         const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
@@ -60,11 +76,23 @@ const api = {
     // Auth
     login: (credentials) => request('/usuarios/login', {
         method: 'POST',
-        body: JSON.stringify(credentials),
+        body: credentials,
     }),
     register: (userData) => request('/usuarios', {
         method: 'POST',
-        body: JSON.stringify(userData),
+        body: userData,
+    }),
+    verifyAccount: (verificationData) => request('/usuarios/verify-account', {
+        method: 'POST',
+        body: verificationData,
+    }),
+    forgotPassword: (emailData) => request('/usuarios/forgot-password', {
+        method: 'POST',
+        body: emailData,
+    }),
+    resetPassword: (token, passwordData) => request(`/usuarios/reset-password/${token}`, {
+        method: 'PUT',
+        body: passwordData,
     }),
 
     // Usuarios
@@ -72,11 +100,11 @@ const api = {
     getUsuarioById: (id) => request(`/usuarios/${id}`),
     createUsuario: (userData) => request('/usuarios', {
         method: 'POST',
-        body: JSON.stringify(userData),
+        body: userData,
     }),
     updateUsuario: (id, userData) => request(`/usuarios/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(userData),
+        body: userData,
     }),
     deleteUsuario: (id) => request(`/usuarios/${id}`, {
         method: 'DELETE',
@@ -87,14 +115,18 @@ const api = {
     getRestauranteById: (id) => request(`/restaurantes/${id}`),
     createRestaurante: (restauranteData) => request('/restaurantes', {
         method: 'POST',
-        body: JSON.stringify(restauranteData),
+        body: restauranteData,
     }),
     updateRestaurante: (id, restauranteData) => request(`/restaurantes/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(restauranteData),
+        body: restauranteData,
     }),
     deleteRestaurante: (id) => request(`/restaurantes/${id}`, {
         method: 'DELETE',
+    }),
+    uploadRestauranteImage: (id, imageData) => request(`/restaurantes/${id}/upload-image`, {
+        method: 'POST',
+        body: imageData, // imageData should be FormData
     }),
 
     // Platos
@@ -102,14 +134,18 @@ const api = {
     getPlatoById: (id) => request(`/platos/${id}`),
     createPlato: (platoData) => request('/platos', {
         method: 'POST',
-        body: JSON.stringify(platoData),
+        body: platoData,
     }),
     updatePlato: (id, platoData) => request(`/platos/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(platoData),
+        body: platoData,
     }),
     deletePlato: (id) => request(`/platos/${id}`, {
         method: 'DELETE',
+    }),
+    uploadPlatoImage: (id, imageData) => request(`/platos/${id}/upload-image`, {
+        method: 'POST',
+        body: imageData, // imageData should be FormData
     }),
 
     // Pedidos
@@ -117,11 +153,11 @@ const api = {
     getPedidoById: (id) => request(`/pedidos/${id}`),
     createPedido: (pedidoData) => request('/pedidos', {
         method: 'POST',
-        body: JSON.stringify(pedidoData),
+        body: pedidoData,
     }),
     updatePedido: (id, pedidoData) => request(`/pedidos/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(pedidoData),
+        body: pedidoData,
     }),
     deletePedido: (id) => request(`/pedidos/${id}`, {
         method: 'DELETE',
@@ -138,11 +174,11 @@ const api = {
     getReseniaById: (id) => request(`/resenias/${id}`),
     createResenia: (reseniaData) => request('/resenias', {
         method: 'POST',
-        body: JSON.stringify(reseniaData),
+        body: reseniaData,
     }),
     updateResenia: (id, reseniaData) => request(`/resenias/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(reseniaData),
+        body: reseniaData,
     }),
     deleteResenia: (id) => request(`/resenias/${id}`, {
         method: 'DELETE',
@@ -153,11 +189,11 @@ const api = {
     getCantonById: (id) => request(`/cantones/${id}`),
     createCanton: (cantonData) => request('/cantones', {
         method: 'POST',
-        body: JSON.stringify(cantonData),
+        body: cantonData,
     }),
     updateCanton: (id, cantonData) => request(`/cantones/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(cantonData),
+        body: cantonData,
     }),
     deleteCanton: (id) => request(`/cantones/${id}`, {
         method: 'DELETE',
@@ -168,11 +204,11 @@ const api = {
     getAlergiaById: (id) => request(`/alergias/${id}`),
     createAlergia: (alergiaData) => request('/alergias', {
         method: 'POST',
-        body: JSON.stringify(alergiaData),
+        body: alergiaData,
     }),
     updateAlergia: (id, alergiaData) => request(`/alergias/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(alergiaData),
+        body: alergiaData,
     }),
     deleteAlergia: (id) => request(`/alergias/${id}`, {
         method: 'DELETE',
@@ -183,11 +219,11 @@ const api = {
     getDeliveryAppById: (id) => request(`/deliveries/${id}`),
     createDeliveryApp: (deliveryAppData) => request('/deliveries', {
         method: 'POST',
-        body: JSON.stringify(deliveryAppData),
+        body: deliveryAppData,
     }),
     updateDeliveryApp: (id, deliveryAppData) => request(`/deliveries/${id}`, {
         method: 'PUT',
-        body: JSON.stringify(deliveryAppData),
+        body: deliveryAppData,
     }),
     deleteDeliveryApp: (id) => request(`/deliveries/${id}`, {
         method: 'DELETE',
@@ -196,7 +232,7 @@ const api = {
     // Solicitudes para ser Propietario
     createSolicitud: (solicitudData) => request('/solicitudes', {
         method: 'POST',
-        body: JSON.stringify(solicitudData),
+        body: solicitudData,
     }),
     getSolicitudes: () => request('/solicitudes'),
     approveSolicitud: (id) => request(`/solicitudes/${id}/aprobar`, {

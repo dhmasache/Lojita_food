@@ -9,6 +9,17 @@ router.post('/', usuarioController.createUsuario);
 // Login de usuario
 router.post('/login', usuarioController.login);
 
+// Verificar cuenta de usuario
+router.post('/verify-account', usuarioController.verifyAccount);
+
+// Solicitar restablecimiento de contraseña
+router.post('/forgot-password', usuarioController.forgotPassword);
+
+// Restablecer contraseña
+router.put('/reset-password/:token', usuarioController.resetPassword);
+
+
+
 
 // --- Rutas Protegidas (Requieren Login) ---
 // Actualizar un usuario por ID (el usuario mismo o un admin)
