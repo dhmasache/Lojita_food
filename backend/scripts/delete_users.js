@@ -8,6 +8,7 @@ async function deleteUsers() {
         await sequelize.authenticate();
         console.log('Conexión a la base de datos establecida correctamente.');
 
+        
         // Eliminar todos los registros de la tabla Restaurantes primero (depende de Usuario)
         console.log('Eliminando todos los Restaurantes...');
         await Restaurante.destroy({ where: {} });

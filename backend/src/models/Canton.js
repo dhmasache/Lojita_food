@@ -10,7 +10,6 @@ const Canton = sequelize.define('Canton', {
     nombre: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     descripcion: {
         type: DataTypes.TEXT,

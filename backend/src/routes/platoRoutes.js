@@ -5,7 +5,7 @@ const { protect, authorize } = require('../middleware/authMiddleware'); // Impor
 const upload = require('../lib/multerConfig'); // Importar
 
 // Crear un nuevo plato
-router.post('/', protect, authorize('admin', 'propietario'), platoController.createPlato); // Añadir protect y authorize aquí también
+router.post('/', protect, authorize('admin', 'propietario'), upload.single('imagenPlato'), platoController.createPlato); // Añadir protect y authorize aquí también
 
 // Subir imagen para un plato (Solo Admin y Propietario del restaurante)
 router.post('/:id/upload-image', protect, authorize('admin', 'propietario'), upload.single('dishImage'), platoController.uploadPlatoImage);

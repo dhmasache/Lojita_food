@@ -3,9 +3,38 @@ const { Plato, Restaurante } = require('../models');
 // Crear un nuevo plato
 exports.createPlato = async (req, res) => {
     try {
-        const plato = await Plato.create(req.body);
+        const { nombre, descripcion, precio, restauranteId } = req.body;
+
+        // Verificar el restaurante y su propietario para la autorización
+        const restaurante = await Restaurante.findByPk(restauranteId);
+        if (!restaurante) {
+            return res.status(404).json({ error: 'Restaurante no encontrado.' });
+        }
+
+        // Autorización: Solo el admin o el propietario del restaurante pueden añadir platos
+        if (req.usuario.rol !== 'admin' && restaurante.propietarioId !== req.usuario.id) {
+            return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para añadir platos a este restaurante.' });
+        }
+
+        // Manejar imagenUrl si se sube un archivo
+        let imagenUrl = null;
+        if (req.file) {
+            imagenUrl = `/uploads/${req.file.filename}`;
+        }
+
+        const plato = await Plato.create({
+            nombre,
+            descripcion,
+            precio: parseFloat(precio), // Asegurarse de que el precio sea un número
+            imagenUrl,
+            restauranteId: parseInt(restauranteId) // Asegurarse de que el ID sea un número
+        });
         res.status(201).json(plato);
     } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            return res.status(400).json({ error: errors.join(', ') });
+        }
         res.status(400).json({ error: error.message });
     }
 };
@@ -15,11 +44,11 @@ exports.getPlatos = async (req, res) => {
     try {
         // Opcional: filtrar platos por restaurante
         const { restauranteId } = req.query;
-        const where = restauranteId ? { restauranteId } : {};
+        const where = restauranteId ? { restauranteId: parseInt(restauranteId) } : {}; // Convertir a int
         
         const platos = await Plato.findAll({
             where,
-            include: { model: Restaurante }
+            include: { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] }
         });
         res.json(platos);
     } catch (error) {
@@ -31,7 +60,7 @@ exports.getPlatos = async (req, res) => {
 exports.getPlatoById = async (req, res) => {
     try {
         const plato = await Plato.findByPk(req.params.id, {
-            include: { model: Restaurante }
+            include: { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] }
         });
         if (plato) {
             res.json(plato);
@@ -46,16 +75,53 @@ exports.getPlatoById = async (req, res) => {
 // Actualizar un plato por ID
 exports.updatePlato = async (req, res) => {
     try {
-        const [updated] = await Plato.update(req.body, {
-            where: { id: req.params.id }
+        const platoId = req.params.id;
+        const { nombre, descripcion, precio, restauranteId } = req.body;
+
+        const plato = await Plato.findByPk(platoId, {
+            include: { model: Restaurante }
         });
+
+        if (!plato) {
+            return res.status(404).json({ error: 'Plato no encontrado' });
+        }
+
+        if (!plato.Restaurante) {
+            return res.status(404).json({ error: 'Restaurante asociado al plato no encontrado.' });
+        }
+
+        // Autorización: Solo el admin o el propietario del restaurante pueden actualizar platos
+        if (req.usuario.rol !== 'admin' && plato.Restaurante.propietarioId !== req.usuario.id) {
+            return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para modificar este plato.' });
+        }
+
+        // Preparar datos para actualizar, incluyendo imagen si se sube una nueva
+        let updateData = {
+            nombre,
+            descripcion,
+            precio: parseFloat(precio),
+            restauranteId: parseInt(restauranteId)
+        };
+
+        if (req.file) { // Si se sube una nueva imagen con la actualización
+            updateData.imagenUrl = `/uploads/${req.file.filename}`;
+        }
+
+        const [updated] = await Plato.update(updateData, {
+            where: { id: platoId }
+        });
+
         if (updated) {
-            const updatedPlato = await Plato.findByPk(req.params.id);
+            const updatedPlato = await Plato.findByPk(platoId);
             res.json(updatedPlato);
         } else {
-            res.status(404).json({ error: 'Plato no encontrado' });
+            res.status(404).json({ error: 'Plato no encontrado (o no se realizaron cambios)' });
         }
     } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            return res.status(400).json({ error: errors.join(', ') });
+        }
         res.status(400).json({ error: error.message });
     }
 };
@@ -63,8 +129,27 @@ exports.updatePlato = async (req, res) => {
 // Eliminar un plato por ID
 exports.deletePlato = async (req, res) => {
     try {
+        const platoId = req.params.id;
+
+        const plato = await Plato.findByPk(platoId, {
+            include: { model: Restaurante }
+        });
+
+        if (!plato) {
+            return res.status(404).json({ error: 'Plato no encontrado' });
+        }
+
+        if (!plato.Restaurante) {
+            return res.status(404).json({ error: 'Restaurante asociado al plato no encontrado.' });
+        }
+
+        // Autorización: Solo el admin o el propietario del restaurante pueden eliminar platos
+        if (req.usuario.rol !== 'admin' && plato.Restaurante.propietarioId !== req.usuario.id) {
+            return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para eliminar este plato.' });
+        }
+
         const deleted = await Plato.destroy({
-            where: { id: req.params.id }
+            where: { id: platoId }
         });
         if (deleted) {
             res.status(204).send();
@@ -76,7 +161,7 @@ exports.deletePlato = async (req, res) => {
     }
 };
 
-// Subir imagen para un plato
+// Subir imagen para un plato (Esta función ya está bien, se usará para actualizaciones específicas de imagen)
 exports.uploadPlatoImage = async (req, res) => {
     try {
         const platoId = req.params.id;

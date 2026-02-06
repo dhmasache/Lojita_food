@@ -8,7 +8,8 @@ import { SolicitudPage } from './pages/solicitudPage.js';
 import { VerifyAccountPage } from './pages/verifyAccount.js';
 import { ForgotPasswordPage } from './pages/forgotPassword.js';
 import { ResetPasswordPage } from './pages/resetPassword.js';
-import { ClientDashboardPage } from './pages/clientDashboard.js'; // Nuevo: Importar ClientDashboardPage
+import { ClientDashboardPage } from './pages/clientDashboard.js';
+import { RestaurantsPage } from './pages/restaurantsPage.js'; // Nuevo: Importar RestaurantsPage
 
 const routes = {
     '/': HomePage,
@@ -20,8 +21,9 @@ const routes = {
     '/reset-password/:token': ResetPasswordPage,
     '/admin': AdminDashboardPage,
     '/mi-restaurante': PropietarioDashboardPage,
-    '/solicitud': SolicitudPage, // Modificado: Ruta a '/solicitud'
-    '/client-dashboard': ClientDashboardPage, // Nuevo: Ruta para el dashboard del cliente
+    '/solicitud': SolicitudPage,
+    '/client-dashboard': ClientDashboardPage,
+    '/restaurantes': RestaurantsPage, // Nuevo: Ruta para la lista completa de restaurantes
 };
 
 export function router() {
@@ -46,4 +48,3 @@ export function router() {
         app.innerHTML = '<h1>404: Página No Encontrada</h1>';
     }
 }
-

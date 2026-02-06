@@ -24,6 +24,7 @@ const renderHeaderContent = (navLinksElement) => {
 
     navLinksElement.innerHTML = `
         <a href="/">Inicio</a>
+        <a href="/restaurantes">Restaurantes</a> <!-- Nuevo enlace -->
         <a href="/about">Nosotros</a>
     `;
 
@@ -91,14 +92,15 @@ export const Header = () => {
     const style = document.createElement('style');
     style.textContent = `
         #main-header {
-            background: var(--background-card);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background-color: var(--surface-color); /* Usar surface-color para un fondo más sólido */
+            backdrop-filter: blur(8px); /* Blur ligeramente reducido */
+            -webkit-backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--border-color);
-            padding: 1rem 2rem;
+            padding: 0.8rem 2rem; /* Padding vertical y horizontal ajustado */
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: var(--shadow-soft); /* Sombra más suave para un look flotante */
         }
 
         .nav-container {
@@ -114,64 +116,87 @@ export const Header = () => {
             align-items: center;
             text-decoration: none;
             font-family: var(--font-serif);
-            font-weight: 600;
-            font-size: 1.5rem;
+            font-weight: 700; /* Más peso para el texto del logo */
+            font-size: 1.6rem; /* Tamaño de fuente ligeramente más grande */
             color: var(--accent-coffee);
+            transition: var(--transition-smooth);
+        }
+
+        .logo:hover {
+            color: var(--primary-dark); /* Color al hover */
         }
 
         .logo img {
-            height: 40px;
-            margin-right: 10px;
+            height: 45px; /* Altura del logo ligeramente mayor */
+            margin-right: 12px; /* Margen ligeramente mayor */
             transition: var(--transition-smooth);
         }
         
         .logo:hover img {
-            transform: rotate(-10deg);
+            transform: scale(1.05) rotate(-3deg); /* Efecto hover más dinámico */
         }
 
         .nav-links {
             display: flex;
             align-items: center;
+            gap: 1rem; /* Espaciado entre elementos de navegación */
         }
 
-        .nav-links a, .nav-links button {
-            margin-left: 1.5rem;
+        .nav-links a {
             text-decoration: none;
             color: var(--text-secondary);
-            font-weight: 600;
+            font-weight: 500; /* Peso de fuente ajustado para enlaces */
             transition: var(--transition-smooth);
-            font-size: 0.95rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0; /* Reset padding for button to match link spacing */
+            font-size: 1rem; /* Tamaño de fuente estándar */
+            padding: 0.5rem 0.8rem; /* Padding para hacer la zona de click/hover más grande */
+            border-radius: 8px; /* Ligeros bordes redondeados */
         }
         
-        .nav-links a:hover, .nav-links button:hover {
-            color: var(--accent-terracotta);
+        .nav-links a:hover {
+            color: var(--primary-color); /* Color principal al hover */
+            background-color: rgba(var(--primary-color-rgb), 0.1); /* Fondo sutil al hover */
         }
         
+        /* Estilos generales para botones dentro del nav */
         .nav-button {
             padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            border: 1px solid var(--accent-terracotta);
-            color: var(--accent-terracotta);
-            background: transparent;
-        }
-
-        .nav-button:hover {
-            background: var(--accent-terracotta);
-            color: white;
+            border-radius: 25px; /* Más redondeado para un look moderno */
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            font-size: 0.95rem; /* Tamaño de fuente ligeramente menor */
+            cursor: pointer;
+            text-decoration: none; /* Para botones que actúan como enlaces */
+            display: inline-flex; /* Asegurar padding y alineación */
+            align-items: center;
+            justify-content: center;
+            border: 1px solid transparent; /* Borde transparente por defecto */
         }
 
         .nav-button.primary {
-            background: var(--accent-terracotta);
+            background-color: var(--primary-color);
             color: white;
-            border-color: var(--accent-terracotta);
+            border-color: var(--primary-color);
         }
 
         .nav-button.primary:hover {
-            background: #c96850; /* A slightly darker shade */
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px); /* Efecto de "levantar" */
+            box-shadow: 0 4px 10px rgba(var(--primary-color-rgb), 0.2);
+        }
+        
+        .nav-button.secondary { /* Nuevo estilo para botones secundarios */
+            background-color: transparent;
+            color: var(--text-primary);
+            border-color: var(--border-color);
+        }
+
+        .nav-button.secondary:hover {
+            background-color: var(--background-main); /* Fondo sutil al hover */
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .welcome-message {
@@ -179,6 +204,7 @@ export const Header = () => {
             color: var(--text-primary);
             font-weight: 600;
             font-size: 0.95rem;
+            white-space: nowrap; /* Evitar que el mensaje se rompa */
         }
     `;
     headerElement.appendChild(style);

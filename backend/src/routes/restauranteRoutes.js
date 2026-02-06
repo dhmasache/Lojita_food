@@ -17,7 +17,7 @@ router.get('/', restauranteController.getRestaurantes);
 router.get('/:id', restauranteController.getRestauranteById);
 
 // Actualizar un restaurante por ID (Solo Admin y Propietario)
-router.put('/:id', protect, authorize('admin', 'propietario'), restauranteController.updateRestaurante);
+router.put('/:id', protect, authorize('admin', 'propietario'), upload.single('imageUrl'), restauranteController.updateRestaurante);
 
 // Eliminar un restaurante por ID (Solo Admin y Propietario)
 router.delete('/:id', protect, authorize('admin', 'propietario'), restauranteController.deleteRestaurante);

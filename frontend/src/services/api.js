@@ -44,16 +44,19 @@ async function request(endpoint, options = {}) {
 
         if (!response.ok) {
             let errorMessage = `Error en la petición: ${response.status}`;
+            let errorBody = null; // Variable para almacenar el cuerpo del error como texto
+
             try {
-                // Intenta parsear la respuesta como JSON
-                const errorData = await response.json();
+                errorBody = await response.text(); // Leer el cuerpo de la respuesta una sola vez
+                const errorData = JSON.parse(errorBody); // Intentar parsearlo como JSON
                 errorMessage = errorData.error || errorData.message || errorMessage;
             } catch (e) {
-                // Si falla el parseo JSON, intenta obtener la respuesta como texto
-                const errorText = await response.text();
-                if (errorText) {
-                    errorMessage = errorText;
+                // Si falla el parseo JSON, o si el body ya fue consumido por otra lectura anterior,
+                // simplemente usamos el errorBody (texto plano) si está disponible.
+                if (errorBody) {
+                    errorMessage = errorBody;
                 }
+                // Si no hay errorBody, errorMessage ya tiene el status por defecto.
             }
             throw new Error(errorMessage);
         }
@@ -106,6 +109,10 @@ const api = {
         method: 'PUT',
         body: userData,
     }),
+    updateUserRole: (id, roleData) => request(`/usuarios/${id}/cambiar-rol`, {
+        method: 'PUT',
+        body: roleData,
+    }),
     deleteUsuario: (id) => request(`/usuarios/${id}`, {
         method: 'DELETE',
     }),
@@ -134,11 +141,11 @@ const api = {
     getPlatoById: (id) => request(`/platos/${id}`),
     createPlato: (platoData) => request('/platos', {
         method: 'POST',
-        body: platoData,
+        body: platoData, // Aceptar FormData directamente
     }),
     updatePlato: (id, platoData) => request(`/platos/${id}`, {
         method: 'PUT',
-        body: platoData,
+        body: platoData, // Aceptar FormData directamente
     }),
     deletePlato: (id) => request(`/platos/${id}`, {
         method: 'DELETE',

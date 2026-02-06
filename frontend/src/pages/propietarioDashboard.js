@@ -18,6 +18,7 @@ function PropietarioDashboardPage() {
     }
 
     let currentRestaurant = null;
+    let editingDishId = null; // Para saber qué plato estamos editando
 
     const renderDashboard = async () => {
         page.innerHTML = `
@@ -34,34 +35,38 @@ function PropietarioDashboardPage() {
 
             <div id="restaurant-edit-form-section" class="card" style="display: none;">
                 <h2>Editar Detalles del Restaurante</h2>
-                <form id="edit-restaurant-form" class="form-grid">
+                <form id="edit-restaurant-form" class="form-grid" enctype="multipart/form-data">
                     <div class="form-group">
-                        <label for="nombre">Nombre</label>
-                        <input type="text" id="nombre" name="nombre" required>
+                        <label for="restaurant-nombre">Nombre</label>
+                        <input type="text" id="restaurant-nombre" name="nombre" required>
                     </div>
                     <div class="form-group">
-                        <label for="direccion">Dirección</label>
-                        <input type="text" id="direccion" name="direccion" required>
+                        <label for="restaurant-direccion">Dirección</label>
+                        <input type="text" id="restaurant-direccion" name="direccion" required>
                     </div>
                     <div class="form-group">
-                        <label for="telefono">Teléfono</label>
-                        <input type="tel" id="telefono" name="telefono" required>
+                        <label for="restaurant-telefono">Teléfono</label>
+                        <input type="tel" id="restaurant-telefono" name="telefono" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email">
+                        <label for="restaurant-email">Email</label>
+                        <input type="email" id="restaurant-email" name="email">
                     </div>
                     <div class="form-group">
-                        <label for="horarioApertura">Horario Apertura</label>
-                        <input type="time" id="horarioApertura" name="horarioApertura" required>
+                        <label for="restaurant-horarioApertura">Horario Apertura</label>
+                        <input type="time" id="restaurant-horarioApertura" name="horarioApertura" required>
                     </div>
                     <div class="form-group">
-                        <label for="horarioCierre">Horario Cierre</label>
-                        <input type="time" id="horarioCierre" name="horarioCierre" required>
+                        <label for="restaurant-horarioCierre">Horario Cierre</label>
+                        <input type="time" id="restaurant-horarioCierre" name="horarioCierre" required>
                     </div>
                     <div class="form-group">
-                        <label for="esTradicional">¿Es Tradicional?</label>
-                        <input type="checkbox" id="esTradicional" name="esTradicional">
+                        <label for="restaurant-descripcion">Descripción</label>
+                        <textarea id="restaurant-descripcion" name="descripcion" rows="4"></textarea>
+                    </div>
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="restaurant-esTradicional" name="esTradicional">
+                        <label for="restaurant-esTradicional">¿Es Tradicional?</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                     <button type="button" id="cancel-edit-restaurant-btn" class="btn btn-secondary">Cancelar</button>
@@ -95,7 +100,7 @@ function PropietarioDashboardPage() {
                     </div>
                     <div class="form-group">
                         <label for="dishDescription">Descripción</label>
-                        <textarea id="dishDescription" name="descripcion"></textarea>
+                        <textarea id="dishDescription" name="descripcion" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="dishPrice">Precio</label>
@@ -103,10 +108,36 @@ function PropietarioDashboardPage() {
                     </div>
                     <div class="form-group">
                         <label for="dishImage">Imagen del Plato</label>
-                        <input type="file" id="dishImage" name="dishImage" accept="image/*">
+                        <input type="file" id="dishImage" name="imagenPlato" accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-primary">Crear Plato</button>
                     <button type="button" id="cancel-add-dish-btn" class="btn btn-secondary">Cancelar</button>
+                </form>
+            </div>
+
+            <div id="edit-dish-form-section" class="card" style="display: none;">
+                <h2>Editar Plato</h2>
+                <form id="edit-dish-form" class="form-grid" enctype="multipart/form-data">
+                    <input type="hidden" id="editDishId" name="id">
+                    <div class="form-group">
+                        <label for="editDishName">Nombre del Plato</label>
+                        <input type="text" id="editDishName" name="nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDishDescription">Descripción</label>
+                        <textarea id="editDishDescription" name="descripcion" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDishPrice">Precio</label>
+                        <input type="number" id="editDishPrice" name="precio" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editDishImage">Imagen del Plato (dejar vacío para no cambiar)</label>
+                        <input type="file" id="editDishImage" name="imagenPlato" accept="image/*">
+                    </div>
+                    <div id="current-dish-image-preview" style="text-align: center; margin-bottom: 1rem;"></div>
+                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    <button type="button" id="cancel-edit-dish-btn" class="btn btn-secondary">Cancelar</button>
                 </form>
             </div>
         `;
@@ -120,6 +151,13 @@ function PropietarioDashboardPage() {
         const dishesListDiv = page.querySelector('#dishes-list');
         const addDishFormSection = page.querySelector('#add-dish-form-section');
         const addDishForm = page.querySelector('#add-dish-form');
+        const editDishFormSection = page.querySelector('#edit-dish-form-section'); // Nuevo
+        const editDishForm = page.querySelector('#edit-dish-form'); // Nuevo
+        const cancelAddDishBtn = page.querySelector('#cancel-add-dish-btn');
+        const cancelEditDishBtn = page.querySelector('#cancel-edit-dish-btn'); // Nuevo
+        const addDishBtn = page.querySelector('#add-dish-btn'); // Botón añadir plato
+        const currentDishImagePreview = page.querySelector('#current-dish-image-preview');
+
 
         const displayMessage = (msg, type) => {
             propietarioMessage.textContent = msg;
@@ -143,23 +181,24 @@ function PropietarioDashboardPage() {
                         <p><strong>Teléfono:</strong> ${currentRestaurant.telefono}</p>
                         <p><strong>Email:</strong> ${currentRestaurant.email || 'N/A'}</p>
                         <p><strong>Horario:</strong> ${currentRestaurant.horarioApertura} - ${currentRestaurant.horarioCierre}</p>
+                        <p><strong>Descripción:</strong> ${currentRestaurant.descripcion || 'Sin descripción.'}</p>
                         <p><strong>Tradicional:</strong> ${currentRestaurant.esTradicional ? 'Sí' : 'No'}</p>
-                        ${currentRestaurant.imageUrl ? `<img src="http://localhost:3000${currentRestaurant.imageUrl}" alt="${currentRestaurant.nombre}" style="max-width: 200px; max-height: 200px; object-fit: cover; margin-top: 1rem;">` : '<p>No hay imagen principal para el restaurante.</p>'}
                     `;
                     if(currentRestaurant.imageUrl) {
-                        currentRestaurantImageDiv.innerHTML = `<img src="http://localhost:3000${currentRestaurant.imageUrl}" alt="${currentRestaurant.nombre}" style="max-width: 200px; max-height: 200px; object-fit: cover; margin-top: 1rem;">`;
+                        currentRestaurantImageDiv.innerHTML = `<img src="http://localhost:3000${currentRestaurant.imageUrl}" alt="${currentRestaurant.nombre}" class="restaurant-image">`;
                     } else {
                         currentRestaurantImageDiv.innerHTML = `<p>No hay imagen principal para el restaurante.</p>`;
                     }
                     
                     // Populate edit form
-                    editRestaurantForm.elements.nombre.value = currentRestaurant.nombre;
-                    editRestaurantForm.elements.direccion.value = currentRestaurant.direccion;
-                    editRestaurantForm.elements.telefono.value = currentRestaurant.telefono;
-                    editRestaurantForm.elements.email.value = currentRestaurant.email;
-                    editRestaurantForm.elements.horarioApertura.value = currentRestaurant.horarioApertura;
-                    editRestaurantForm.elements.horarioCierre.value = currentRestaurant.horarioCierre;
-                    editRestaurantForm.elements.esTradicional.checked = currentRestaurant.esTradicional;
+                    editRestaurantForm.elements['restaurant-nombre'].value = currentRestaurant.nombre;
+                    editRestaurantForm.elements['restaurant-direccion'].value = currentRestaurant.direccion;
+                    editRestaurantForm.elements['restaurant-telefono'].value = currentRestaurant.telefono;
+                    editRestaurantForm.elements['restaurant-email'].value = currentRestaurant.email;
+                    editRestaurantForm.elements['restaurant-horarioApertura'].value = currentRestaurant.horarioApertura;
+                    editRestaurantForm.elements['restaurant-horarioCierre'].value = currentRestaurant.horarioCierre;
+                    editRestaurantForm.elements['restaurant-descripcion'].value = currentRestaurant.descripcion; // Nuevo
+                    editRestaurantForm.elements['restaurant-esTradicional'].checked = currentRestaurant.esTradicional;
 
                     // Fetch dishes for this restaurant
                     const dishes = await api.getPlatos(currentRestaurant.id);
@@ -172,7 +211,7 @@ function PropietarioDashboardPage() {
                             dishItem.className = 'dish-item card';
                             dishItem.innerHTML = `
                                 <h3>${dish.nombre}</h3>
-                                ${dish.imagenUrl ? `<img src="http://localhost:3000${dish.imagenUrl}" alt="${dish.nombre}" style="max-width: 150px; max-height: 150px; object-fit: cover; margin-bottom: 0.5rem;">` : '<p>No hay imagen para este plato.</p>'}
+                                ${dish.imagenUrl ? `<img src="http://localhost:3000${dish.imagenUrl}" alt="${dish.nombre}" class="dish-image">` : '<p>No hay imagen para este plato.</p>'}
                                 <p>${dish.descripcion || 'Sin descripción.'}</p>
                                 <p><strong>Precio:</strong> $${parseFloat(dish.precio).toFixed(2)}</p>
                                 <div class="dish-actions">
@@ -184,8 +223,27 @@ function PropietarioDashboardPage() {
                         });
                         // Add event listeners for dish actions (edit/delete)
                         dishesListDiv.querySelectorAll('.edit-dish-btn').forEach(button => {
-                            button.addEventListener('click', (e) => {
-                                displayMessage('Funcionalidad de edición de plato aún no implementada.', 'info');
+                            button.addEventListener('click', async (e) => {
+                                const dishId = e.target.dataset.id;
+                                editingDishId = dishId; // Establecer el ID del plato que se está editando
+                                addDishFormSection.style.display = 'none'; // Ocultar form añadir
+                                editDishFormSection.style.display = 'block'; // Mostrar form editar
+
+                                try {
+                                    const dishToEdit = await api.getPlatoById(dishId);
+                                    editDishForm.elements.editDishName.value = dishToEdit.nombre;
+                                    editDishForm.elements.editDishDescription.value = dishToEdit.descripcion;
+                                    editDishForm.elements.editDishPrice.value = parseFloat(dishToEdit.precio).toFixed(2);
+                                    // Previsualizar imagen actual si existe
+                                    if (dishToEdit.imagenUrl) {
+                                        currentDishImagePreview.innerHTML = `<img src="http://localhost:3000${dishToEdit.imagenUrl}" alt="${dishToEdit.nombre}" class="dish-image-preview">`;
+                                    } else {
+                                        currentDishImagePreview.innerHTML = '<p>No hay imagen actual.</p>';
+                                    }
+                                } catch (error) {
+                                    displayMessage(error.message || 'Error al cargar los datos del plato para edición.', 'error');
+                                    editDishFormSection.style.display = 'none'; // Ocultar formulario de edición si hay error
+                                }
                             });
                         });
                         dishesListDiv.querySelectorAll('.delete-dish-btn').forEach(button => {
@@ -226,13 +284,14 @@ function PropietarioDashboardPage() {
         editRestaurantForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const updatedData = {
-                nombre: editRestaurantForm.elements.nombre.value,
-                direccion: editRestaurantForm.elements.direccion.value,
-                telefono: editRestaurantForm.elements.telefono.value,
-                email: editRestaurantForm.elements.email.value,
-                horarioApertura: editRestaurantForm.elements.horarioApertura.value,
-                horarioCierre: editRestaurantForm.elements.horarioCierre.value,
-                esTradicional: editRestaurantForm.elements.esTradicional.checked,
+                nombre: editRestaurantForm.elements['restaurant-nombre'].value,
+                direccion: editRestaurantForm.elements['restaurant-direccion'].value,
+                telefono: editRestaurantForm.elements['restaurant-telefono'].value,
+                email: editRestaurantForm.elements['restaurant-email'].value,
+                horarioApertura: editRestaurantForm.elements['restaurant-horarioApertura'].value,
+                horarioCierre: editRestaurantForm.elements['restaurant-horarioCierre'].value,
+                descripcion: editRestaurantForm.elements['restaurant-descripcion'].value, // Nuevo
+                esTradicional: editRestaurantForm.elements['restaurant-esTradicional'].checked,
             };
             try {
                 await api.updateRestaurante(currentRestaurant.id, updatedData);
@@ -266,12 +325,21 @@ function PropietarioDashboardPage() {
 
         page.querySelector('#add-dish-btn').addEventListener('click', () => {
             addDishFormSection.style.display = 'block';
+            editDishFormSection.style.display = 'none'; // Asegurarse de que el form de edición esté oculto
         });
 
-        page.querySelector('#cancel-add-dish-btn').addEventListener('click', () => {
+        cancelAddDishBtn.addEventListener('click', () => {
             addDishFormSection.style.display = 'none';
             addDishForm.reset();
         });
+
+        cancelEditDishBtn.addEventListener('click', () => { // Nuevo
+            editDishFormSection.style.display = 'none';
+            editDishForm.reset();
+            editingDishId = null;
+            currentDishImagePreview.innerHTML = '';
+        });
+
 
         addDishForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -280,26 +348,14 @@ function PropietarioDashboardPage() {
                 return;
             }
 
-            const formData = new FormData();
-            formData.append('nombre', addDishForm.elements.dishName.value);
-            formData.append('descripcion', addDishForm.elements.dishDescription.value);
-            formData.append('precio', addDishForm.elements.dishPrice.value);
+            const formData = new FormData(addDishForm);
             formData.append('restauranteId', currentRestaurant.id); // Asignar el ID del restaurante
-
-            const dishImageFile = addDishForm.elements.dishImage.files[0];
-            if (dishImageFile) {
-                formData.append('dishImage', dishImageFile);
-            }
+            
+            // Convertir precio a número si es necesario (el Multer/body-parser no lo hace automáticamente)
+            // formData.set('precio', parseFloat(formData.get('precio'))); // No necesario, Multer lo maneja como string, el backend lo parseará
 
             try {
-                const newDish = await api.createPlato(Object.fromEntries(formData)); // createPlato espera JSON, no FormData
-                // If an image was provided, upload it separately after dish creation
-                if (dishImageFile && newDish && newDish.id) {
-                    const imageFormData = new FormData();
-                    imageFormData.append('dishImage', dishImageFile);
-                    await api.uploadPlatoImage(newDish.id, imageFormData);
-                }
-
+                await api.createPlato(formData); // Enviar FormData directamente
                 displayMessage('Plato creado con éxito.', 'success');
                 addDishFormSection.style.display = 'none';
                 addDishForm.reset();
@@ -308,6 +364,35 @@ function PropietarioDashboardPage() {
                 displayMessage(error.message || 'Error al crear el plato.', 'error');
             }
         });
+
+        editDishForm.addEventListener('submit', async (e) => { // Nuevo
+            e.preventDefault();
+            if (!editingDishId) {
+                displayMessage('No hay un plato seleccionado para editar.', 'error');
+                return;
+            }
+
+            const formData = new FormData(editDishForm);
+            formData.append('restauranteId', currentRestaurant.id); // Asegurar restauranteId
+
+            // Multer no procesa PUT/PATCH con body. Se debe enviar _method=PUT para que lo detecte express-form-data
+            // Como estamos usando un enfoque más simple, pasaremos los datos y la imagen por separado si es necesario
+            // o simplemente manejaremos la imagen como un campo que se reemplaza si está presente.
+            
+            // La API de updatePlato en el backend puede manejar FormData ahora
+            try {
+                await api.updatePlato(editingDishId, formData);
+                displayMessage('Plato actualizado con éxito.', 'success');
+                editDishFormSection.style.display = 'none';
+                editDishForm.reset();
+                editingDishId = null;
+                currentDishImagePreview.innerHTML = '';
+                fetchRestaurantAndDishes(); // Recargar lista
+            } catch (error) {
+                displayMessage(error.message || 'Error al actualizar el plato.', 'error');
+            }
+        });
+
 
         // Initial fetch
         fetchRestaurantAndDishes();

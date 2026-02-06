@@ -16,7 +16,7 @@ const Restaurante = sequelize.define('Restaurante', {
         allowNull: false,
     },
     telefono: {
-        type: DataTypes.STRING(10),
+        type: DataTypes.STRING(20), // Aumentar la longitud para aceptar números más largos
         allowNull: false,
     },
     email: {

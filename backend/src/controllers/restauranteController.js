@@ -39,7 +39,7 @@ exports.createRestaurante = async (req, res) => {
             nombre,
             direccion,
             telefono,
-            email,
+            email: email || null, // Convertir cadena vacía a null para pasar validación isEmail con allowNull: true
             horarioApertura,
             horarioCierre,
             descripcion, // Nuevo campo
@@ -103,16 +103,61 @@ exports.updateRestaurante = async (req, res) => {
             return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para modificar este restaurante.' });
         }
         
-        const [updated] = await Restaurante.update(req.body, {
+        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion } = req.body;
+        let updateData = { nombre, direccion, telefono, horarioApertura, horarioCierre, descripcion };
+
+        // 1. Manejo de imagen
+        if (req.file) { // Si se sube un nuevo archivo
+            updateData.imageUrl = `/uploads/${req.file.filename}`;
+            // Considerar borrar la imagen antigua si es necesario
+        } else if (req.body.imageUrl === undefined) {
+            // Si el frontend NO envió el campo imageUrl, significa que no se quiso cambiar.
+            // No hacemos nada para conservar la imagen existente en DB.
+        } else if (req.body.imageUrl === 'null') { // Si se envió 'null' explícitamente desde el frontend para borrar la imagen
+            updateData.imageUrl = null;
+        }
+
+
+        // 2. Conversión de esTradicional
+        updateData.esTradicional = req.body.esTradicional === 'true';
+
+        // 3. Conversión de email de string vacío a null
+        updateData.email = email || null;
+
+        // 4. Manejo de propietarioId (solo si es admin y se proporciona)
+        if (req.usuario.rol === 'admin' && req.body.propietarioId !== undefined) {
+            if (req.body.propietarioId) {
+                const owner = await Usuario.findByPk(req.body.propietarioId);
+                if (!owner) {
+                    return res.status(400).json({ error: 'El propietarioId especificado no existe.' });
+                }
+                updateData.propietarioId = parseInt(req.body.propietarioId);
+            } else {
+                updateData.propietarioId = null; // Si se envía vacío, asignarlo a null
+            }
+        }
+        
+        const [updated] = await Restaurante.update(updateData, {
             where: { id: req.params.id }
         });
 
         if (updated) {
             const updatedRestaurante = await Restaurante.findByPk(req.params.id);
             res.json(updatedRestaurante);
+        } else {
+            // Si updated es 0, significa que no se encontraron cambios o el ID no existe.
+            // Aunque ya lo verificamos al principio, es una buena medida defensiva.
+            res.status(400).json({ error: 'No se pudo actualizar el restaurante o no se encontraron cambios.' });
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            return res.status(400).json({ error: errors.join(', ') });
+        }
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ error: 'Ya existe un restaurante con el mismo teléfono o email (si fueran únicos).' });
+        }
+        res.status(500).json({ error: error.message || 'Error interno del servidor al actualizar el restaurante.' });
     }
 };
 
