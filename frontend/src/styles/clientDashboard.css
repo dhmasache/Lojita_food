@@ -1,0 +1,184 @@
+/* frontend/src/styles/clientDashboard.css */
+
+.client-dashboard-container {
+    padding: 3.5rem 5rem; /* Usar el mismo padding que admin-content para consistencia */
+    min-height: calc(100vh - 80px); /* Ajustar altura para ocupar el espacio restante */
+    color: var(--color-dark-text);
+}
+
+.dashboard-header {
+    margin-bottom: 3.5rem;
+    text-align: center;
+}
+
+.dashboard-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem; /* Título prominente */
+    color: var(--color-dark-text);
+    margin-bottom: 0.5rem;
+    text-shadow: var(--shadow-sm);
+}
+
+.dashboard-header .user-role {
+    font-size: 1.2rem;
+    color: var(--color-medium-text);
+    font-weight: 500;
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas flexibles */
+    gap: 2.5rem; /* Espacio entre tarjetas */
+}
+
+/* Estilo general para las secciones (tarjetas) */
+.profile-section, .actions-section, .orders-section, .shipping-address-section {
+    background-color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 2.5rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-border-light);
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-section h2, .actions-section h2, .orders-section h2, .shipping-address-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--color-dark-text);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-background-medium);
+}
+
+.profile-section p, .actions-section p, .orders-section p, .shipping-address-section p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--color-medium-text);
+}
+
+.profile-section p strong {
+    color: var(--color-dark-text);
+}
+
+.actions-section #restaurant-registration-status {
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    background-color: var(--color-background-light);
+    border: 1px dashed var(--color-light-text);
+    flex-grow: 1; /* Para que ocupe el espacio disponible y empuje el botón hacia abajo */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.actions-section #restaurant-registration-status p strong {
+    color: var(--color-primary);
+}
+.actions-section #restaurant-registration-status .btn-tertiary { /* Estilo para el botón de propietario */
+    background-color: var(--color-primary-light);
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+    padding: 0.7rem 1.2rem;
+    border-radius: 25px;
+    font-weight: 600;
+    margin-top: 1rem;
+    text-decoration: none;
+    transition: var(--transition-ease);
+}
+.actions-section #restaurant-registration-status .btn-tertiary:hover {
+    background-color: var(--color-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Mensajes generales (éxito/error/info) */
+.message {
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 2rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.message.success {
+    background-color: #d4edda; /* Verde claro */
+    color: #155724; /* Verde oscuro */
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da; /* Rojo claro */
+    color: #721c24; /* Rojo oscuro */
+    border: 1px solid #f5c6cb;
+}
+
+.message.info {
+    background-color: #d1ecf1; /* Azul claro */
+    color: #0c5460; /* Azul oscuro */
+    border: 1px solid #bee5eb;
+}
+
+/* Botones dentro de secciones */
+.profile-section .btn, .actions-section .btn {
+    align-self: flex-start; /* Alinear botones a la izquierda */
+    margin-top: auto; /* Empujar el botón al final de la tarjeta */
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .client-dashboard-container {
+        padding: 2.5rem 3rem;
+    }
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+    }
+    .profile-section, .actions-section, .orders-section, .shipping-address-section {
+        padding: 2rem;
+    }
+    .profile-section h2, .actions-section h2, .orders-section h2, .shipping-address-section h2 {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .client-dashboard-container {
+        padding: 1.5rem 1.5rem;
+    }
+    .dashboard-header h1 {
+        font-size: 2rem;
+    }
+    .dashboard-header .user-role {
+        font-size: 1rem;
+    }
+    .dashboard-content {
+        grid-template-columns: 1fr; /* Una sola columna en móvil */
+        gap: 1.5rem;
+    }
+    .profile-section h2, .actions-section h2, .orders-section h2, .shipping-address-section h2 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.8rem;
+    }
+    .profile-section p, .actions-section p, .orders-section p, .shipping-address-section p {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .client-dashboard-container {
+        padding: 1rem;
+    }
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+    .profile-section, .actions-section, .orders-section, .shipping-address-section {
+        padding: 1.5rem;
+    }
+}

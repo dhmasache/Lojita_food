@@ -1,0 +1,217 @@
+/* frontend/src/styles/solicitudPage.css */
+
+.solicitud-page-container { /* Clase de contenedor principal para la página de solicitud */
+    padding: 3.5rem 5rem;
+    min-height: calc(100vh - 80px); /* Ajustar altura para ocupar el espacio restante */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centrar el formulario verticalmente */
+    box-sizing: border-box;
+}
+
+.solicitud-form-card { /* Tarjeta que contiene el formulario */
+    background-color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 40px 50px;
+    box-shadow: var(--shadow-xl);
+    max-width: 800px; /* Ancho máximo para el formulario de solicitud */
+    width: 100%;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.solicitud-form-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-dark-text);
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--color-primary-light);
+    padding-bottom: 18px;
+    letter-spacing: 0.05em;
+}
+
+.solicitud-form-card p {
+    color: var(--color-medium-text);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Estilos de form-group, labels, inputs y textareas (reusando de restaurantForm.css/global.css) */
+.solicitud-form-card .form-group {
+    margin-bottom: 20px;
+}
+
+.solicitud-form-card .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--color-dark-text);
+    font-size: 1.15rem;
+    transition: color 0.3s ease;
+}
+
+.solicitud-form-card .form-group input[type="text"],
+.solicitud-form-card .form-group input[type="email"],
+.solicitud-form-card .form-group input[type="tel"],
+.solicitud-form-card .form-group textarea,
+.solicitud-form-card .form-group .form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--color-light-text);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    color: var(--color-dark-text);
+    background-color: var(--color-background-light);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.solicitud-form-card .form-group input[type="text"]:focus,
+.solicitud-form-card .form-group input[type="email"]:focus,
+.solicitud-form-card .form-group input[type="tel"]:focus,
+.solicitud-form-card .form-group textarea:focus,
+.solicitud-form-card .form-group .form-control:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.2);
+    outline: none;
+    background-color: white;
+}
+
+.solicitud-form-card .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Estilos del mapa (reusando de restaurantForm.css) */
+#leaflet-map-solicitud {
+    height: 300px;
+    width: 100%;
+    border-radius: var(--border-radius-md);
+    margin-top: 15px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-light-text);
+}
+
+/* Información de latitud, longitud y dirección seleccionada */
+.solicitud-form-card .form-group p {
+    font-size: 0.95rem;
+    color: var(--color-medium-text);
+    margin-top: 10px;
+    text-align: left;
+}
+
+.solicitud-form-card .form-group p span {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Botón de envío */
+.solicitud-form-card button[type="submit"] {
+    padding: 14px 30px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    box-shadow: var(--shadow-md);
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    margin-top: 20px;
+    align-self: center; /* Centrar el botón */
+}
+
+.solicitud-form-card button[type="submit"]:hover {
+    background: linear-gradient(45deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.4);
+}
+
+/* Mensajes de formulario (éxito/error) */
+.message {
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .solicitud-page-container {
+        padding: 20px 10px;
+    }
+    .solicitud-form-card {
+        padding: 25px;
+        margin: 10px;
+    }
+    .solicitud-form-card h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    .solicitud-form-card .form-group label {
+        font-size: 1rem;
+    }
+    .solicitud-form-card .form-group input,
+    .solicitud-form-card .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .solicitud-form-card button[type="submit"] {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .solicitud-page-container {
+        padding: 10px 5px;
+    }
+    .solicitud-form-card {
+        padding: 15px;
+        margin: 5px;
+    }
+    .solicitud-form-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+    .solicitud-form-card p {
+        font-size: 0.9rem;
+    }
+    .solicitud-form-card .form-group input,
+    .solicitud-form-card .form-group textarea {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    .solicitud-form-card button[type="submit"] {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}

@@ -1,0 +1,200 @@
+/* frontend/src/styles/restaurantDetail.css */
+
+.restaurant-detail-page {
+    padding: 2.5rem 0; /* Padding vertical, ancho controlado por el contenido */
+    max-width: 900px;
+    margin: 0 auto;
+    font-family: var(--font-sans-serif);
+    color: var(--text-primary);
+    /* No hay background-color aquí, el wrapper lo manejará */
+}
+
+.restaurant-detail-page .restaurant-detail-content {
+    background-color: var(--surface-color); /* Fondo blanco puro para el contenido principal */
+    border-radius: 15px; /* Bordes más redondeados */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Sombra más suave y extendida */
+    overflow: hidden; /* Asegurar que los bordes redondeados se vean bien con la imagen */
+    border: 1px solid var(--border-color); /* Borde sutil para definir el contenedor */
+}
+
+.restaurant-detail-page .page-title {
+    font-family: var(--font-serif);
+    font-size: 3.2rem; /* Título principal más grande */
+    color: #5D4037; /* Marrón oscuro para un toque elegante */
+    text-align: center;
+    margin: 2rem 0 1rem 0;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.restaurant-detail-page .restaurant-image-main {
+    width: 100%;
+    height: 380px; /* Altura controlada, un poco más que antes */
+    object-fit: cover; /* Recortar la imagen para que encaje */
+    display: block;
+    /* Añadir un sutil overlay de degradado */
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+    
+    /* Efecto de sombra para la imagen, haciéndola más "chévere" */
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* Sombra pronunciada debajo de la imagen */
+    position: relative;
+    z-index: 1; /* Para que la sombra se vea sobre el fondo */
+}
+
+.restaurant-detail-page .restaurant-title {
+    font-family: var(--font-serif);
+    font-size: 2.8rem; /* Título del restaurante prominente */
+    color: var(--primary-color); /* Naranja Terracota */
+    text-align: center;
+    margin: 2rem 0 2rem 0; /* Más margen arriba y abajo */
+    padding: 0 1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.restaurant-detail-page .message { /* Estilo para mensajes de carga/error */
+    text-align: center;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.restaurant-detail-page .message.error {
+    background-color: rgba(255, 0, 0, 0.1);
+    color: red;
+}
+.restaurant-detail-page .message.success {
+    background-color: rgba(0, 128, 0, 0.1);
+    color: green;
+}
+
+
+.restaurant-detail-page .detail-container {
+    padding: 0 2.5rem 2.5rem 2.5rem; /* Padding a los lados y abajo dentro del contenedor principal */
+}
+
+.restaurant-detail-page h3 { /* Títulos de subsección como Descripción, Calificación */
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    color: #5D4037; /* Marrón oscuro */
+    margin: 2rem 0 1rem 0; /* Más espacio arriba */
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f0f0f0; /* Separador más definido */
+    text-align: left;
+    font-weight: 600;
+}
+
+.restaurant-detail-page .detail-section {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 1.5rem; /* Menos margen entre secciones para un look más compacto */
+}
+
+.restaurant-detail-page .detail-item {
+    display: flex;
+    align-items: flex-start; /* Alineación al inicio por si el contenido es multilinea */
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+    gap: 0.8rem;
+    padding: 0.3rem 0; /* Un poco de padding para cada item de detalle */
+}
+
+.restaurant-detail-page .detail-item strong {
+    font-weight: 600;
+    color: var(--text-primary);
+    min-width: 100px;
+    text-align: right;
+    flex-shrink: 0; /* Evitar que la etiqueta strong se encoja */
+}
+
+.restaurant-detail-page .detail-item span {
+    color: var(--text-secondary);
+    flex-grow: 1;
+    font-size: 1.05rem;
+}
+
+.restaurant-detail-page .description {
+    font-family: var(--font-sans-serif);
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    text-align: justify;
+    margin-bottom: 0;
+    padding-top: 0.5rem;
+}
+
+.restaurant-detail-page .rating {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: var(--accent-coffee);
+    text-align: center;
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 0;
+    background-color: #fffaf7; /* Fondo sutil para la sección de rating */
+    border-radius: 8px;
+    border: 1px solid #ffe8d6;
+}
+
+.restaurant-detail-page .rating .star {
+    color: gold;
+    font-size: 2.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .restaurant-detail-page {
+        padding: 1.5rem 0;
+    }
+    .restaurant-detail-page .restaurant-detail-content {
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+    }
+    .restaurant-detail-page .page-title {
+        font-size: 2.5rem;
+        margin-top: 1rem;
+        margin-bottom: 0.8rem;
+    }
+    .restaurant-detail-page .restaurant-image-main {
+        height: 250px;
+    }
+    .restaurant-detail-page .restaurant-title {
+        font-size: 2rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .restaurant-detail-page .detail-container {
+        padding: 0 1rem 1rem 1rem;
+    }
+    .restaurant-detail-page .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+    .restaurant-detail-page .detail-item strong {
+        min-width: unset;
+        text-align: left;
+        margin-right: 0;
+        margin-bottom: 0.3rem;
+    }
+    .restaurant-detail-page h3 {
+        font-size: 1.5rem;
+    }
+    .restaurant-detail-page .description {
+        font-size: 1rem;
+    }
+    .restaurant-detail-page .rating {
+        font-size: 1.8rem;
+    }
+    .restaurant-detail-page .rating .star {
+        font-size: 2rem;
+    }
+}

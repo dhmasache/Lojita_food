@@ -1,522 +1,609 @@
-/* Estilos para Paneles de Control (Admin y Propietario) */
-.dashboard-container {
-    padding: 2.5rem; /* Un poco más de padding */
-    max-width: 1200px;
-    margin: 0 auto;
-    min-height: calc(100vh - 70px - 2rem); /* Ajuste para el header y padding */
-    font-family: var(--font-body); /* Asegurar una fuente de cuerpo */
-    color: var(--text-color);
+/* ===================================
+   ADMIN DASHBOARD STYLESHEET - FULL WIDTH LAYOUT
+   =================================== */
+
+/* --- Custom CSS Variables (for easier theme management) --- */
+:root {
+    --color-primary: #D97757; /* Terracota */
+    --color-primary-dark: #b35e46;
+    --color-primary-light: #FFDAC1; /* Versión más clara de terracota */
+    
+    --color-secondary: #6B7280; /* Gris azulado */
+    
+    --color-dark-text: #2D333B; /* Texto oscuro principal */
+    --color-medium-text: #4B5563; /* Texto secundario */
+    --color-light-text: #9CA3AF; /* Texto terciario */
+    
+    --color-background-light: #F9FAFB; /* Fondo muy claro */
+    --color-background-medium: #F3F4F6; /* Fondo de contenido */
+    --color-background-dark: #1F2937; /* Fondo de sidebar (eliminado) */
+    
+    --color-primary-rgb: 217, 119, 87; /* RGB para usar en rgba() */
+    --color-success: #28A745; /* Verde para éxito */
+    --color-danger: #DC3545; /* Rojo para peligro */
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    --border-radius-sm: 0.375rem; /* 6px */
+    --border-radius-md: 0.5rem;   /* 8px */
+    --border-radius-lg: 0.75rem;  /* 12px */
+    --border-radius-xl: 1rem;    /* 16px */
+    
+    --transition-ease: all 0.3s ease-in-out;
 }
 
-.dashboard-container h1 {
-    font-size: 2.8rem; /* Tamaño más grande para el título principal */
-    margin-bottom: 1.5rem; /* Más espacio debajo */
-    color: var(--primary-dark);
-    text-align: center;
-    font-weight: 700; /* Más peso para el título */
+
+/* --- General Layout --- */
+.admin-dashboard-wrapper {
+    display: flex; /* Aunque no haya sidebar, mantener flexbox es buena práctica para futuras expansiones */
+    min-height: 100vh; /* Ocupar toda la altura de la ventana */
+    background-color: var(--color-background-light); /* Fondo muy claro */
+    font-family: 'Inter', sans-serif; /* Fuente principal del dashboard */
+    color: var(--color-dark-text);
 }
 
-.dashboard-container p {
-    text-align: center;
-    margin-bottom: 2.5rem; /* Más espacio debajo del párrafo principal */
-    color: var(--text-secondary); /* Un color de texto secundario */
-    font-size: 1.1rem; /* Un poco más grande */
-    line-height: 1.6; /* Mejor interlineado */
-}
-
-/* Estilo general para tarjetas dentro de dashboards */
-.dashboard-container .card {
-    margin-bottom: 2rem; /* Separación entre secciones */
-    background-color: var(--background-card);
-    border-radius: 10px;
-    box-shadow: var(--shadow-lg);
-    padding: 2rem;
-    border: 1px solid var(--border-color); /* Añadir borde para consistencia */
-}
-
-/* Sección de Solicitudes (Específico de Admin) */
-.solicitudes-section {
-    margin-top: 3.5rem; /* Más margen superior */
-    text-align: left;
-}
-
-.solicitudes-section h2, 
-.restaurant-management-section h2, 
-.restaurants-list-section h2, /* Aplicar a h2 de listado de restaurantes */
-.restaurants-exploration-section h2, /* Aplicar a h2 de exploración de restaurantes */
-.dishes-section h2 { /* Aplicar a h2 de sección de platos */
-    font-size: 2.2rem; /* Tamaño más grande para subtítulos */
-    margin-bottom: 1.8rem; /* Más espacio debajo */
-    color: var(--primary-color);
-    text-align: center;
-    font-weight: 600;
-}
-
-#solicitudes-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 220px); /* Ancho fijo para tarjetas de solicitud */
-    gap: 1rem; /* Gap reducido */
-    margin-top: 2rem;
-}
-
-.solicitud-item {
-    background-color: var(--background-card); /* Usar background-card */
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Bordes más redondeados como en home.css */
-    overflow: hidden;
-    box-shadow: var(--shadow-soft); /* Sombra suave como en home.css */
-    transition: var(--transition-smooth);
-    cursor: pointer;
+/* El main content wrapper ahora ocupará todo el ancho */
+.admin-main-content-wrapper {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    width: 100%; /* Ocupar el 100% del ancho disponible */
+    height: 100%; /* Asegurar que se estire a la altura de su padre */
 }
 
-.solicitud-item:hover {
-    transform: translateY(-8px); /* Efecto hover más pronunciado como en home.css */
-    box-shadow: var(--shadow-medium); /* Sombra más grande al pasar el ratón como en home.css */
-}
-
-.solicitud-item .card-content { /* Nuevo contenedor para el contenido de texto */
-    padding: 1rem;
-}
-
-.solicitud-item h3 {
-    font-size: 1.1rem; /* Título de solicitud más pequeño */
-    margin: 0 0 0.5rem 0; /* Margen ajustado */
-    color: var(--text-primary); /* Color de texto primario */
-    font-weight: 600;
-    text-align: left; /* Alinear a la izquierda */
-    padding-bottom: 0; /* Quitar padding inferior */
-    border-bottom: none; /* Quitar borde inferior */
-}
-
-.solicitud-item p {
-    font-size: 0.85rem; /* Tamaño base del texto */
-    line-height: 1.5; /* Mejor interlineado para legibilidad */
-    margin: 0 0 0.5rem 0; /* Espacio entre párrafos */
-    color: var(--text-secondary);
-    text-align: left;
-}
-
-.solicitud-item strong {
-    color: var(--primary-color);
-    font-weight: 600;
-}
-
-.solicitud-item .solicitud-actions {
-    margin-top: 1rem; /* Más espacio encima de las acciones */
-    display: flex;
-    gap: 0.5rem; /* Más espacio entre botones */
-    justify-content: center; /* Centrar los botones */
-    padding: 0 1rem 1rem 1rem; /* Padding en la parte inferior para los botones */
-}
-
-/* Colores de estado */
-.solicitud-item.status-pendiente {
-    border-left: 6px solid var(--accent-color); /* Borde más grueso */
-}
-.solicitud-item.status-aprobada {
-    border-left: 6px solid var(--success-color);
-}
-.solicitud-item.status-rechazada {
-    border-left: 6px solid var(--error-color);
-}
-
-/* Estilos para botones de acción (ajustados para ser más pequeños) */
-.solicitud-actions .btn, 
-.restaurant-actions .btn, /* Aplicar a botones de acciones de restaurante */
-.dish-actions .btn { /* Aplicar a botones de acciones de plato */
-    padding: 0.5rem 1rem; /* Padding reducido */
-    border-radius: 20px; /* Más redondeado */
-    font-weight: 600;
-    transition: var(--transition-smooth);
-    text-decoration: none; /* Asegurar que no tengan underline */
-    cursor: pointer;
-    font-size: 0.8rem; /* Tamaño de fuente reducido */
-}
-
-.solicitud-actions .btn-success, .dish-actions .btn-success {
-    background-color: var(--success-color);
-    color: white;
-    border: none;
-}
-
-.solicitud-actions .btn-success:hover, .dish-actions .btn-success:hover {
-    background-color: var(--success-color-dark);
-    box-shadow: var(--shadow-button-success);
-}
-
-.solicitud-actions .btn-danger, .dish-actions .btn-danger {
-    background-color: var(--error-color);
-    color: white;
-    border: none;
-}
-
-.solicitud-actions .btn-danger:hover, .dish-actions .btn-danger:hover {
-    background-color: var(--error-color-dark);
-    box-shadow: var(--shadow-button-error);
-}
-
-
-/* Mensajes del administrador/propietario */
-#admin-message, #propietario-message, #restaurant-list-message { /* Incluir mensaje de lista de restaurantes */
-    margin-top: 2.5rem;
-    margin-bottom: 2.5rem;
-    padding: 1rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    text-align: center;
-    font-weight: 500;
-}
-
-#admin-message.success, #propietario-message.success, #restaurant-list-message.success {
-    background-color: var(--success-color-light);
-    color: var(--success-color-dark);
-    border: 1px solid var(--success-color);
-}
-
-#admin-message.error, #propietario-message.error, #restaurant-list-message.error {
-    background-color: var(--error-color-light);
-    color: var(--error-color-dark);
-    border: 1px solid var(--error-color);
-}
-
-/* Sección de Gestión de Restaurantes (Admin) */
-.restaurant-management-section {
-    margin-top: 3.5rem;
-    text-align: center; /* Centrar el botón de agregar */
-}
-
-.restaurant-management-section .btn { /* Estilo para el botón "Agregar Nuevo Restaurante" */
-    margin-bottom: 2.5rem;
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    font-weight: 600;
-}
-
-.form-card { /* Aplicar estilo de tarjeta al contenedor del formulario */
-    background-color: var(--background-card);
-    padding: 2.5rem; /* Más padding */
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    border: 1px solid var(--border-color);
-    margin: 0 auto 2rem auto; /* Centrar y añadir margen inferior */
-    max-width: 700px; /* Ancho máximo para el formulario */
-    text-align: left;
-}
-
-.form-card h3 {
-    font-size: 1.8rem;
-    color: var(--primary-dark);
-    margin-bottom: 1.5rem;
-    text-align: center;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.6rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    font-size: 1rem;
-}
-
-.form-group input[type="text"],
-.form-group input[type="email"],
-.form-group input[type="time"],
-.form-group input[type="number"],
-.form-group textarea,
-.form-group input[type="file"] {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid var(--border-color-light);
-    border-radius: 8px;
-    background-color: var(--input-background);
-    color: var(--text-color);
-    font-size: 1rem;
-    transition: var(--transition-smooth);
-}
-
-.form-group input[type="text"]:focus,
-.form-group input[type="email"]:focus,
-.form-group input[type="time"]:focus,
-.form-group input[type="number"]:focus,
-.form-group textarea:focus,
-.form-group input[type="file"]:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.2);
-    outline: none;
-}
-
-.form-group textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-group input[type="file"] {
-    padding: 0.5rem 1rem; /* Ajuste para el file input */
-}
-
-.checkbox-group {
+/* --- Admin Header (Top Bar) --- */
+.admin-header {
+    background-color: white;
+    padding: 1.5rem 3.5rem;
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    margin-top: 1rem;
-    margin-bottom: 1.5rem;
+    justify-content: space-between; /* Espaciar título y acciones de la cabecera */
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+    position: sticky;
+    top: 0;
+    border-bottom: 1px solid var(--color-border-light);
+    width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
 }
 
-.checkbox-group input[type="checkbox"] {
-    width: auto; /* Anular el 100% width */
-    transform: scale(1.2); /* Hacer el checkbox un poco más grande */
+.admin-header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-dark-text);
+    margin: 0;
+    letter-spacing: 0.03em;
+    text-shadow: var(--shadow-sm);
+    display: flex; /* Usar flexbox para el título y el saludo */
+    align-items: center; /* Alinear verticalmente el texto y el saludo */
+    gap: 15px; /* Espacio entre el título principal y el saludo */
 }
 
-.checkbox-group label {
-    margin-bottom: 0; /* Reset margin */
-    font-weight: 400;
-}
-
-.form-card button[type="submit"], .form-card button[type="button"] {
-    margin-top: 1.5rem;
-    width: auto;
-    display: inline-block;
-    min-width: 150px;
-}
-
-.form-card button[type="submit"] {
-    margin-right: 1rem;
+.header-welcome { /* Estilo para el saludo del usuario en la cabecera */
+    font-family: 'Inter', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-medium-text);
+    white-space: nowrap;
 }
 
 
-/* Estilos específicos para Propietario Dashboard */
-#restaurant-details-section #restaurant-info img {
-    margin-top: 1.5rem; /* Más margen */
-    max-width: 250px; /* Tamaño un poco más grande */
-    height: auto;
-    border-radius: 12px; /* Más redondeado */
-    box-shadow: var(--shadow-md); /* Sombra más definida */
-    object-fit: cover;
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Espacio entre el saludo y el botón */
 }
 
-.form-grid {
+.admin-add-button {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 1.1rem 2.5rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition-ease);
+    box-shadow: 0 8px 20px rgba(var(--color-primary-rgb), 0.4);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.admin-add-button:hover {
+    background: linear-gradient(45deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(var(--color-primary-rgb), 0.6);
+}
+
+/* --- Main Content Area --- */
+.admin-content {
+    flex-grow: 1;
+    padding: 3.5rem 5rem; /* Más padding general para una sensación más premium */
+    background-color: var(--color-background-medium); /* Fondo ligeramente gris para romper el blanco */
+    line-height: 1.7; /* Mejorar legibilidad del texto general */
+}
+
+/* --- Statistics Cards --- */
+.stats-cards-row {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.8rem; /* Más espacio */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+    margin-bottom: 4rem;
 }
 
-@media (min-width: 768px) {
-    .form-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Ajuste de min-width */
-        gap: 2rem;
+.stat-card {
+    background: linear-gradient(135deg, white, var(--color-background-light));
+    border-radius: var(--border-radius-xl);
+    padding: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--color-border-light);
+    transition: var(--transition-ease);
+    text-align: left;
+    overflow: hidden;
+    position: relative;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60px;
+    height: 60px;
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+    border-bottom-left-radius: var(--border-radius-xl);
+    z-index: 0;
+}
+
+.stat-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
+    border-color: var(--color-primary);
+}
+
+.stat-icon {
+    font-size: 4rem;
+    color: var(--color-primary);
+    margin-bottom: 0.8rem;
+    filter: drop-shadow(0 3px 5px rgba(var(--color-primary-rgb), 0.5));
+    z-index: 1;
+}
+
+.stat-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 1.2rem;
+    color: var(--color-medium-text);
+    letter-spacing: 0.03em;
+    z-index: 1;
+}
+
+.stat-text span {
+    display: block;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--color-dark-text);
+    line-height: 1.1;
+    margin-top: 0.4rem;
+    text-shadow: var(--shadow-sm);
+    z-index: 1;
+}
+
+/* --- Table Container --- */
+.table-container {
+    background-color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 3rem;
+    box-shadow: var(--shadow-xl); /* Usar shadow-xl para tablas también */
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4rem;
+    border: 1px solid var(--color-border-light);
+    overflow: hidden;
+}
+
+.table-container h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--color-dark-text);
+    margin: 0 0 2.5rem 0;
+    letter-spacing: 0.02em;
+    text-shadow: var(--shadow-sm);
+}
+
+.table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 1rem;
+}
+
+.registered-restaurants-table, .registered-users-table, .solicitudes-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-family: 'Inter', sans-serif;
+    table-layout: auto;
+    min-width: 780px;
+}
+
+.registered-restaurants-table thead th, .registered-users-table thead th, .solicitudes-table thead th {
+    background-color: var(--color-background-medium);
+    color: var(--color-medium-text);
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: left;
+    padding: 1.4rem 1.8rem;
+    border-bottom: 2px solid var(--color-border-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.registered-restaurants-table tbody td, .registered-users-table tbody td, .solicitudes-table tbody td {
+    padding: 1.4rem 1.8rem;
+    border-bottom: 1px solid var(--color-border-light);
+    color: var(--color-dark-text);
+    vertical-align: middle;
+    white-space: normal;
+}
+
+/* Striped rows for better readability */
+.registered-restaurants-table tbody tr:nth-child(even), .registered-users-table tbody tr:nth-child(even), .solicitudes-table tbody tr:nth-child(even) {
+    background-color: rgba(var(--color-primary-rgb), 0.03);
+}
+
+.registered-restaurants-table tbody tr:last-child td, .registered-users-table tbody tr:last-child td, .solicitudes-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.status-badge {
+    padding: 0.5em 1.2em;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-badge.status-active {
+    background-color: var(--color-success);
+    color: white;
+}
+
+.status-badge.status-inactive {
+    background-color: var(--color-danger);
+    color: white;
+}
+
+.btn-edit-small {
+    background-color: var(--color-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-ease);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-edit-small:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Role Select Dropdown --- */
+.role-select {
+    padding: 0.4rem 0.8rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-dark);
+    background-color: var(--color-background-light);
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: var(--transition-ease);
+    min-width: 120px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236B7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd' /%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1.5em;
+}
+
+.role-select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3);
+}
+
+/* --- Delete User Button --- */
+.delete-user-btn {
+    background-color: var(--color-danger);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-ease);
+    box-shadow: var(--shadow-sm);
+}
+
+.delete-user-btn:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- View Solicitud Button --- */
+.view-solicitud-btn {
+    background-color: var(--color-secondary);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-ease);
+    box-shadow: var(--shadow-sm);
+}
+
+.view-solicitud-btn:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Solicitud Detail Modal --- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1070;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--color-background-light);
+    margin: 5% auto;
+    padding: 2.5rem;
+    border-radius: var(--border-radius-xl);
+    border: 1px solid var(--color-border-dark);
+    width: 80%;
+    max-width: 600px;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: var(--color-dark-text);
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: 0.8rem;
+}
+
+.modal-content h2 span {
+    color: var(--color-primary);
+}
+
+.modal-content p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--color-medium-text);
+}
+
+.modal-content p strong {
+    color: var(--color-dark-text);
+}
+
+.modal-content span.status-badge {
+    font-size: 1rem;
+    padding: 0.4em 0.8em;
+}
+
+
+.close-button {
+    color: var(--color-medium-text);
+    font-size: 2rem;
+    font-weight: bold;
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    cursor: pointer;
+    transition: var(--transition-ease);
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: var(--color-danger);
+    text-decoration: none;
+    transform: rotate(90deg);
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border-light);
+}
+
+
+/* ===================================
+   RESPONSIVENESS FOR ADMIN DASHBOARD - REFINED
+   =================================== */
+
+/* Media Queries para Tablets y pantallas pequeñas de Laptop (hasta 992px) */
+@media (max-width: 992px) {
+    .admin-header {
+        padding: 1rem 1.5rem;
+        flex-direction: column; /* Apilar elementos en columnas en pantallas pequeñas */
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .admin-header-title {
+        font-size: 2rem;
+    }
+
+    .header-welcome {
+        font-size: 1rem;
+    }
+
+    .header-actions {
+        width: 100%; /* Ocupar todo el ancho */
+        justify-content: space-between;
+    }
+    
+    .admin-add-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .admin-content {
+        padding: 1.5rem;
+    }
+
+    .stats-cards-row {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .table-container {
+        padding: 1.5rem;
+        max-width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .table-container h2 {
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .registered-restaurants-table, .registered-users-table, .solicitudes-table {
+        min-width: 600px;
+    }
+
+    .registered-restaurants-table thead th, .registered-users-table thead th, .solicitudes-table thead th,
+    .registered-restaurants-table tbody td, .registered-users-table tbody td, .solicitudes-table tbody td {
+        padding: 1rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .modal-content {
+        width: 90%;
+        margin: 10% auto;
+        padding: 1.5rem;
+    }
+
+    .modal-content h2 {
+        font-size: 1.5rem;
+    }
+    .modal-content p {
+        font-size: 1rem;
     }
 }
 
-/* Listado de Platos */
-#dishes-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 180px); /* Ancho fijo para platos */
-    gap: 1rem; /* Gap reducido */
-    margin-top: 2.5rem; /* Más margen */
+/* Media Queries para Teléfonos Móviles (hasta 768px) */
+@media (max-width: 768px) {
+    .admin-header {
+        padding: 0.8rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+    .admin-header-title {
+        width: 100%;
+        text-align: center;
+        margin-right: 0;
+        font-size: 1.6rem;
+        flex-direction: column; /* Apilar título y saludo */
+        gap: 5px;
+    }
+    .header-welcome {
+        font-size: 0.9rem;
+    }
+
+    .header-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .admin-add-button {
+        width: 100%;
+    }
+
+    .admin-content {
+        padding: 0.8rem;
+    }
+    
+    .stats-cards-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .table-container h2 {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+
+    .registered-restaurants-table, .registered-users-table, .solicitudes-table {
+        min-width: 350px;
+    }
+
+    .registered-restaurants-table thead th, .registered-users-table thead th, .solicitudes-table thead th,
+    .registered-restaurants-table tbody td, .registered-users-table tbody td, .solicitudes-table tbody td {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.8rem;
+    }
+
+    .role-select, .delete-user-btn, .btn-edit-small, .view-solicitud-btn {
+        padding: 0.3rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    .modal-actions button {
+        width: 100%;
+    }
 }
 
-.dish-item {
-    background-color: var(--background-card); /* Usar background-card */
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Bordes más redondeados como en home.css */
-    overflow: hidden;
-    box-shadow: var(--shadow-soft); /* Sombra suave como en home.css */
-    transition: var(--transition-smooth);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center; /* Centrar contenido de la tarjeta */
-    text-align: center;
-}
-
-.dish-item:hover {
-    transform: translateY(-8px); /* Efecto hover más pronunciado como en home.css */
-    box-shadow: var(--shadow-medium); /* Sombra más grande al pasar el ratón como en home.css */
-}
-
-.dish-item .card-content { /* Nuevo contenedor para el contenido de texto */
-    padding: 1rem;
-}
-
-.dish-item h3 {
-    font-size: 1.1rem; /* Tamaño de título consistente */
-    margin: 0 0 0.5rem 0; /* Margen ajustado */
-    color: var(--text-primary);
-    font-weight: 600;
-    padding-bottom: 0;
-    border-bottom: none;
-    width: 100%; /* Asegurar que el borde inferior se extienda */
-}
-
-.dish-item p {
-    font-size: 0.85rem; /* Tamaño base del texto */
-    color: var(--text-secondary);
-    margin: 0 0 0.5rem 0; /* Margen ajustado */
-    flex-grow: 1;
-    line-height: 1.5;
-    text-align: left; /* Alinear descripción a la izquierda */
-}
-
-.dish-item .dish-image { /* Estilo para la imagen del plato */
-    max-width: 100%;
-    height: 120px; /* Altura consistente y más pequeña */
-    object-fit: cover;
-    border-radius: 0; /* Sin bordes redondeados para la imagen */
-    margin-top: 0; /* Margen superior ajustado */
-    margin-bottom: 0; /* Margen inferior ajustado */
-    box-shadow: none; /* Sin sombra para la imagen */
-}
-
-.dish-item .dish-actions {
-    margin-top: 1rem; /* Margen ajustado */
-    display: flex;
-    gap: 0.5rem; /* Gap reducido */
-    width: 100%;
-    justify-content: center;
-    padding: 0 1rem 1rem 1rem; /* Padding en la parte inferior para los botones */
-}
-
-.dish-item .dish-actions .btn {
-    margin-top: 0;
-    flex-grow: 1;
-    border-radius: 20px;
-    font-size: 0.8rem; /* Tamaño de fuente reducido */
-    padding: 0.5rem 1rem; /* Padding reducido */
-}
-
-/* Estilos específicos para Client Dashboard */
-.client-dashboard-container {
-    /* Inherits general .dashboard-container styles */
-}
-
-.client-actions-section {
-    text-align: center;
-    margin-top: 3rem;
-    margin-bottom: 3.5rem;
-}
-
-.client-actions-section .btn {
-    padding: 0.8rem 2rem;
-    font-size: 1.1rem;
-    border-radius: 30px;
-    font-weight: 600;
-}
-
-.restaurants-exploration-section {
-    margin-top: 3.5rem;
-}
-
-.restaurants-exploration-section h2 {
-    font-size: 2.2rem;
-    margin-bottom: 1.8rem;
-    color: var(--primary-color);
-    text-align: center;
-    font-weight: 600;
-}
-
-.restaurants-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 250px); /* Ancho fijo para tarjetas de restaurante como en home.css */
-    gap: 1.5rem; /* Gap reducido como en home.css */
-    margin-top: 2rem;
-}
-
-.restaurant-item { /* Mejoras de estilo para las tarjetas de restaurante */
-    background-color: var(--background-card); /* Usar background-card */
-    border: 1px solid var(--border-color);
-    border-radius: 16px; /* Bordes más redondeados como en home.css */
-    overflow: hidden;
-    box-shadow: var(--shadow-soft); /* Sombra suave como en home.css */
-    transition: var(--transition-smooth);
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.restaurant-item:hover {
-    transform: translateY(-8px); /* Efecto hover más pronunciado como en home.css */
-    box-shadow: var(--shadow-medium); /* Sombra más grande al pasar el ratón como en home.css */
-}
-
-.restaurant-item .restaurant-image {
-    width: 100%; /* La imagen ocupa todo el ancho de la tarjeta */
-    height: 180px; /* Altura consistente como en home.css */
-    object-fit: cover;
-    border-radius: 0; /* La imagen no debe tener bordes redondeados */
-    margin-top: 0;
-    margin-bottom: 0;
-    box-shadow: none;
-}
-
-.restaurant-item .card-content { /* Nuevo contenedor para el contenido de texto */
-    padding: 1rem;
-    flex-grow: 1; /* Permitir que el contenido crezca */
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.restaurant-item h3 {
-    margin: 0 0 0.5rem 0; /* Margen ajustado */
-    font-family: var(--font-serif);
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 1.2rem; /* Tamaño de fuente de título de restaurante */
-    text-align: left;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.restaurant-item p {
-    font-size: 0.9rem; /* Tamaño de fuente de párrafo */
-    color: var(--text-secondary);
-    margin: 0 0 1rem 0; /* Margen ajustado */
-    line-height: 1.5;
-    text-align: left;
-}
-
-.restaurant-item .restaurant-actions { /* Contenedor para botones de acción */
-    margin-top: 1rem; /* Margen ajustado */
-    display: flex;
-    gap: 0.5rem;
-    width: 100%;
-    justify-content: center;
-    padding: 0 1rem 1rem 1rem; /* Padding en la parte inferior para los botones */
-}
-
-/* Título de la sección de exploración de restaurantes */
-.restaurants-exploration-section h1 { /* Para la página de restaurantes completa */
-    color: var(--accent-coffee); /* Color específico como el de la imagen */
-    font-family: var(--font-serif);
-    font-size: 2.5rem; /* Tamaño de fuente grande */
-    text-align: center;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-}
-
-.restaurants-exploration-section p { /* Subtítulo centrado */
-    text-align: center;
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    margin-bottom: 2rem;
-}
-
-/* Footer de la tarjeta de restaurante (rating y tiempo de entrega) */
-.restaurant-item-footer { /* Similar a .card-footer en home.css */
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--accent-olive-green);
-    margin-top: auto; /* Empujar al final si la tarjeta es flex column */
+/* Media Queries para Teléfonos Móviles muy pequeños (hasta 480px) */
+@media (max-width: 480px) {
+    .admin-header-title {
+        font-size: 1.4rem;
+    }
+    .header-welcome {
+        font-size: 0.8rem;
+    }
 }

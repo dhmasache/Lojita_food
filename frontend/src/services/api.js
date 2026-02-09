@@ -50,18 +50,28 @@ async function request(endpoint, options = {}) {
                 errorBody = await response.text(); // Leer el cuerpo de la respuesta una sola vez
                 const errorData = JSON.parse(errorBody); // Intentar parsearlo como JSON
                 errorMessage = errorData.error || errorData.message || errorMessage;
+
+                // NEW: Specific handling for JWT expired error
+                if (errorMessage.includes('jwt expired')) {
+                    alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+                    localStorage.removeItem('jwt_token');
+                    localStorage.removeItem('lojita_user');
+                    window.location.href = '/login'; // Redirect to login page
+                    return; // Stop further processing
+                }
+
             } catch (e) {
-                // Si falla el parseo JSON, o si el body ya fue consumido por otra lectura anterior,
-                // simplemente usamos el errorBody (texto plano) si está disponible.
+                // If fails to parse JSON, or if the body was already consumed by another read,
+                // just use the errorBody (plain text) if available.
                 if (errorBody) {
                     errorMessage = errorBody;
                 }
-                // Si no hay errorBody, errorMessage ya tiene el status por defecto.
+                // If no errorBody, errorMessage already has the default status.
             }
             throw new Error(errorMessage);
         }
 
-        // Si la respuesta es 204 No Content, no intentes parsear JSON
+        // If the response is 204 No Content, do not attempt to parse JSON
         if (response.status === 204) {
             return null;
         }
@@ -69,7 +79,7 @@ async function request(endpoint, options = {}) {
         return await response.json();
     } catch (error) {
         console.error('Error en la petición API:', error);
-        throw error; // Re-lanza el error para que sea manejado por el componente que llama
+        throw error; // Re-throw the error so it is handled by the calling component
     }
 }
 
@@ -118,7 +128,13 @@ const api = {
     }),
 
     // Restaurantes
-    getRestaurantes: () => request('/restaurantes'),
+    getRestaurantes: (searchTerm = '') => {
+        let endpoint = '/restaurantes';
+        if (searchTerm) {
+            endpoint += `?search=${encodeURIComponent(searchTerm)}`;
+        }
+        return request(endpoint);
+    },
     getRestauranteById: (id) => request(`/restaurantes/${id}`),
     createRestaurante: (restauranteData) => request('/restaurantes', {
         method: 'POST',
@@ -135,6 +151,9 @@ const api = {
         method: 'POST',
         body: imageData, // imageData should be FormData
     }),
+    // NEW: Get restaurants owned by a specific user
+    getUserRestaurants: (userId) => request(`/restaurantes?propietarioId=${userId}`),
+
 
     // Platos
     getPlatos: (restauranteId = '') => request(`/platos${restauranteId ? `?restauranteId=${restauranteId}` : ''}`),
@@ -248,6 +267,8 @@ const api = {
     rejectSolicitud: (id) => request(`/solicitudes/${id}/rechazar`, {
         method: 'PUT',
     }),
+    // NEW: Get solicitudes by a specific user
+    getUserSolicitudes: (userId) => request(`/solicitudes?usuarioId=${userId}`),
 };
 
 export default api;

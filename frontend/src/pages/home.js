@@ -1,4 +1,6 @@
 // src/pages/home.js
+import { router } from '../router.js'; // Import the router function
+import api from '../services/api.js'; // Import the API service
 
 export const HomePage = () => {
     const pageElement = document.createElement('div');
@@ -11,10 +13,10 @@ export const HomePage = () => {
         <div class="hero-content">
             <h1>El Sabor de Loja, a tu Puerta</h1>
             <p>Descubre los mejores platos de los restaurantes locales y recíbelos en minutos.</p>
-            <div class="search-bar">
-                <input type="text" placeholder="Busca tu plato o restaurante favorito...">
-                <button class="primary">Buscar</button>
-            </div>
+            <form id="search-form" class="search-bar">
+                <input type="text" id="search-input" placeholder="Busca tu plato o restaurante favorito...">
+                <button type="submit" id="search-button" class="primary">Buscar</button>
+            </form>
         </div>
     `;
 
@@ -91,6 +93,37 @@ export const HomePage = () => {
     pageElement.appendChild(heroSection);
     pageElement.appendChild(categorySection);
     pageElement.appendChild(featuredSection);
+
+    // Add event listener for the search form
+    const searchForm = heroSection.querySelector('#search-form');
+    const searchInput = heroSection.querySelector('#search-input');
+
+    searchForm.addEventListener('submit', async (e) => { // Make function async
+        e.preventDefault(); // Prevent default form submission
+
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            try {
+                const results = await api.getRestaurantes(searchTerm); // Call API with search term
+
+                if (results.length === 1) {
+                    // If exactly one result, redirect to its detail page
+                    // This assumes a restaurant detail page exists at /restaurante/:id
+                    window.history.pushState({}, '', `/restaurante/${results[0].id}`);
+                    router();
+                } else {
+                    // If zero or multiple results, redirect to the filtered list
+                    window.history.pushState({}, '', `/restaurantes?search=${encodeURIComponent(searchTerm)}`);
+                    router();
+                }
+            } catch (error) {
+                console.error('Error during search:', error);
+                // Fallback: redirect to filtered list even if API call fails
+                window.history.pushState({}, '', `/restaurantes?search=${encodeURIComponent(searchTerm)}`);
+                router();
+            }
+        }
+    });
 
     return pageElement;
 };

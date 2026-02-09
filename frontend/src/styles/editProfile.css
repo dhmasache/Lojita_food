@@ -1,0 +1,264 @@
+/* frontend/src/styles/editProfile.css */
+
+.edit-profile-page-container {
+    padding: 3.5rem 5rem;
+    min-height: calc(100vh - 80px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.edit-profile-card {
+    background-color: white;
+    border-radius: var(--border-radius-xl);
+    padding: 40px 50px;
+    box-shadow: var(--shadow-xl);
+    max-width: 700px; /* Ancho un poco menor que el de restaurante */
+    width: 100%;
+    margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.edit-profile-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-dark-text);
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid var(--color-primary-light);
+    padding-bottom: 18px;
+    letter-spacing: 0.05em;
+}
+
+/* Estilos de form-group, labels, inputs y textareas (reusando de restaurantForm.css/global.css) */
+.edit-profile-card .form-group {
+    margin-bottom: 20px;
+}
+
+.edit-profile-card .form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--color-dark-text);
+    font-size: 1.15rem;
+    transition: color 0.3s ease;
+}
+
+.edit-profile-card .form-group input[type="text"],
+.edit-profile-card .form-group input[type="email"],
+.edit-profile-card .form-group input[type="tel"],
+.edit-profile-card .form-group input[type="password"] {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid var(--color-light-text);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    color: var(--color-dark-text);
+    background-color: var(--color-background-light);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.edit-profile-card .form-group input[type="text"]:focus,
+.edit-profile-card .form-group input[type="email"]:focus,
+.edit-profile-card .form-group input[type="tel"]:focus,
+.edit-profile-card .form-group input[type="password"]:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.2);
+    outline: none;
+    background-color: white;
+}
+
+/* Current profile image preview */
+.current-profile-image-preview {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: var(--color-background-light);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--color-border-light);
+}
+.current-profile-image-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%; /* Imagen de perfil circular */
+    border: 2px solid var(--color-primary-light);
+    box-shadow: var(--shadow-sm);
+}
+.current-profile-image-preview p {
+    margin: 0;
+    color: var(--color-medium-text);
+    font-size: 0.95rem;
+}
+
+/* Custom file upload (reusar estilos de restaurantForm.css) */
+/* Botón para eliminar imagen */
+.edit-profile-card .custom-file-upload .btn-danger {
+    margin-left: auto; /* Empujar el botón a la derecha */
+    padding: 8px 15px;
+    font-size: 0.9rem;
+    border-radius: 20px;
+}
+
+
+/* Botones de acción del formulario */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid var(--color-background-medium);
+}
+
+.form-actions .btn {
+    padding: 14px 30px;
+    font-size: 1.1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    box-shadow: var(--shadow-md);
+}
+
+.form-actions .btn-primary {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+}
+
+.form-actions .btn-primary:hover {
+    background: linear-gradient(45deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.4);
+}
+
+.form-actions .btn-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.form-actions .btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Mensajes de formulario (éxito/error) */
+.message {
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .edit-profile-page-container {
+        padding: 20px 10px;
+    }
+    .edit-profile-card {
+        padding: 25px;
+        margin: 10px;
+    }
+    .edit-profile-card h2 {
+        font-size: 2rem;
+        margin-bottom: 20px;
+    }
+    .edit-profile-card .form-group label {
+        font-size: 1rem;
+    }
+    .edit-profile-card .form-group input {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+    }
+    .form-actions .btn {
+        width: 100%;
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+    .current-profile-image-preview {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .current-profile-image-preview img {
+        width: 60px;
+        height: 60px;
+    }
+    .edit-profile-card .custom-file-upload {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    .edit-profile-card .custom-file-upload .custom-upload-button,
+    .edit-profile-card .custom-file-upload .btn-danger {
+        width: 100%;
+        text-align: center;
+    }
+    .edit-profile-card .custom-file-upload .file-name-display {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-profile-page-container {
+        padding: 10px 5px;
+    }
+    .edit-profile-card {
+        padding: 15px;
+        margin: 5px;
+    }
+    .edit-profile-card h2 {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+    }
+    .edit-profile-card .form-group label {
+        font-size: 0.95rem;
+    }
+    .edit-profile-card .form-group input {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+    .form-actions .btn {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+    }
+}

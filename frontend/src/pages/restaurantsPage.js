@@ -1,14 +1,20 @@
 // frontend/src/pages/restaurantsPage.js
 import api from '../services/api.js';
 import { router } from '../router.js'; // Necesario para redirección si se hace click en Ver Detalles
+import '../styles/restaurants.css'; // Importar el nuevo archivo CSS
 
 function RestaurantsPage() {
     const page = document.createElement('div');
-    page.className = 'restaurants-page-container dashboard-container'; // Reutilizar estilos de dashboard
+    page.className = 'restaurants-page-container'; // Usar solo la clase específica de la página
+
+    // Extract search term from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchTerm = urlParams.get('search');
 
     page.innerHTML = `
         <h1>Explorar Restaurantes</h1>
         <p>Descubre los mejores sabores de Loja. Aquí tienes una guía completa de todos nuestros restaurantes.</p>
+        ${searchTerm ? `<p class="search-status">Resultados de búsqueda para: <strong>"${searchTerm}"</strong></p>` : ''}
 
         <div id="restaurants-list-message" class="message" style="display: none;"></div>
         
@@ -29,12 +35,12 @@ function RestaurantsPage() {
         }, 5000);
     };
 
-    const fetchAllRestaurants = async () => {
+    const fetchAllRestaurants = async (searchParam = '') => { // Accept optional searchParam
         restaurantsListContainer.innerHTML = '<p>Cargando restaurantes...</p>';
         try {
-            const restaurantes = await api.getRestaurantes();
+            const restaurantes = await api.getRestaurantes(searchParam); // Pass searchParam to API
             if (restaurantes.length === 0) {
-                restaurantsListContainer.innerHTML = '<p>No hay restaurantes disponibles para explorar.</p>';
+                restaurantsListContainer.innerHTML = `<p>No hay restaurantes disponibles ${searchParam ? `para "${searchParam}"` : 'para explorar'}.</p>`;
                 return;
             }
 
@@ -73,7 +79,7 @@ function RestaurantsPage() {
         }
     };
 
-    fetchAllRestaurants();
+    fetchAllRestaurants(searchTerm); // Pass the search term on initial load
 
     return page;
 }

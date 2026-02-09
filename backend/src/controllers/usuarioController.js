@@ -116,9 +116,14 @@ exports.getUsuarios = async (req, res) => {
     }
 };
 
-// Obtener un usuario por ID (Solo Admin)
+// Obtener un usuario por ID (Solo Admin o el propio usuario)
 exports.getUsuarioById = async (req, res) => {
     try {
+        // Un usuario puede obtener su propio perfil, o un admin puede obtener cualquier perfil
+        if (req.usuario.rol !== 'admin' && req.usuario.id.toString() !== req.params.id) {
+            return res.status(403).json({ error: 'Acceso denegado. No puedes ver el perfil de otros usuarios.' });
+        }
+
         const usuario = await Usuario.findByPk(req.params.id, {
             attributes: { exclude: ['password'] }
         });
@@ -132,32 +137,59 @@ exports.getUsuarioById = async (req, res) => {
     }
 };
 
+
 // Actualizar un usuario por ID (El propio usuario o un Admin)
 exports.updateUsuario = async (req, res) => {
     try {
-        // Un usuario no-admin no puede cambiar su propio rol.
-        if (req.usuario.rol !== 'admin') {
-            delete req.body.rol;
-        }
+        const usuarioIdToUpdate = req.params.id;
+        const { nombre, email, telefono, password } = req.body;
+        let updateData = { nombre, email, telefono };
 
-        // Un usuario solo puede modificarse a sí mismo, a menos que sea admin.
-        if (req.usuario.rol !== 'admin' && req.usuario.id.toString() !== req.params.id) {
+        // Autorización: un usuario solo puede modificarse a sí mismo, a menos que sea admin.
+        if (req.usuario.rol !== 'admin' && req.usuario.id.toString() !== usuarioIdToUpdate) {
             return res.status(403).json({ error: 'Acceso denegado. No puedes modificar otros usuarios.' });
         }
+
+        // Un usuario no-admin no puede cambiar su propio rol.
+        if (req.usuario.rol !== 'admin') {
+            delete req.body.rol; // Asegurarse de que el rol no se pueda modificar por un no-admin
+        }
         
-        const [updated] = await Usuario.update(req.body, {
-            where: { id: req.params.id }
+        // Manejar la actualización de contraseña si se proporciona
+        if (password) {
+            const salt = await bcrypt.genSalt(10);
+            updateData.password = await bcrypt.hash(password, salt);
+        }
+
+        // Manejar imagen de perfil si se sube un archivo
+        if (req.file) {
+            updateData.imagenPerfil = `/uploads/${req.file.filename}`;
+        } else if (req.body.imagenPerfil === 'null') { // Si se envía 'null' para borrar la imagen
+            updateData.imagenPerfil = null;
+        }
+
+
+        const [updated] = await Usuario.update(updateData, {
+            where: { id: usuarioIdToUpdate },
+            individualHooks: true // Para que los hooks 'beforeUpdate' se ejecuten
         });
 
         if (updated) {
-            const updatedUsuario = await Usuario.findByPk(req.params.id, {
+            const updatedUsuario = await Usuario.findByPk(usuarioIdToUpdate, {
                 attributes: { exclude: ['password'] }
             });
             res.json(updatedUsuario);
         } else {
-            res.status(404).json({ error: 'Usuario no encontrado' });
+            res.status(404).json({ error: 'Usuario no encontrado o no se realizaron cambios.' });
         }
     } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({ error: 'El email ya está registrado.' });
+        }
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(err => err.message);
+            return res.status(400).json({ error: errors.join(', ') });
+        }
         res.status(400).json({ error: error.message });
     }
 };

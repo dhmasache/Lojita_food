@@ -1,0 +1,134 @@
+/* frontend/src/styles/restaurants.css */
+
+.restaurants-page-container {
+    padding: 2.5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    font-family: var(--font-sans-serif);
+    color: var(--text-primary);
+}
+
+.restaurants-page-container h1 {
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    color: var(--accent-coffee);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.restaurants-page-container p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.restaurants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Flexible */
+    gap: 1.5rem;
+    margin-top: 2rem;
+    justify-content: center; /* Centrar la grilla */
+}
+
+.restaurant-item {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 320px; /* Limitar el ancho de la tarjeta */
+    margin: 0 auto; /* Centrar la tarjeta si la celda es más grande */
+}
+
+.restaurant-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.restaurant-item .restaurant-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px 12px 0 0; /* Bordes redondeados solo arriba */
+    margin-top: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+}
+
+.restaurant-item .card-content {
+    padding: 1rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.restaurant-item h3 {
+    font-family: var(--font-serif);
+    margin: 0 0 0.5rem 0;
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.3rem;
+    text-align: left;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.restaurant-item p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem 0;
+    line-height: 1.6;
+    text-align: left;
+}
+
+.restaurant-item .restaurant-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--accent-olive-green);
+    margin-top: auto;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border-color-light);
+}
+
+.restaurant-item .view-restaurant-btn {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.8rem 0;
+    font-size: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .restaurants-page-container {
+        padding: 1.5rem;
+    }
+    .restaurants-page-container h1 {
+        font-size: 2.2rem;
+    }
+    .restaurants-page-container p {
+        font-size: 1rem;
+    }
+    .restaurants-grid {
+        grid-template-columns: 1fr;
+        max-width: 400px; /* Centrar y limitar ancho en móviles */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .restaurant-item {
+        max-width: 100%; /* Permitir que ocupe todo el ancho disponible en móvil */
+    }
+}

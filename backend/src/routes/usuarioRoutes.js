@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const usuarioController = require('../controllers/usuarioController');
 const { protect, authorize } = require('../middleware/authMiddleware');
+const upload = require('../lib/multerConfig'); // Importar Multer
 
 // --- Rutas Públicas ---
 // Registro de un nuevo usuario
@@ -23,8 +24,7 @@ router.put('/reset-password/:token', usuarioController.resetPassword);
 
 // --- Rutas Protegidas (Requieren Login) ---
 // Actualizar un usuario por ID (el usuario mismo o un admin)
-// La lógica de si es el mismo usuario o admin se hará en el controlador.
-router.put('/:id', protect, usuarioController.updateUsuario);
+router.put('/:id', protect, upload.single('imagenPerfil'), usuarioController.updateUsuario);
 
 
 // --- Rutas de Administrador ---

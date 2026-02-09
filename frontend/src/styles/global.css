@@ -1,23 +1,23 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;600&family=Playfair+Display:wght@400;600;700&display=swap');
 
 /* src/styles/global.css */
 
 :root {
   /* Paleta de Colores: Tecnológico + Tradicional */
-  --background-main: #f0f2f5; /* Blanco hueso, más cálido que el blanco puro */
+  --background-main: #fcfcfc; /* Crema muy claro (casi blanco) */
   --background-card: rgba(255, 255, 255, 0.6); /* Base para Glassmorphism */
   --text-primary: #1a1a1a; /* Negro profundo para alta legibilidad */
   --text-secondary: #595959;
   
   /* Colores de acento tradicionales */
-  --accent-terracotta: #E07A5F;
+  --accent-terracotta: #D97757; /* Naranja tierra / Terracota especificado */
   --accent-olive-green: #81B29A;
   --accent-coffee: #6f4e37;
 
   /* Nuevas variables basadas en el tema */
   --surface-color: #ffffff; /* Blanco puro para superficies de tarjetas */
   --primary-color: var(--accent-terracotta); /* Color principal, mapeado a terracota */
-  --primary-dark: #cc6a4c; /* Una sombra más oscura de terracota */
+  --primary-dark: #b35e46; /* Una sombra más oscura de terracota (#D97757 - 20%) */
   --accent-color: var(--accent-olive-green); /* Color de acento, mapeado a verde oliva */
   --error-color: #d32f2f; /* Rojo para mensajes de error */
   --success-color: #388e3c; /* Verde para mensajes de éxito */
@@ -35,7 +35,7 @@
 
   /* Tipografía */
   --font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  --font-serif: 'Lora', 'Georgia', serif;
+  --font-serif: 'Playfair Display', 'Lora', 'Georgia', serif; /* Priorizar Playfair Display */
 
   /* Transiciones */
   --transition-smooth: all 0.3s ease-in-out;
@@ -171,17 +171,25 @@
   }
 }
 
-body {
-  font-family: var(--font-sans-serif);
-  background-color: var(--background-main);
-  color: var(--text-primary);
+html, body {
+  height: 100%; /* Ensure html and body take full viewport height */
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans-serif);
+  background-color: #FDF6F0; /* Fondo del body especificado */
+  color: var(--text-primary);
+  /* Removido margin, padding, box-sizing ya que ahora se manejan en html, body o globalmente */
 }
 
 *, *:before, *:after {
-  box-sizing: inherit;
+  box-sizing: inherit; /* Heredar box-sizing del html/body */
+}
+
+html {
+    box-sizing: border-box; /* Establecer box-sizing globalmente */
 }
 
 h1, h2, h3, h4 {
@@ -195,3 +203,39 @@ h1, h2, h3, h4 {
     max-width: 1200px;
     margin: 0 auto;
 }
+
+/* --- Global Responsiveness --- */
+@media (max-width: 1024px) {
+  .main-container {
+    padding: 1.5rem;
+  }
+  .card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 1rem;
+  }
+  .card {
+    padding: 1.2rem;
+  }
+  /* Smaller base font size for better mobile readability if needed */
+  :root {
+    font-size: 90%; /* Scale down base font for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-container {
+    padding: 0.8rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  :root {
+    font-size: 85%; /* Further scale down base font */
+  }
+}
+

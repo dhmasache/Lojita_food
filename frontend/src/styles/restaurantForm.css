@@ -1,0 +1,365 @@
+/* frontend/src/styles/restaurantForm.css */
+
+/* Contenedor principal de la página del formulario */
+.restaurant-form-page-container {
+    min-height: 100vh; /* Asegura que ocupe toda la altura de la ventana */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Centrar verticalmente el formulario si hay espacio */
+    padding: 30px 20px; /* Padding general para evitar que el card toque los bordes */
+    box-sizing: border-box; /* Incluir padding en el cálculo del tamaño */
+}
+
+/* Tarjeta principal del formulario */
+.restaurant-form-card {
+    background-color: white;
+    border-radius: var(--border-radius-xl); /* Bordes más redondeados */
+    padding: 40px 50px; /* Más padding interno para un look premium */
+    box-shadow: var(--shadow-xl); /* Sombra más pronunciada y elegante */
+    max-width: 900px; /* Un poco más ancho para formularios más complejos */
+    width: 100%;
+    margin: 20px auto; /* Centrar horizontalmente y dar margen */
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Más espacio entre grupos de formulario */
+    animation: fadeIn 0.5s ease-out; /* Animación sutil de entrada */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Título del formulario */
+.restaurant-form-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem; /* Título más grande y con más presencia */
+    font-weight: 700;
+    color: var(--color-dark-text);
+    text-align: center;
+    margin-bottom: 30px; /* Más margen inferior */
+    border-bottom: 2px solid var(--color-primary-light); /* Separador sutil */
+    padding-bottom: 18px;
+    letter-spacing: 0.05em; /* Espaciado de letras */
+}
+
+/* Párrafos descriptivos */
+.restaurant-form-card p {
+    color: var(--color-medium-text);
+    text-align: center;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+/* Grupos de formulario */
+.restaurant-form-card .form-group {
+    margin-bottom: 20px; /* Espacio entre cada grupo de input */
+}
+
+/* Etiquetas de los inputs */
+.restaurant-form-card .form-group label {
+    display: block;
+    margin-bottom: 10px; /* Más espacio entre label y input */
+    font-weight: 600;
+    color: var(--color-dark-text);
+    font-size: 1.15rem; /* Tamaño de fuente ligeramente mayor */
+    transition: color 0.3s ease;
+}
+
+/* Estilo base para inputs y textareas */
+.restaurant-form-card .form-group input[type="text"],
+.restaurant-form-card .form-group input[type="email"],
+.restaurant-form-card .form-group input[type="tel"],
+.restaurant-form-card .form-group input[type="time"],
+.restaurant-form-card .form-group textarea,
+.restaurant-form-card .form-group .form-control { /* Para la barra de búsqueda del mapa */
+    width: 100%;
+    padding: 14px 18px; /* Más padding */
+    border: 1px solid var(--color-light-text);
+    border-radius: var(--border-radius-md); /* Bordes suaves */
+    font-size: 1rem;
+    color: var(--color-dark-text);
+    background-color: var(--color-background-light); /* Fondo ligeramente diferenciado */
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Efecto focus para inputs y textareas */
+.restaurant-form-card .form-group input[type="text"]:focus,
+.restaurant-form-card .form-group input[type="email"]:focus,
+.restaurant-form-card .form-group input[type="tel"]:focus,
+.restaurant-form-card .form-group input[type="time"]:focus,
+.restaurant-form-card .form-group textarea:focus,
+.restaurant-form-card .form-group .form-control:focus {
+    border-color: var(--color-primary); /* Borde primario al enfocar */
+    box-shadow: 0 0 0 4px rgba(var(--color-primary-rgb), 0.2); /* Sombra de enfoque más suave */
+    outline: none;
+    background-color: white; /* Fondo blanco al enfocar */
+}
+
+.restaurant-form-card .form-group textarea {
+    resize: vertical;
+    min-height: 120px; /* Altura mínima un poco mayor para textareas */
+}
+
+/* Estilo para el checkbox "Es Tradicional" */
+.restaurant-form-card .form-group .checkbox-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.restaurant-form-card .form-group input[type="checkbox"] {
+    position: relative;
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--color-medium-text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.restaurant-form-card .form-group input[type="checkbox"]:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.restaurant-form-card .form-group input[type="checkbox"]:checked::before {
+    content: '✓';
+    display: block;
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    line-height: 18px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.restaurant-form-card .form-group #esTradicional-checkbox + label {
+    margin-bottom: 0; /* Ajustar margen para alinear con checkbox */
+    font-weight: normal;
+}
+
+
+/* Imagen actual preview */
+#current-image-preview {
+    display: block;
+    margin-top: 15px;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-background-medium);
+}
+
+/* --- Custom File Input Styling --- */
+.custom-file-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.hidden-file-input {
+    /* Oculta el input original, pero lo hace accesible para JavaScript */
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+.custom-upload-button {
+    background-color: var(--color-secondary); /* Color del botón */
+    color: white;
+    padding: 10px 15px;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: var(--transition-ease);
+    font-weight: 600;
+    flex-shrink: 0; /* Evitar que el botón se encoja */
+}
+
+.custom-upload-button:hover {
+    background-color: #5a6268;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+.file-name-display {
+    color: var(--color-medium-text);
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Mostrar puntos suspensivos si el nombre es muy largo */
+    flex-grow: 1; /* Permitir que ocupe el espacio restante */
+}
+
+
+/* Estilos para el mapa */
+#leaflet-map {
+    height: 300px; /* Altura del mapa */
+    width: 100%;
+    border-radius: var(--border-radius-md);
+    margin-top: 15px;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-light-text);
+}
+
+/* Información de latitud, longitud y dirección seleccionada */
+.restaurant-form-card .form-group p {
+    font-size: 0.95rem;
+    color: var(--color-medium-text);
+    margin-top: 10px;
+    text-align: left;
+}
+
+.restaurant-form-card .form-group p span {
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+/* Botones de acción del formulario */
+.form-actions {
+    display: flex;
+    justify-content: flex-end; /* Alinear botones a la derecha */
+    gap: 15px; /* Espacio entre botones */
+    margin-top: 35px; /* Más margen superior */
+    padding-top: 25px;
+    border-top: 1px solid var(--color-background-medium); /* Separador */
+}
+
+.form-actions .btn {
+    padding: 14px 30px; /* Más padding para botones robustos */
+    font-size: 1.1rem;
+    border-radius: 30px; /* Botones más redondeados (tipo píldora) */
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 700; /* Texto más bold */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: none;
+    box-shadow: var(--shadow-md); /* Sombra para los botones */
+}
+
+.form-actions .btn-primary {
+    background: linear-gradient(45deg, var(--color-primary), var(--color-primary-dark));
+    color: white;
+}
+
+.form-actions .btn-primary:hover {
+    background: linear-gradient(45deg, var(--color-primary-dark), var(--color-primary));
+    transform: translateY(-3px); /* Efecto levantar */
+    box-shadow: 0 10px 20px rgba(var(--color-primary-rgb), 0.4);
+}
+
+.form-actions .btn-secondary {
+    background-color: var(--color-secondary);
+    color: white;
+}
+
+.form-actions .btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Mensajes de formulario (éxito/error) */
+.message {
+    padding: 15px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.message.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.message.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .restaurant-form-card {
+        padding: 30px;
+        margin: 20px auto;
+        max-width: 700px;
+    }
+    .restaurant-form-card h2 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .restaurant-form-page-container {
+        padding: 20px 10px;
+    }
+    .restaurant-form-card {
+        padding: 25px;
+        margin: 10px;
+        max-width: 100%;
+    }
+    .restaurant-form-card h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+    }
+    .restaurant-form-card .form-group label {
+        font-size: 1rem;
+    }
+    .restaurant-form-card .form-group input,
+    .restaurant-form-card .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.95rem;
+    }
+    .form-actions {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 25px;
+        padding-top: 20px;
+    }
+    .form-actions .btn {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 1rem;
+    }
+    .custom-file-upload {
+        flex-direction: column; /* Apilar botón y nombre de archivo */
+        align-items: flex-start;
+    }
+    .custom-upload-button {
+        width: 100%; /* Botón de archivo al 100% en móvil */
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .restaurant-form-card {
+        padding: 15px;
+        margin: 5px;
+    }
+    .restaurant-form-card h2 {
+        font-size: 1.4rem;
+        padding-bottom: 10px;
+    }
+    .restaurant-form-card p {
+        font-size: 0.9rem;
+    }
+    .restaurant-form-card .form-group input,
+    .restaurant-form-card .form-group textarea {
+        padding: 8px 10px;
+        font-size: 0.9rem;
+    }
+}

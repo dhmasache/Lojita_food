@@ -305,11 +305,71 @@ export function AboutPage() {
             </div>
         </div>
 
+        `;
+
+    const isLoggedIn = localStorage.getItem('jwt_token') !== null;
+
+    let ctaTitle = "¿Listo para Explorar o Unirte?";
+    let ctaDescription = "Descubre tu próximo plato favorito o impulsa tu negocio uniéndote a nuestra red de restaurantes. ¡La aventura culinaria te espera!";
+
+    if (isLoggedIn) {
+        ctaTitle = "¿Listo para Explorar?";
+        ctaDescription = "Descubre tu próximo plato favorito o gestiona tu negocio en nuestra red de restaurantes. ¡La aventura culinaria te espera!";
+    }
+
+    let ctaSectionHtml = `
         <div class="about-section contact-cta">
-            <h2>¿Listo para Explorar o Unirte?</h2>
-            <p>Descubre tu próximo plato favorito o impulsa tu negocio uniéndote a nuestra red de restaurantes. ¡La aventura culinaria te espera!</p>
-            <a href="/register" data-link class="btn btn-primary about-cta-btn">Únete Ahora</a>
+            <h2>${ctaTitle}</h2>
+            <p>${ctaDescription}</p>
+            ${!isLoggedIn ? `<a href="/register" data-link class="btn btn-primary about-cta-btn">Únete Ahora</a>` : ''}
         </div>
+    `;
+
+    element.innerHTML = `
+        <div class="about-hero-section">
+            <h1 class="about-main-title">Acerca de LojitaFood</h1>
+            <p class="about-intro-text">Conectando los sabores auténticos de Loja contigo. ¡Una experiencia culinaria única al alcance de tu mano!</p>
+        </div>
+
+        <div class="about-section mission-vision">
+            <div class="mission-card card"> <!-- Añadimos 'card' para estilos base -->
+                <span class="icon">✨</span>
+                <h2>Nuestra Misión</h2>
+                <p>Ser el puente digital que conecta a los apasionados de la gastronomía lojana con los mejores restaurantes locales, ofreciendo una experiencia de búsqueda y pedido sin igual, siempre con la calidad y autenticidad que nos caracteriza.</p>
+            </div>
+            <div class="vision-card card"> <!-- Añadimos 'card' para estilos base -->
+                <span class="icon">🚀</span>
+                <h2>Nuestra Visión</h2>
+                <p>Convertirnos en la plataforma líder de descubrimiento culinario en Loja y sus alrededores, reconocida por fomentar la cultura gastronómica local, apoyar a los negocios y por su innovación constante en el servicio al cliente. En un futuro, aspiramos a expandir nuestra plataforma más allá de Loja, integrando la gastronomía típica de diversas provincias del Ecuador, demostrando la escalabilidad y el impacto nacional de LojitaFood.</p>
+            </div>
+        </div>
+
+        <div class="about-section team-values">
+            <h2>Nuestros Valores</h2>
+            <div class="values-grid">
+                <div class="value-item card"> <!-- Añadimos 'card' para estilos base -->
+                    <span class="icon">💡</span>
+                    <h3>Innovación</h3>
+                    <p>Siempre buscando nuevas formas de mejorar la experiencia del usuario y del restaurante.</p>
+                </div>
+                <div class="value-item card"> <!-- Añadimos 'card' para estilos base -->
+                    <span class="icon">🤝</span>
+                    <h3>Comunidad</h3>
+                    <p>Construimos lazos fuertes entre comensales y establecimientos locales, apoyando el crecimiento mutuo.</p>
+                </div>
+                <div class="value-item card"> <!-- Añadimos 'card' para estilos base -->
+                    <span class="icon">❤️</span>
+                    <h3>Pasión Culinaria</h3>
+                    <p>Celebramos y promovemos la riqueza y diversidad de la cocina lojana con dedicación y amor por lo nuestro.</p>
+                </div>
+                <div class="value-item card"> <!-- Añadimos 'card' para estilos base -->
+                    <span class="icon">🛡️</span>
+                    <h3>Integridad</h3>
+                    <p>Operamos con transparencia, honestidad y respeto en todas nuestras interacciones y procesos.</p>
+                </div>
+            </div>
+        </div>
+        ${ctaSectionHtml}
     `;
 
     // Apply styles directly for encapsulation

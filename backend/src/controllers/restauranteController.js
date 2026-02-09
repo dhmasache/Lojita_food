@@ -1,4 +1,5 @@
-const { Restaurante, Usuario } = require('../models'); // Asegúrate de importar Usuario
+const { Restaurante, Usuario, sequelize } = require('../models');
+const { Op } = require('sequelize');
 
 // Crear un nuevo restaurante
 exports.createRestaurante = async (req, res) => {
@@ -19,12 +20,11 @@ exports.createRestaurante = async (req, res) => {
             // Si no hay usuario logueado (esto debería ser manejado por auth middleware antes),
             // o si un admin decide no asignar un propietario al crear.
             // Por ahora, lo dejamos null si no hay un req.usuario y no es admin con propietarioId.
-            // Considera si quieres permitir restaurantes sin propietario inicial.
             // El middleware de autenticación debería asegurar que req.usuario existe.
             return res.status(401).json({ error: 'Usuario no autenticado para crear un restaurante.' });
         }
 
-        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion } = req.body;
+        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud } = req.body;
 
         // Multer pone la información del archivo en req.file
         let imageUrl = null;
@@ -45,6 +45,8 @@ exports.createRestaurante = async (req, res) => {
             descripcion, // Nuevo campo
             esTradicional,
             imageUrl, // Nuevo campo
+            latitud: latitud || null, // Guardar latitud
+            longitud: longitud || null, // Guardar longitud
             propietarioId
         });
         res.status(201).json(restaurante);
@@ -64,7 +66,22 @@ exports.createRestaurante = async (req, res) => {
 // Obtener todos los restaurantes
 exports.getRestaurantes = async (req, res) => {
     try {
+        const { search, propietarioId } = req.query; // Obtener propietarioId de la query
+        let whereClause = {};
+
+        if (search) {
+            whereClause.nombre = {
+                [Op.like]: `%${search}%`
+            };
+        }
+
+        // Si se proporciona propietarioId, añadirlo a la cláusula WHERE
+        if (propietarioId) {
+            whereClause.propietarioId = propietarioId;
+        }
+
         const restaurantes = await Restaurante.findAll({
+            where: whereClause,
             include: { model: Usuario, as: 'propietario', attributes: ['id', 'nombre', 'email'] }
         });
         res.json(restaurantes);
@@ -103,8 +120,8 @@ exports.updateRestaurante = async (req, res) => {
             return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para modificar este restaurante.' });
         }
         
-        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion } = req.body;
-        let updateData = { nombre, direccion, telefono, horarioApertura, horarioCierre, descripcion };
+        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud } = req.body;
+        let updateData = { nombre, direccion, telefono, horarioApertura, horarioCierre, descripcion, latitud, longitud };
 
         // 1. Manejo de imagen
         if (req.file) { // Si se sube un nuevo archivo
@@ -186,7 +203,6 @@ exports.deleteRestaurante = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
-
 // Subir imagen para un restaurante
 exports.uploadRestauranteImage = async (req, res) => {
     try {

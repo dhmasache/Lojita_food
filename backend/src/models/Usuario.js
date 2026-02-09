@@ -27,6 +27,14 @@ const Usuario = sequelize.define('Usuario', {
         type: DataTypes.ENUM('cliente', 'propietario', 'admin'),
         defaultValue: 'cliente',
     },
+    telefono: { // Nuevo campo para el teléfono del usuario
+        type: DataTypes.STRING(20),
+        allowNull: true,
+    },
+    imagenPerfil: { // Nuevo campo para la URL de la imagen de perfil
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
     verificationCode: {
         type: DataTypes.STRING(255),
         allowNull: true,

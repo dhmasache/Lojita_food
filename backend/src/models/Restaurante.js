@@ -50,6 +50,19 @@ const Restaurante = sequelize.define('Restaurante', {
         type: DataTypes.TEXT, // Campo para la descripción del restaurante
         allowNull: true,
     },
+    estadoAprobacion: { // Nuevo campo para el estado de aprobación
+        type: DataTypes.ENUM('pendiente', 'aprobado', 'rechazado'),
+        defaultValue: 'pendiente',
+        allowNull: false,
+    },
+    latitud: {
+        type: DataTypes.DECIMAL(10, 8), // Precision para latitud (ej. 123.45678901)
+        allowNull: true, // Permitir nulo inicialmente si no todos los restaurantes tendrán ubicación GPS
+    },
+    longitud: {
+        type: DataTypes.DECIMAL(11, 8), // Precision para longitud (ej. 123.45678901)
+        allowNull: true, // Permitir nulo inicialmente si no todos los restaurantes tendrán ubicación GPS
+    },
     // propietarioId se definirá en las asociaciones
 }, {
     tableName: 'Restaurantes',

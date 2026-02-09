@@ -1,382 +1,422 @@
 // frontend/src/pages/adminDashboard.js
 import api from '../services/api.js';
-import { router } from '../router.js'; // Necesario para posible redirección
+import { router } from '../router.js'; // Import router for navigation
 
 function AdminDashboardPage() {
     const page = document.createElement('div');
-    page.className = 'admin-dashboard-container';
-
-    // Check if the user is logged in and is an 'admin'
     const user = JSON.parse(localStorage.getItem('lojita_user'));
 
-    if (!user || user.rol !== 'admin') {
-        page.innerHTML = `
-            <h1>Acceso Denegado</h1>
-            <p>No tienes permiso para ver esta página. Debes ser un 'administrador'.</p>
-            <a href="/login" data-link>Iniciar Sesión</a>
-        `;
-        return page;
-    }
-
     page.innerHTML = `
-        <h1>Panel de Administrador</h1>
-        <p>Bienvenido, ${user.nombre}. Aquí puedes gestionar las solicitudes para ser propietario de restaurante y añadir nuevos restaurantes.</p>
+        <div class="admin-dashboard-wrapper">
+            <!-- Main Content Container (holds header and main content) -->
+            <div class="admin-main-content-wrapper full-width">
+                <!-- Main Header (Top Bar) -->
+                <header class="admin-header">
+                    <h1 class="admin-header-title">Panel de Administración <span class="header-welcome">Bienvenido, ${user.nombre}</span></h1>
+                    <div class="header-actions">
+                        <button id="edit-profile-btn" class="btn btn-secondary admin-profile-btn">Mi Perfil</button>
+                        <button id="add-restaurant-btn" class="btn btn-primary admin-add-button">+ Agregar Restaurante</button>
+                    </div>
+                </header>
 
-        <div class="solicitudes-section">
-            <h2>Solicitudes de Propietario Pendientes</h2>
-            <div id="solicitudes-list">
-                <p>Cargando solicitudes...</p>
-            </div>
-            <div id="admin-message" class="message" style="display: none;"></div>
-        </div>
-
-        <div class="restaurant-management-section">
-            <h2>Gestionar Restaurantes</h2>
-            <button id="add-restaurant-btn" class="btn btn-primary">Agregar Nuevo Restaurante</button>
-            
-            <div id="add-restaurant-form-container" style="display: none;" class="card form-card">
-                <h3 id="form-title">Formulario para Agregar Restaurante</h3>
-                <form id="add-restaurant-form" enctype="multipart/form-data">
-                    <input type="hidden" id="restaurant-id" name="id">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="nombre">Nombre del Restaurante</label>
-                            <input type="text" id="nombre" name="nombre" required>
+                <!-- Main Content Area -->
+                <main class="admin-content">
+                    <!-- Statistics Cards -->
+                    <div class="stats-cards-row">
+                        <div class="stat-card">
+                            <i class="icon-bell stat-icon"></i>
+                            <span class="stat-text">Solicitudes: <span id="solicitudes-count">0</span></span>
                         </div>
-                        <div class="form-group">
-                            <label for="direccion">Dirección</label>
-                            <input type="text" id="direccion" name="direccion" required>
+                        <div class="stat-card">
+                            <i class="icon-building stat-icon"></i>
+                            <span class="stat-text">Restaurantes Activos: <span id="active-restaurants-count">0</span></span>
                         </div>
-                        <div class="form-group">
-                            <label for="telefono">Teléfono</label>
-                            <input type="text" id="telefono" name="telefono" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="horarioApertura">Horario de Apertura</label>
-                            <input type="time" id="horarioApertura" name="horarioApertura" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="horarioCierre">Horario de Cierre</label>
-                            <input type="time" id="horarioCierre" name="horarioCierre" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="descripcion">Descripción</label>
-                            <textarea id="descripcion" name="descripcion" rows="4"></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="imageUrl">Imagen del Restaurante</label>
-                            <input type="file" id="imageUrl" name="imageUrl" accept="image/*">
-                            <div id="current-image-preview" style="display: none;">
-                                <img id="preview-image" src="" alt="Previsualización de imagen" class="restaurant-image" style="max-width: 100px; margin-top: 10px;">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="propietarioId">ID del Propietario (opcional para Admin)</label>
-                            <input type="number" id="propietarioId" name="propietarioId">
-                        </div>
-                        <div class="form-group checkbox-group">
-                            <input type="checkbox" id="esTradicional" name="esTradicional">
-                            <label for="esTradicional">Es Tradicional</label>
+                        <div class="stat-card">
+                            <i class="icon-users stat-icon"></i>
+                            <span class="stat-text">Usuarios Totales: <span id="total-users-count">0</span></span>
                         </div>
                     </div>
-                    <button type="submit" id="submit-btn" class="btn btn-success">Guardar Restaurante</button>
-                    <button type="button" id="cancel-add-restaurant-btn" class="btn btn-secondary">Cancelar</button>
-                </form>
-            </div>
-        </div>
 
-        <div class="restaurants-list-section">
-            <h2>Restaurantes Registrados</h2>
-            <div id="registered-restaurants-list" class="restaurants-grid">
-                <p>Cargando restaurantes...</p>
+                    <!-- Registered Restaurants Table -->
+                    <div class="table-container card">
+                        <h2>Restaurantes Registrados</h2>
+                        <div class="table-responsive-wrapper">
+                            <table class="registered-restaurants-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Ubicación</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="restaurants-table-body">
+                                    <tr><td colspan="4">Cargando restaurantes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Registered Users Table -->
+                    <div class="table-container card">
+                        <h2>Usuarios Registrados</h2>
+                        <div class="table-responsive-wrapper">
+                            <table class="registered-users-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Email</th>
+                                        <th>Rol</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <tr><td colspan="5">Cargando usuarios...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Solicitudes Pendientes Table -->
+                    <div class="table-container card">
+                        <h2>Solicitudes Pendientes</h2>
+                        <div class="table-responsive-wrapper">
+                            <table class="solicitudes-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID Solicitud</th>
+                                        <th>Usuario</th>
+                                        <th>Email Usuario</th>
+                                        <th>Restaurante</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="solicitudes-table-body">
+                                    <tr><td colspan="6">Cargando solicitudes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </main>
             </div>
-            <div id="restaurant-list-message" class="message" style="display: none;"></div>
+
+            <!-- Solicitud Detail Modal -->
+            <div id="solicitud-detail-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <h2>Detalles de la Solicitud <span id="modal-solicitud-id"></span></h2>
+                    <p><strong>Estado:</strong> <span id="modal-solicitud-estado"></span></p>
+                    <p><strong>Usuario Solicitante:</strong> <span id="modal-usuario-nombre"></span> (<span id="modal-usuario-email"></span>)</p>
+                    <p><strong>Nombre Restaurante:</strong> <span id="modal-restaurante-nombre"></span></p>
+                    <p><strong>Dirección Restaurante:</strong> <span id="modal-restaurante-direccion"></span></p>
+                    <p><strong>Teléfono Restaurante:</strong> <span id="modal-restaurante-telefono"></span></p>
+                    <p><strong>Descripción:</strong> <span id="modal-restaurante-descripcion"></span></p>
+                    <div class="modal-actions">
+                        <button id="modal-approve-btn" class="btn btn-success">Aprobar</button>
+                        <button id="modal-reject-btn" class="btn btn-danger">Rechazar</button>
+                    </div>
+                    </div>
+                </div>
+
         </div>
     `;
 
-    const solicitudesList = page.querySelector('#solicitudes-list');
-    const adminMessage = page.querySelector('#admin-message'); // Mensaje para solicitudes
-    const registeredRestaurantsList = page.querySelector('#registered-restaurants-list'); // Nuevo
-    const restaurantListMessage = page.querySelector('#restaurant-list-message'); // Nuevo
-    
-    // Elementos para añadir/editar restaurante
-    const formTitle = page.querySelector('#form-title');
-    const restaurantIdInput = page.querySelector('#restaurant-id');
-    const nombreInput = page.querySelector('#add-restaurant-form #nombre');
-    const direccionInput = page.querySelector('#add-restaurant-form #direccion');
-    const telefonoInput = page.querySelector('#add-restaurant-form #telefono');
-    const emailInput = page.querySelector('#add-restaurant-form #email');
-    const horarioAperturaInput = page.querySelector('#add-restaurant-form #horarioApertura');
-    const horarioCierreInput = page.querySelector('#add-restaurant-form #horarioCierre');
-    const descripcionInput = page.querySelector('#add-restaurant-form #descripcion');
-    const imageUrlInput = page.querySelector('#add-restaurant-form #imageUrl');
-    const propietarioIdInput = page.querySelector('#add-restaurant-form #propietarioId');
-    const esTradicionalInput = page.querySelector('#add-restaurant-form #esTradicional');
-    const submitBtn = page.querySelector('#submit-btn');
-    const currentImagePreviewContainer = page.querySelector('#current-image-preview');
-    const previewImage = page.querySelector('#preview-image');
-
-
+    // JavaScript Logic
+    const solicitudesCountSpan = page.querySelector('#solicitudes-count');
+    const activeRestaurantsCountSpan = page.querySelector('#active-restaurants-count');
+    const totalUsersCountSpan = page.querySelector('#total-users-count');
+    const restaurantsTableBody = page.querySelector('#restaurants-table-body');
+    const usersTableBody = page.querySelector('#users-table-body');
+    const solicitudesTableBody = page.querySelector('#solicitudes-table-body');
     const addRestaurantBtn = page.querySelector('#add-restaurant-btn');
-    const addRestaurantFormContainer = page.querySelector('#add-restaurant-form-container');
-    const addRestaurantForm = page.querySelector('#add-restaurant-form');
-    const cancelAddRestaurantBtn = page.querySelector('#cancel-add-restaurant-btn');
-    const restaurantMessage = document.createElement('div'); // Mensaje específico para restaurantes
-    restaurantMessage.className = 'message';
-    restaurantMessage.style.display = 'none';
-    addRestaurantFormContainer.prepend(restaurantMessage); // Insertar antes del formulario
+    const editProfileBtn = page.querySelector('#edit-profile-btn');
 
-    const displayMessage = (msg, type, targetElement = adminMessage) => {
-        targetElement.textContent = msg;
-        targetElement.className = `message ${type}`;
-        targetElement.style.display = 'block';
-        setTimeout(() => {
-            targetElement.style.display = 'none';
-        }, 5000);
-    };
 
-    // --- Lógica para Solicitudes ---
-    const fetchSolicitudes = async () => {
-        solicitudesList.innerHTML = '<p>Cargando solicitudes...</p>';
+    // Solicitud Modal Elements
+    const solicitudDetailModal = page.querySelector('#solicitud-detail-modal');
+    const modalCloseButton = page.querySelector('#solicitud-detail-modal .close-button');
+    const modalSolicitudId = page.querySelector('#modal-solicitud-id');
+    const modalSolicitudEstado = page.querySelector('#modal-solicitud-estado');
+    const modalUsuarioNombre = page.querySelector('#modal-usuario-nombre');
+    const modalUsuarioEmail = page.querySelector('#modal-usuario-email');
+    const modalRestauranteNombre = page.querySelector('#modal-restaurante-nombre');
+    const modalRestauranteDireccion = page.querySelector('#modal-restaurante-direccion');
+    const modalRestauranteTelefono = page.querySelector('#modal-restaurante-telefono');
+    const modalRestauranteDescripcion = page.querySelector('#modal-restaurante-descripcion');
+    const modalApproveBtn = page.querySelector('#modal-approve-btn');
+    const modalRejectBtn = page.querySelector('#modal-reject-btn');
+
+
+    const updateStats = async () => {
         try {
             const solicitudes = await api.getSolicitudes();
-            if (solicitudes.length === 0) {
-                solicitudesList.innerHTML = '<p>No hay solicitudes pendientes.</p>';
-                return;
-            }
+            solicitudesCountSpan.textContent = solicitudes.filter(s => s.estado === 'pendiente').length;
 
-            solicitudesList.innerHTML = ''; // Limpiar lista
-            solicitudes.forEach(solicitud => {
-                const solicitudItem = document.createElement('div');
-                solicitudItem.className = `solicitud-item status-${solicitud.estado}`;
-                solicitudItem.innerHTML = `
-                    <div class="card-content">
-                        <h3>Solicitud #${solicitud.id} - ${solicitud.nombreRestaurante}</h3>
-                        <p><strong>Usuario:</strong> ${solicitud.Usuario ? solicitud.Usuario.nombre : 'N/A'} (${solicitud.Usuario ? solicitud.Usuario.email : 'N/A'})</p>
-                        <p><strong>Dirección:</strong> ${solicitud.direccionRestaurante}</p>
-                        <p><strong>Teléfono:</strong> ${solicitud.telefonoRestaurante || 'No especificado'}</p>
-                        <p><strong>Descripción:</strong> ${solicitud.descripcion ? solicitud.descripcion.substring(0, 70) + '...' : 'Sin descripción adicional'}</p>
-                        <p><strong>Estado:</strong> ${solicitud.estado}</p>
-                        <p><strong>Fecha:</strong> ${new Date(solicitud.createdAt).toLocaleDateString()}</p>
-                    </div>
-                    <div class="solicitud-actions">
-                        ${solicitud.estado === 'pendiente' ? `
-                            <button class="btn btn-success approve-btn" data-id="${solicitud.id}" data-propietario-id="${solicitud.usuarioId}">Aprobar</button>
-                            <button class="btn btn-danger reject-btn" data-id="${solicitud.id}">Rechazar</button>
-                        ` : ''}
-                    </div>
-                `;
-                solicitudesList.appendChild(solicitudItem);
-            });
+            const restaurants = await api.getRestaurantes();
+            activeRestaurantsCountSpan.textContent = restaurants.length;
 
-            // Añadir event listeners a los botones de acción
-            solicitudesList.querySelectorAll('.approve-btn').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const id = e.target.dataset.id;
-                    const propietarioId = parseInt(e.target.dataset.propietarioId); // Obtener y parsear el ID del propietario
-                    try {
-                        await api.approveSolicitud(id);
-                        // Después de aprobar la solicitud, cambiar el rol del usuario a propietario
-                        await api.updateUserRole(propietarioId, { rol: 'propietario' });
-                        displayMessage('Solicitud aprobada y usuario promovido a propietario con éxito.', 'success');
-                        fetchSolicitudes(); // Recargar lista
-                        fetchRestaurants(); // Recargar lista de restaurantes, porque podría haberse creado uno
-                    } catch (error) {
-                        displayMessage(error.message || 'Error al aprobar la solicitud o promover usuario.', 'error');
-                    }
-                });
-            });
-
-            solicitudesList.querySelectorAll('.reject-btn').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const id = e.target.dataset.id;
-                    try {
-                        await api.rejectSolicitud(id);
-                        displayMessage('Solicitud rechazada con éxito.', 'success');
-                        fetchSolicitudes(); // Recargar lista
-                    } catch (error) {
-                        displayMessage(error.message || 'Error al rechazar la solicitud.', 'error');
-                    }
-                });
-            });
-
+            const users = await api.getUsuarios();
+            totalUsersCountSpan.textContent = users.length;
         } catch (error) {
-            solicitudesList.innerHTML = `<p class="error">Error al cargar solicitudes: ${error.message}</p>`;
-            console.error('Error fetching solicitudes:', error);
+            console.error('Error fetching stats:', error);
+            solicitudesCountSpan.textContent = 'N/A';
+            activeRestaurantsCountSpan.textContent = 'N/A';
+            totalUsersCountSpan.textContent = 'N/A';
         }
     };
 
-    // --- Lógica para Añadir/Editar Restaurante ---
-    const resetForm = () => {
-        addRestaurantForm.reset();
-        restaurantIdInput.value = '';
-        formTitle.textContent = 'Formulario para Agregar Restaurante';
-        submitBtn.textContent = 'Guardar Restaurante';
-        currentImagePreviewContainer.style.display = 'none';
-        previewImage.src = '';
-        imageUrlInput.required = true; // Imagen requerida para añadir
-    };
-
-    addRestaurantBtn.addEventListener('click', () => {
-        resetForm(); // Resetear el formulario para el modo "añadir"
-        addRestaurantFormContainer.style.display = 'block';
-        addRestaurantBtn.style.display = 'none'; // Ocultar botón al mostrar formulario
-        restaurantMessage.style.display = 'none'; // Limpiar mensajes anteriores
-    });
-
-    cancelAddRestaurantBtn.addEventListener('click', () => {
-        addRestaurantFormContainer.style.display = 'none';
-        addRestaurantBtn.style.display = 'block'; // Mostrar botón de nuevo
-        resetForm(); // Limpiar y resetear el formulario
-    });
-
-    addRestaurantForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const formData = new FormData(addRestaurantForm);
-        const restauranteId = restaurantIdInput.value; // Obtener el ID del restaurante si estamos editando
-
-        formData.set('esTradicional', esTradicionalInput.checked ? 'true' : 'false');
-        
-        if (propietarioIdInput.value) {
-            formData.set('propietarioId', parseInt(propietarioIdInput.value));
-        } else {
-            formData.delete('propietarioId');
-        }
-
-        // Si no se selecciona una nueva imagen en el modo de edición, no enviar el campo 'imageUrl'
-        if (restauranteId && !imageUrlInput.files.length) {
-            formData.delete('imageUrl');
-        }
-
-        try {
-            if (restauranteId) {
-                // Modo edición
-                await api.updateRestaurante(restauranteId, formData);
-                displayMessage('Restaurante actualizado con éxito.', 'success', restaurantMessage);
-            } else {
-                // Modo añadir
-                await api.createRestaurante(formData);
-                displayMessage('Restaurante agregado con éxito.', 'success', restaurantMessage);
-            }
-            addRestaurantFormContainer.style.display = 'none';
-            addRestaurantBtn.style.display = 'block';
-            resetForm();
-            fetchRestaurants(); // Recargar la lista de restaurantes
-        } catch (error) {
-            console.error('API Error:', error); // <-- Línea añadida para depuración
-            displayMessage(error.message || `Error al ${restauranteId ? 'actualizar' : 'agregar'} restaurante.`, 'error', restaurantMessage);
-        }
-    });
-
-    // --- Lógica para Listar Restaurantes ---
-    const fetchRestaurants = async () => {
-        registeredRestaurantsList.innerHTML = '<p>Cargando restaurantes...</p>';
+    const fetchRestaurantsTable = async () => {
+        restaurantsTableBody.innerHTML = '<tr><td colspan="4">Cargando restaurantes...</td></tr>';
         try {
             const restaurantes = await api.getRestaurantes();
+            restaurantsTableBody.innerHTML = '';
             if (restaurantes.length === 0) {
-                registeredRestaurantsList.innerHTML = '<p>No hay restaurantes registrados.</p>';
+                restaurantsTableBody.innerHTML = '<tr><td colspan="4">No hay restaurantes registrados.</td></tr>';
                 return;
             }
 
-            registeredRestaurantsList.innerHTML = ''; // Limpiar lista
             restaurantes.forEach(restaurante => {
-                const restaurantItem = document.createElement('div');
-                restaurantItem.className = 'restaurant-item'; 
-                restaurantItem.innerHTML = `
-                    ${restaurante.imageUrl ? `<img src="http://localhost:3000${restaurante.imageUrl}" alt="${restaurante.nombre}" class="restaurant-image">` : ''}
-                    <div class="card-content">
-                        <h3>${restaurante.nombre}</h3>
-                        <p>${restaurante.descripcion ? restaurante.descripcion.substring(0, 70) + '...' : 'Sin descripción.'}</p>
-                        <div class="restaurant-item-footer">
-                            <span>⭐ ${restaurante.calificacionPromedio || 'N/A'}</span>
-                            <span>🕒 ${restaurante.horarioApertura} - ${restaurante.horarioCierre}</span>
-                        </div>
-                        <div class="restaurant-actions">
-                            <button class="btn btn-primary edit-restaurant-admin-btn" data-id="${restaurante.id}">Editar</button>
-                            <button class="btn btn-danger delete-restaurant-admin-btn" data-id="${restaurante.id}">Eliminar</button>
-                        </div>
-                    </div>
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${restaurante.nombre}</td>
+                    <td>${restaurante.direccion}</td>
+                    <td>
+                        <span class="status-badge ${restaurante.estadoAprobacion === 'aprobado' ? 'status-active' : 'status-inactive'}">
+                            ${restaurante.estadoAprobacion}
+                        </span>
+                    </td>
+                    <td><button class="btn btn-edit-small" data-id="${restaurante.id}">Editar</button></td>
                 `;
-                registeredRestaurantsList.appendChild(restaurantItem);
+                restaurantsTableBody.appendChild(row);
             });
 
-            // --- Event listeners para EDITAR ---
-            registeredRestaurantsList.querySelectorAll('.edit-restaurant-admin-btn').forEach(button => {
-                button.addEventListener('click', async (e) => {
+            restaurantsTableBody.querySelectorAll('.btn-edit-small').forEach(button => {
+                button.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
-                    try {
-                        const restauranteToEdit = await api.getRestauranteById(id);
-                        
-                        // Cargar datos en el formulario
-                        restaurantIdInput.value = restauranteToEdit.id;
-                        nombreInput.value = restauranteToEdit.nombre;
-                        direccionInput.value = restauranteToEdit.direccion;
-                        telefonoInput.value = restauranteToEdit.telefono;
-                        emailInput.value = restauranteToEdit.email;
-                        horarioAperturaInput.value = restauranteToEdit.horarioApertura;
-                        horarioCierreInput.value = restauranteToEdit.horarioCierre;
-                        descripcionInput.value = restauranteToEdit.descripcion;
-                        propietarioIdInput.value = restauranteToEdit.propietarioId;
-                        esTradicionalInput.checked = restauranteToEdit.esTradicional;
-
-                        // Manejar previsualización de imagen
-                        if (restauranteToEdit.imageUrl) {
-                            previewImage.src = `http://localhost:3000${restauranteToEdit.imageUrl}`;
-                            currentImagePreviewContainer.style.display = 'block';
-                            imageUrlInput.required = false; // Ya tiene imagen, no es requerida para añadir
-                        } else {
-                            currentImagePreviewContainer.style.display = 'none';
-                            previewImage.src = '';
-                            imageUrlInput.required = false; // No hay imagen previa, pero no se hace requerida para edición
-                        }
-
-                        // Cambiar texto del formulario y botón
-                        formTitle.textContent = 'Formulario para Editar Restaurante';
-                        submitBtn.textContent = 'Actualizar Restaurante';
-                        
-                        addRestaurantFormContainer.style.display = 'block';
-                        addRestaurantBtn.style.display = 'none';
-                        restaurantMessage.style.display = 'none'; // Limpiar mensajes
-                    } catch (error) {
-                        displayMessage(error.message || 'Error al cargar datos del restaurante para edición.', 'error', restaurantListMessage);
-                    }
+                    window.history.pushState({}, '', `/admin/restaurantes/editar/${id}`);
+                    router();
                 });
             });
-
-            // --- Event listeners para ELIMINAR ---
-            registeredRestaurantsList.querySelectorAll('.delete-restaurant-admin-btn').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const id = e.target.dataset.id;
-                    if (confirm('¿Estás seguro de que quieres eliminar este restaurante?')) {
-                        try {
-                            await api.deleteRestaurante(id);
-                            displayMessage('Restaurante eliminado con éxito.', 'success', restaurantListMessage);
-                            fetchRestaurants(); // Recargar lista
-                        } catch (error) {
-                            displayMessage(error.message || 'Error al eliminar el restaurante.', 'error', restaurantListMessage);
-                        }
-                    }
-                });
-            });
-
 
         } catch (error) {
-            displayMessage(error.message || 'Error al cargar restaurantes.', 'error', restaurantListMessage);
-            registeredRestaurantsList.innerHTML = `<p class="error">Error al cargar restaurantes: ${error.message}</p>`;
-            console.error('Error fetching restaurants for admin:', error);
+            restaurantsTableBody.innerHTML = '<tr><td colspan="4">Error al cargar restaurantes.</td></tr>';
+            console.error('Error fetching restaurants for table:', error);
         }
     };
 
+    // Function to fetch and render users table
+    const fetchUsersTable = async () => {
+        usersTableBody.innerHTML = '<tr><td colspan="5">Cargando usuarios...</td></tr>';
+        try {
+            const users = await api.getUsuarios();
+            usersTableBody.innerHTML = '';
+            if (users.length === 0) {
+                usersTableBody.innerHTML = '<tr><td colspan="5">No hay usuarios registrados.</td></tr>';
+                return;
+            }
 
-    // Cargar solicitudes al montar la página
-    fetchSolicitudes();
-    // Cargar restaurantes al montar la página
-    fetchRestaurants();
+            users.forEach(userItem => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${userItem.id}</td>
+                    <td>${userItem.nombre}</td>
+                    <td>${userItem.email}</td>
+                    <td>
+                        <select class="role-select" data-id="${userItem.id}">
+                            <option value="cliente" ${userItem.rol === 'cliente' ? 'selected' : ''}>Cliente</option>
+                            <option value="propietario" ${userItem.rol === 'propietario' ? 'selected' : ''}>Propietario</option>
+                            <option value="admin" ${userItem.rol === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger delete-user-btn" data-id="${userItem.id}">Eliminar</button>
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+
+            // Add event listeners for role changes
+            usersTableBody.querySelectorAll('.role-select').forEach(select => {
+                select.addEventListener('change', async (e) => {
+                    const userId = e.target.dataset.id;
+                    const newRole = e.target.value;
+                    if (confirm(`¿Está seguro de cambiar el rol del usuario ${userId} a ${newRole}?`)) {
+                        try {
+                            await api.updateUserRole(userId, { rol: newRole });
+                            alert('Rol de usuario actualizado con éxito.');
+                            fetchUsersTable(); // Refresh table
+                        } catch (error) {
+                            alert('Error al actualizar el rol: ' + error.message);
+                            console.error('Error updating user role:', error);
+                        }
+                    } else {
+                        // A simpler revert:
+                        fetchUsersTable(); // Re-fetch to ensure original state if not changed
+                    }
+                });
+            });
+
+            // Add event listeners for user deletion
+            usersTableBody.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const userId = e.target.dataset.id;
+                    if (confirm(`¿Está seguro de eliminar al usuario ${userId}? Esta acción es irreversible.`)) {
+                        try {
+                            await api.deleteUsuario(userId);
+                            alert('Usuario eliminado con éxito.');
+                            fetchUsersTable(); // Refresh table
+                            updateStats(); // Refresh stats in case total users changed
+                        } catch (error) {
+                            alert('Error al eliminar usuario: ' + error.message);
+                            console.error('Error deleting user:', error);
+                        }
+                    }
+                });
+            });
+
+        } catch (error) {
+            usersTableBody.innerHTML = '<tr><td colspan="5">Error al cargar usuarios.</td></tr>';
+            console.error('Error fetching users for table:', error);
+        }
+    };
+
+    // Function to fetch and render solicitudes table
+    const fetchSolicitudesTable = async () => {
+        solicitudesTableBody.innerHTML = '<tr><td colspan="6">Cargando solicitudes...</td></tr>';
+        try {
+            const solicitudes = await api.getSolicitudes();
+            solicitudesTableBody.innerHTML = '';
+            if (solicitudes.length === 0) {
+                solicitudesTableBody.innerHTML = '<tr><td colspan="6">No hay solicitudes pendientes.</td></tr>';
+                return;
+            }
+
+            solicitudes.forEach(solicitud => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${solicitud.id}</td>
+                    <td>${solicitud.Usuario ? solicitud.Usuario.nombre : 'N/A'}</td>
+                    <td>${solicitud.Usuario ? solicitud.Usuario.email : 'N/A'}</td>
+                    <td>${solicitud.nombreRestaurante}</td>
+                    <td><span class="status-badge ${solicitud.estado === 'pendiente' ? 'status-inactive' : 'status-active'}">${solicitud.estado}</span></td>
+                    <td>
+                        <button class="btn btn-info view-solicitud-btn" data-id="${solicitud.id}">Ver Detalles</button>
+                    </td>
+                `;
+                solicitudesTableBody.appendChild(row);
+            });
+
+            // Add event listeners for view details buttons
+            solicitudesTableBody.querySelectorAll('.view-solicitud-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const solicitudId = e.target.dataset.id;
+                    const selectedSolicitud = solicitudes.find(s => s.id == solicitudId);
+                    if (selectedSolicitud) {
+                        openSolicitudModal(selectedSolicitud);
+                    }
+                });
+            });
+
+        } catch (error) {
+            solicitudesTableBody.innerHTML = '<tr><td colspan="6">Error al cargar solicitudes.</td></tr>';
+            console.error('Error fetching solicitudes for table:', error);
+        }
+    };
+
+    // Function to open and populate the solicitud modal
+    const openSolicitudModal = (solicitud) => {
+        modalSolicitudId.textContent = solicitud.id;
+        modalSolicitudEstado.textContent = solicitud.estado;
+        modalUsuarioNombre.textContent = solicitud.Usuario ? solicitud.Usuario.nombre : 'N/A';
+        modalUsuarioEmail.textContent = solicitud.Usuario ? solicitud.Usuario.email : 'N/A';
+        modalRestauranteNombre.textContent = solicitud.nombreRestaurante;
+        modalRestauranteDireccion.textContent = solicitud.direccionRestaurante;
+        modalRestauranteTelefono.textContent = solicitud.telefonoRestaurante;
+        modalRestauranteDescripcion.textContent = solicitud.descripcion;
+
+        // Set data-id for approve/reject buttons
+        modalApproveBtn.dataset.id = solicitud.id;
+        modalRejectBtn.dataset.id = solicitud.id;
+
+        // Hide/show buttons based on solicitud status
+        if (solicitud.estado === 'pendiente') {
+            modalApproveBtn.style.display = 'inline-block';
+            modalRejectBtn.style.display = 'inline-block';
+        } else {
+            modalApproveBtn.style.display = 'none';
+            modalRejectBtn.style.display = 'none';
+        }
+
+        solicitudDetailModal.style.display = 'block'; // Show the modal
+    };
+
+    // Function to close the solicitud modal
+    const closeSolicitudModal = () => {
+        solicitudDetailModal.style.display = 'none';
+    };
+
+    // Event listeners for modal close and overlay
+    modalCloseButton.addEventListener('click', closeSolicitudModal);
+    solicitudDetailModal.addEventListener('click', (e) => {
+        if (e.target === solicitudDetailModal) {
+            closeSolicitudModal();
+        }
+    });
+
+    // Event listeners for modal action buttons
+    modalApproveBtn.addEventListener('click', async (e) => {
+        const solicitudId = e.target.dataset.id;
+        if (confirm(`¿Está seguro de APROBAR la solicitud ${solicitudId}?`)) {
+            try {
+                await api.approveSolicitud(solicitudId);
+                alert('Solicitud aprobada con éxito. El restaurante ha sido creado y el usuario actualizado.');
+                closeSolicitudModal();
+                fetchSolicitudesTable(); // Refresh table
+                updateStats(); // Refresh stats
+                fetchRestaurantsTable(); // Refresh restaurants table as a new one might be added
+            } catch (error) {
+                alert('Error al aprobar solicitud: ' + error.message);
+                console.error('Error approving solicitud:', error);
+            }
+        }
+    });
+
+    modalRejectBtn.addEventListener('click', async (e) => {
+        const solicitudId = e.target.dataset.id;
+        if (confirm(`¿Está seguro de RECHAZAR la solicitud ${solicitudId}?`)) {
+            try {
+                await api.rejectSolicitud(solicitudId);
+                alert('Solicitud rechazada con éxito.');
+                closeSolicitudModal();
+                fetchSolicitudesTable(); // Refresh table
+                updateStats(); // Refresh stats
+            } catch (error) {
+                alert('Error al rechazar solicitud: ' + error.message);
+                console.error('Error rejecting solicitud:', error);
+            }
+        }
+    });
+
+
+    // Event listener for "Add Restaurant" button
+    addRestaurantBtn.addEventListener('click', () => {
+        window.history.pushState({}, '', '/admin/restaurantes/nuevo');
+        router();
+    });
+
+    // Event listener for "Mi Perfil" button
+    editProfileBtn.addEventListener('click', () => {
+        window.history.pushState({}, '', '/profile/edit');
+        router();
+    });
+
+    // Initial data loads
+    updateStats();
+    fetchRestaurantsTable();
+    fetchUsersTable();
+    fetchSolicitudesTable();
 
     return page;
 }
