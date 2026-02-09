@@ -50,6 +50,26 @@ const Restaurante = sequelize.define('Restaurante', {
         type: DataTypes.TEXT, // Campo para la descripción del restaurante
         allowNull: true,
     },
+    cantonId: {
+        type: DataTypes.INTEGER,
+        allowNull: true, // Permitir nulo si un restaurante no tiene cantón asignado al inicio
+    },
+    horarioLunesViernesApertura: {
+        type: DataTypes.TIME,
+        allowNull: true, // Puede ser nulo si no se especifica
+    },
+    horarioLunesViernesCierre: {
+        type: DataTypes.TIME,
+        allowNull: true, // Puede ser nulo si no se especifica
+    },
+    horarioSabadoDomingoApertura: {
+        type: DataTypes.TIME,
+        allowNull: true, // Puede ser nulo si no se especifica
+    },
+    horarioSabadoDomingoCierre: {
+        type: DataTypes.TIME,
+        allowNull: true, // Puede ser nulo si no se especifica
+    },
     estadoAprobacion: { // Nuevo campo para el estado de aprobación
         type: DataTypes.ENUM('pendiente', 'aprobado', 'rechazado'),
         defaultValue: 'pendiente',

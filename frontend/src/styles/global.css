@@ -239,3 +239,73 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Styling for Delivery App Tags */
+.delivery-app-tag {
+    display: inline-block;
+    background-color: var(--accent-olive-green);
+    color: white;
+    padding: 0.3em 0.8em;
+    border-radius: 5px;
+    margin-right: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+.no-delivery-apps {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* Styling for Allergy Warning */
+.allergy-warning {
+    color: var(--error-color);
+    background-color: rgba(var(--error-color), 0.1);
+    border: 1px solid var(--error-color);
+    padding: 0.5em 0.8em;
+    border-radius: 5px;
+    margin-top: 0.8em;
+    font-size: 0.9em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.allergy-warning::before {
+    content: '⚠️'; /* Warning emoji */
+    font-size: 1.2em;
+}
+
+/* Styling for checkbox groups in forms */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+    padding: 0.5em 0;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--background-main);
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+}
+
+.checkbox-item input[type="checkbox"] {
+    /* Basic styling for checkboxes */
+    width: 1.1em;
+    height: 1.1em;
+    accent-color: var(--primary-color); /* Tint the checkbox with primary color */
+}
+
+.checkbox-item label {
+    margin-bottom: 0; /* Override default form-group label margin */
+    font-weight: normal;
+    color: var(--text-primary);
+}

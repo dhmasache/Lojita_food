@@ -30,6 +30,7 @@ const renderHeaderContent = (navLinksElement, navRightElement) => {
     let centerLinksHtml = `
         <a href="/">Inicio</a>
         <a href="/restaurantes">Restaurantes</a>
+        <a href="/cantones">Cantones</a>
         <a href="/about">Nosotros</a>
     `;
 

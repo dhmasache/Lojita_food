@@ -32,6 +32,14 @@ function RegisterPage() {
                 <span class="error-text" id="password-error" style="display: none;"></span>
             </div>
             
+            <div class="form-group">
+                <label>Mis Alergias (Selecciona todas las que apliquen)</label>
+                <div id="alergias-checkboxes" class="checkbox-group">
+                    <!-- Allergy checkboxes will be loaded here -->
+                    <p>Cargando alergias...</p>
+                </div>
+            </div>
+            
             <button type="submit" class="btn btn-primary">Crear Cuenta</button>
             <p class="sub-text">
                 ¿Ya tienes una cuenta? <a href="/login" data-link>Inicia Sesión</a>.
@@ -46,12 +54,43 @@ function RegisterPage() {
     const nombreInput = page.querySelector('#nombre');
     const emailInput = page.querySelector('#email');
     const passwordInput = page.querySelector('#password');
+    const alergiasCheckboxesContainer = page.querySelector('#alergias-checkboxes');
 
     const nombreError = page.querySelector('#nombre-error');
     const emailError = page.querySelector('#email-error');
     const passwordError = page.querySelector('#password-error');
 
     const toggleButton = page.querySelector('.password-toggle-btn');
+
+    // Function to fetch alergias and populate the checkboxes
+    const populateAlergiasCheckboxes = async () => {
+        alergiasCheckboxesContainer.innerHTML = '<p>Cargando alergias...</p>';
+        try {
+            const alergias = await api.getAlergias();
+            console.log('Fetched allergies:', alergias); // <--- ADDED THIS LINE
+            alergiasCheckboxesContainer.innerHTML = ''; // Clear loading message
+            if (alergias.length === 0) {
+                alergiasCheckboxesContainer.innerHTML = '<p>No hay alergias disponibles.</p>';
+                return;
+            }
+            alergias.forEach(alergia => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'checkbox-item';
+                checkboxDiv.innerHTML = `
+                    <input type="checkbox" id="alergia-${alergia.id}" name="selectedAlergiaIds" value="${alergia.id}">
+                    <label for="alergia-${alergia.id}">${alergia.nombre}</label>
+                `;
+                alergiasCheckboxesContainer.appendChild(checkboxDiv);
+            });
+        } catch (error) {
+            console.error('Error fetching alergias:', error);
+            generalErrorMessage.textContent = 'Error al cargar las alergias.';
+            generalErrorMessage.style.display = 'block';
+        }
+    };
+
+    // Call to populate alergias on page load
+    populateAlergiasCheckboxes();
 
     // --- Validation Functions ---
     const validateNombre = () => {
@@ -128,9 +167,11 @@ function RegisterPage() {
         const nombre = nombreInput.value;
         const email = emailInput.value;
         const password = passwordInput.value;
+        const selectedAlergiaIds = Array.from(alergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
+                                            .map(checkbox => checkbox.value);
 
         try {
-            const userData = { nombre, email, password };
+            const userData = { nombre, email, password, selectedAlergiaIds };
             await api.register(userData);
             
             // Guardar el email en localStorage para la página de verificación

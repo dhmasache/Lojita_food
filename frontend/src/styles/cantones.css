@@ -1,0 +1,90 @@
+/* frontend/src/styles/cantones.css */
+
+.cantones-page-container {
+    padding: 2.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    font-family: var(--font-sans-serif);
+    color: var(--text-primary);
+}
+
+.cantones-page-container h1 {
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    color: var(--accent-coffee);
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.cantones-page-container p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.cantones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.canton-item {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition-smooth);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.canton-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-medium);
+}
+
+.canton-item h3 {
+    font-family: var(--font-serif);
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.canton-item p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    flex-grow: 1;
+    margin-bottom: 1rem;
+}
+
+.canton-item .view-canton-restaurants-btn {
+    width: 100%;
+    padding: 0.8rem 0;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .cantones-page-container {
+        padding: 1.5rem;
+    }
+    .cantones-page-container h1 {
+        font-size: 2.2rem;
+    }
+    .cantones-page-container p {
+        font-size: 1rem;
+    }
+    .cantones-grid {
+        grid-template-columns: 1fr;
+    }
+}

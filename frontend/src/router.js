@@ -13,6 +13,7 @@ import { RestaurantsPage } from './pages/restaurantsPage.js';
 import { RestaurantDetailPage } from './pages/restaurantDetailPage.js';
 import { RestaurantFormPage } from './pages/restaurantFormPage.js';
 import { EditProfilePage } from './pages/editProfilePage.js'; // Import the new component
+import { CantonesPage } from './pages/cantonesPage.js'; // Import the new CantonesPage component
 
 const routes = [
     { path: /^\/$/, component: HomePage },
@@ -31,6 +32,7 @@ const routes = [
     { path: /^\/profile\/edit$/, component: EditProfilePage }, // New route for editing user profile
     { path: /^\/restaurantes$/, component: RestaurantsPage },
     { path: /^\/restaurante\/(.+)$/, component: RestaurantDetailPage, paramName: 'id' },
+    { path: /^\/cantones$/, component: CantonesPage },
 ];
 
 export function router() {

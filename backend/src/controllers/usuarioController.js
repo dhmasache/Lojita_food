@@ -1,4 +1,4 @@
-const { Usuario, sequelize } = require('../models');
+const { Usuario, Alergia, UsuarioAlergia, sequelize } = require('../models');
 const jwt = require('jsonwebtoken');
 const { sendEmail } = require('../lib/mailer');
 const crypto = require('crypto');
@@ -61,7 +61,7 @@ exports.login = async (req, res) => {
 // Crear un nuevo usuario (Registro público)
 exports.createUsuario = async (req, res) => {
     try {
-        const { nombre, email, password } = req.body;
+        const { nombre, email, password, selectedAlergiaIds } = req.body;
 
         // Generar código de verificación
         const verificationCode = crypto.randomInt(100000, 999999).toString();
@@ -73,6 +73,12 @@ exports.createUsuario = async (req, res) => {
             rol: 'cliente',
             verificationCode 
         });
+        
+        // Asegurarse de que selectedAlergiaIds sea un array
+        const parsedAlergiaIds = Array.isArray(selectedAlergiaIds) ? selectedAlergiaIds : (selectedAlergiaIds ? [selectedAlergiaIds] : []);
+        if (parsedAlergiaIds.length > 0) {
+            await usuario.setAlergias(parsedAlergiaIds);
+        }
         
         // Enviar correo de verificación
         await sendEmail({
@@ -108,7 +114,8 @@ exports.createUsuario = async (req, res) => {
 exports.getUsuarios = async (req, res) => {
     try {
         const usuarios = await Usuario.findAll({
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'] },
+            include: [{ model: Alergia, attributes: ['id', 'nombre'], through: { attributes: [] } }]
         });
         res.json(usuarios);
     } catch (error) {
@@ -125,7 +132,8 @@ exports.getUsuarioById = async (req, res) => {
         }
 
         const usuario = await Usuario.findByPk(req.params.id, {
-            attributes: { exclude: ['password'] }
+            attributes: { exclude: ['password'] },
+            include: [{ model: Alergia, attributes: ['id', 'nombre'], through: { attributes: [] } }]
         });
         if (usuario) {
             res.json(usuario);
@@ -142,7 +150,7 @@ exports.getUsuarioById = async (req, res) => {
 exports.updateUsuario = async (req, res) => {
     try {
         const usuarioIdToUpdate = req.params.id;
-        const { nombre, email, telefono, password } = req.body;
+        const { nombre, email, telefono, password, selectedAlergiaIds } = req.body;
         let updateData = { nombre, email, telefono };
 
         // Autorización: un usuario solo puede modificarse a sí mismo, a menos que sea admin.
@@ -178,6 +186,13 @@ exports.updateUsuario = async (req, res) => {
             const updatedUsuario = await Usuario.findByPk(usuarioIdToUpdate, {
                 attributes: { exclude: ['password'] }
             });
+            // Asegurarse de que selectedAlergiaIds sea un array
+            const parsedAlergiaIds = Array.isArray(selectedAlergiaIds) ? selectedAlergiaIds : (selectedAlergiaIds ? [selectedAlergiaIds] : []);
+            if (parsedAlergiaIds.length > 0) {
+                await updatedUsuario.setAlergias(parsedAlergiaIds);
+            } else {
+                await updatedUsuario.setAlergias([]); // Clear all associations if none selected
+            }
             res.json(updatedUsuario);
         } else {
             res.status(404).json({ error: 'Usuario no encontrado o no se realizaron cambios.' });

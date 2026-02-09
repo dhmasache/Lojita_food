@@ -29,17 +29,14 @@
 
 .restaurant-detail-page .restaurant-image-main {
     width: 100%;
-    height: 380px; /* Altura controlada, un poco más que antes */
-    object-fit: cover; /* Recortar la imagen para que encaje */
+    max-height: 300px; /* Altura máxima controlada */
+    object-fit: contain; /* Asegurar que la imagen completa sea visible */
+    background-color: var(--surface-color); /* Fondo para el espacio vacío si la imagen no llena el contenedor */
     display: block;
-    /* Añadir un sutil overlay de degradado */
-    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
-    
-    /* Efecto de sombra para la imagen, haciéndola más "chévere" */
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15); /* Sombra pronunciada debajo de la imagen */
+    border-radius: 15px 15px 0 0; /* Bordes redondeados solo arriba, a juego con el contenedor */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1); /* Sombra más suave */
     position: relative;
-    z-index: 1; /* Para que la sombra se vea sobre el fondo */
+    z-index: 1;
 }
 
 .restaurant-detail-page .restaurant-title {

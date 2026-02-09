@@ -1,9 +1,9 @@
-const { Plato, Restaurante } = require('../models');
+const { Plato, Restaurante, Alergia, PlatoAlergia } = require('../models');
 
 // Crear un nuevo plato
 exports.createPlato = async (req, res) => {
     try {
-        const { nombre, descripcion, precio, restauranteId } = req.body;
+        const { nombre, descripcion, precio, restauranteId, preparacion, selectedAlergiaIds } = req.body;
 
         // Verificar el restaurante y su propietario para la autorización
         const restaurante = await Restaurante.findByPk(restauranteId);
@@ -27,8 +27,15 @@ exports.createPlato = async (req, res) => {
             descripcion,
             precio: parseFloat(precio), // Asegurarse de que el precio sea un número
             imagenUrl,
+            preparacion, // Nuevo campo
             restauranteId: parseInt(restauranteId) // Asegurarse de que el ID sea un número
         });
+
+        // Asegurarse de que selectedAlergiaIds sea un array
+        const parsedAlergiaIds = Array.isArray(selectedAlergiaIds) ? selectedAlergiaIds : (selectedAlergiaIds ? [selectedAlergiaIds] : []);
+        if (parsedAlergiaIds.length > 0) {
+            await plato.setAlergias(parsedAlergiaIds);
+        }
         res.status(201).json(plato);
     } catch (error) {
         if (error.name === 'SequelizeValidationError') {
@@ -48,7 +55,10 @@ exports.getPlatos = async (req, res) => {
         
         const platos = await Plato.findAll({
             where,
-            include: { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] }
+            include: [
+                { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] },
+                { model: Alergia, attributes: ['id', 'nombre'], through: { attributes: [] } }
+            ]
         });
         res.json(platos);
     } catch (error) {
@@ -60,7 +70,10 @@ exports.getPlatos = async (req, res) => {
 exports.getPlatoById = async (req, res) => {
     try {
         const plato = await Plato.findByPk(req.params.id, {
-            include: { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] }
+            include: [
+                { model: Restaurante, attributes: ['id', 'nombre', 'propietarioId'] },
+                { model: Alergia, attributes: ['id', 'nombre'], through: { attributes: [] } }
+            ]
         });
         if (plato) {
             res.json(plato);
@@ -76,7 +89,7 @@ exports.getPlatoById = async (req, res) => {
 exports.updatePlato = async (req, res) => {
     try {
         const platoId = req.params.id;
-        const { nombre, descripcion, precio, restauranteId } = req.body;
+        const { nombre, descripcion, precio, restauranteId, preparacion, selectedAlergiaIds } = req.body;
 
         const plato = await Plato.findByPk(platoId, {
             include: { model: Restaurante }
@@ -100,6 +113,7 @@ exports.updatePlato = async (req, res) => {
             nombre,
             descripcion,
             precio: parseFloat(precio),
+            preparacion, // Nuevo campo
             restauranteId: parseInt(restauranteId)
         };
 
@@ -113,6 +127,13 @@ exports.updatePlato = async (req, res) => {
 
         if (updated) {
             const updatedPlato = await Plato.findByPk(platoId);
+            // Asegurarse de que selectedAlergiaIds sea un array
+            const parsedAlergiaIds = Array.isArray(selectedAlergiaIds) ? selectedAlergiaIds : (selectedAlergiaIds ? [selectedAlergiaIds] : []);
+            if (parsedAlergiaIds.length > 0) {
+                await updatedPlato.setAlergias(parsedAlergiaIds);
+            } else {
+                await updatedPlato.setAlergias([]); // Clear all associations if none selected
+            }
             res.json(updatedPlato);
         } else {
             res.status(404).json({ error: 'Plato no encontrado (o no se realizaron cambios)' });

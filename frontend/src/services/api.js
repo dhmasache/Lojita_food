@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3000/api';
+const API_BASE_URL = 'http://localhost:3000/api'; // Base URL for the backend API
 
 /**
  * Función genérica para realizar peticiones a la API.
@@ -128,10 +128,13 @@ const api = {
     }),
 
     // Restaurantes
-    getRestaurantes: (searchTerm = '') => {
+    getRestaurantes: (queryParamsOrEndpoint = '') => {
         let endpoint = '/restaurantes';
-        if (searchTerm) {
-            endpoint += `?search=${encodeURIComponent(searchTerm)}`;
+        if (queryParamsOrEndpoint.startsWith('/restaurantes?')) {
+            endpoint = queryParamsOrEndpoint;
+        } else if (queryParamsOrEndpoint) {
+            // This path is for existing calls that only pass a search term
+            endpoint += `?search=${encodeURIComponent(queryParamsOrEndpoint)}`;
         }
         return request(endpoint);
     },

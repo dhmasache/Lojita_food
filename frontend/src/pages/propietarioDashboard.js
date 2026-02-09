@@ -64,6 +64,17 @@ function PropietarioDashboardPage() {
                             <textarea id="dishDescription" name="descripcion" rows="3"></textarea>
                         </div>
                         <div class="form-group">
+                            <label for="dishPreparacion">Preparación (Ingredientes)</label>
+                            <textarea id="dishPreparacion" name="preparacion" rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Alérgenos en el Plato (Selecciona todas las que apliquen)</label>
+                            <div id="add-dish-alergias-checkboxes" class="checkbox-group">
+                                <!-- Allergy checkboxes will be loaded here -->
+                                <p>Cargando alérgenos...</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label for="dishPrice">Precio</label>
                             <input type="number" id="dishPrice" name="precio" step="0.01" required>
                         </div>
@@ -94,6 +105,17 @@ function PropietarioDashboardPage() {
                         <div class="form-group">
                             <label for="editDishDescription">Descripción</label>
                             <textarea id="editDishDescription" name="descripcion" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="editDishPreparacion">Preparación (Ingredientes)</label>
+                            <textarea id="editDishPreparacion" name="preparacion" rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Alérgenos en el Plato (Selecciona todas las que apliquen)</label>
+                            <div id="edit-dish-alergias-checkboxes" class="checkbox-group">
+                                <!-- Allergy checkboxes will be loaded here -->
+                                <p>Cargando alérgenos...</p>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="editDishPrice">Precio</label>
@@ -127,6 +149,8 @@ function PropietarioDashboardPage() {
         const cancelAddDishBtn = page.querySelector('#cancel-add-dish-btn');
         const dishImageFileInput = page.querySelector('#dishImage');
         const dishImageNameDisplay = page.querySelector('#dish-image-name-display');
+        const addDishPreparacionTextarea = page.querySelector('#dishPreparacion');
+        const addDishAlergiasCheckboxesContainer = page.querySelector('#add-dish-alergias-checkboxes');
 
         const editDishFormSection = page.querySelector('#edit-dish-form-section');
         const editDishForm = page.querySelector('#edit-dish-form');
@@ -134,6 +158,8 @@ function PropietarioDashboardPage() {
         const editDishImageFileInput = page.querySelector('#editDishImage');
         const editDishImageNameDisplay = page.querySelector('#edit-dish-image-name-display');
         const currentDishImagePreview = page.querySelector('#current-dish-image-preview');
+        const editDishPreparacionTextarea = page.querySelector('#editDishPreparacion');
+        const editDishAlergiasCheckboxesContainer = page.querySelector('#edit-dish-alergias-checkboxes');
 
 
         const displayMessage = (msg, type) => {
@@ -176,8 +202,10 @@ function PropietarioDashboardPage() {
                         <p><strong>Dirección:</strong> ${currentRestaurant.direccion}</p>
                         <p><strong>Teléfono:</strong> ${currentRestaurant.telefono}</p>
                         <p><strong>Email:</strong> ${currentRestaurant.email || 'N/A'}</p>
-                        <p><strong>Horario:</strong> ${currentRestaurant.horarioApertura} - ${currentRestaurant.horarioCierre}</p>
+                        <p><strong>Horario L-V:</strong> ${currentRestaurant.horarioLunesViernesApertura || 'N/A'} - ${currentRestaurant.horarioLunesViernesCierre || 'N/A'}</p>
+                        <p><strong>Horario S-D:</strong> ${currentRestaurant.horarioSabadoDomingoApertura || 'N/A'} - ${currentRestaurant.horarioSabadoDomingoCierre || 'N/A'}</p>
                         <p><strong>Descripción:</strong> ${currentRestaurant.descripcion || 'Sin descripción.'}</p>
+                        <p><strong>Cantón:</strong> ${currentRestaurant.Canton ? currentRestaurant.Canton.nombre : 'N/A'}</p>
                         <p><strong>Tradicional:</strong> ${currentRestaurant.esTradicional ? 'Sí' : 'No'}</p>
                         ${currentRestaurant.imageUrl ? `<img src="http://localhost:3000${currentRestaurant.imageUrl}" alt="${currentRestaurant.nombre}" class="restaurant-image">` : '<p>No hay imagen principal para el restaurante.</p>'}
                     `;
@@ -189,7 +217,7 @@ function PropietarioDashboardPage() {
                     });
 
                     // Fetch dishes for this restaurant
-                    const dishes = await api.getPlatos(currentRestaurant.id);
+                    const dishes = await api.getPlatos(`?restauranteId=${currentRestaurant.id}`);
                     dishesListDiv.innerHTML = ''; // Limpiar antes de renderizar
                     if (dishes.length === 0) {
                         dishesListDiv.innerHTML = '<p>Aún no tienes platos registrados.</p>';
@@ -202,6 +230,9 @@ function PropietarioDashboardPage() {
                                 ${dish.imagenUrl ? `<img src="http://localhost:3000${dish.imagenUrl}" alt="${dish.nombre}" class="dish-image">` : '<p>No hay imagen para este plato.</p>'}
                                 <p>${dish.descripcion || 'Sin descripción.'}</p>
                                 <p><strong>Precio:</strong> $${parseFloat(dish.precio).toFixed(2)}</p>
+                                <p><strong>Preparación:</strong> ${dish.preparacion || 'N/A'}</p>
+                                ${dish.Alergias && dish.Alergias.length > 0 ? 
+                                    `<p><strong>Alérgenos:</strong> ${dish.Alergias.map(a => a.nombre).join(', ')}</p>` : ''}
                                 <div class="dish-actions">
                                     <button class="btn btn-secondary edit-dish-btn" data-id="${dish.id}">Editar Plato</button>
                                     <button class="btn btn-danger delete-dish-btn" data-id="${dish.id}">Eliminar Plato</button>
@@ -223,6 +254,12 @@ function PropietarioDashboardPage() {
                                     editDishForm.elements.editDishName.value = dishToEdit.nombre;
                                     editDishForm.elements.editDishDescription.value = dishToEdit.descripcion;
                                     editDishForm.elements.editDishPrice.value = parseFloat(dishToEdit.precio).toFixed(2);
+                                    editDishPreparacionTextarea.value = dishToEdit.preparacion || '';
+
+                                    // Populate and pre-select allergies for edit form
+                                    const dishAlergiaIds = dishToEdit.Alergias ? dishToEdit.Alergias.map(a => a.id) : [];
+                                    await populateAlergiasCheckboxes(editDishAlergiasCheckboxesContainer, dishAlergiaIds);
+                                    
                                     if (dishToEdit.imagenUrl) {
                                         currentDishImagePreview.innerHTML = `<img src="http://localhost:3000${dishToEdit.imagenUrl}" alt="${dishToEdit.nombre}" class="dish-image-preview">`;
                                         editDishImageNameDisplay.textContent = dishToEdit.imagenUrl.split('/').pop();
@@ -275,18 +312,48 @@ function PropietarioDashboardPage() {
             }
         };
 
+        // Function to fetch alergias and populate the checkboxes
+        const populateAlergiasCheckboxes = async (container, selectedAlergiaIds = []) => {
+            container.innerHTML = '<p>Cargando alérgenos...</p>';
+            try {
+                const alergias = await api.getAlergias();
+                container.innerHTML = ''; // Clear loading message
+                if (alergias.length === 0) {
+                    container.innerHTML = '<p>No hay alérgenos disponibles.</p>';
+                    return;
+                }
+                alergias.forEach(alergia => {
+                    const checkboxDiv = document.createElement('div');
+                    checkboxDiv.className = 'checkbox-item';
+                    checkboxDiv.innerHTML = `
+                        <input type="checkbox" id="alergia-${alergia.id}-${container.id}" name="selectedAlergiaIds" value="${alergia.id}" ${selectedAlergiaIds.includes(alergia.id) ? 'checked' : ''}>
+                        <label for="alergia-${alergia.id}-${container.id}">${alergia.nombre}</label>
+                    `;
+                    container.appendChild(checkboxDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching alergias:', error);
+                displayMessage('Error al cargar los alérgenos.', 'error');
+            }
+        };
 
+        // Initial calls to populate checkboxes
+        populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer);
+        // For edit form, it will be populated when edit button is clicked (in fetchRestaurantAndDishes)
+        
         addDishBtn.addEventListener('click', () => {
             addDishFormSection.style.display = 'block';
             editDishFormSection.style.display = 'none';
             addDishForm.reset();
             dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
+            populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer); // Re-populate for reset
         });
 
         cancelAddDishBtn.addEventListener('click', () => {
             addDishFormSection.style.display = 'none';
             addDishForm.reset();
             dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
+            addDishPreparacionTextarea.value = ''; // Clear preparacion
         });
 
         cancelEditDishBtn.addEventListener('click', () => {
@@ -307,6 +374,13 @@ function PropietarioDashboardPage() {
 
             const formData = new FormData(addDishForm);
             formData.append('restauranteId', currentRestaurant.id);
+            formData.append('preparacion', addDishPreparacionTextarea.value);
+
+            const selectedAlergiaIds = Array.from(addDishAlergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
+                                                .map(checkbox => checkbox.value);
+            selectedAlergiaIds.forEach(id => {
+                formData.append('selectedAlergiaIds[]', id);
+            });
             
             try {
                 await api.createPlato(formData);
@@ -314,6 +388,8 @@ function PropietarioDashboardPage() {
                 addDishFormSection.style.display = 'none';
                 addDishForm.reset();
                 dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
+                addDishPreparacionTextarea.value = ''; // Clear preparacion
+                populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer); // Reset checkboxes
                 fetchRestaurantAndDishes();
             } catch (error) {
                 displayMessage(error.message || 'Error al crear el plato.', 'error');
@@ -337,6 +413,14 @@ function PropietarioDashboardPage() {
                 formData.delete('imagenPlato'); // Eliminar el campo si no se seleccionó una nueva imagen
             }
 
+            formData.append('preparacion', editDishPreparacionTextarea.value);
+
+            const selectedAlergiaIds = Array.from(editDishAlergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
+                                                .map(checkbox => checkbox.value);
+            selectedAlergiaIds.forEach(id => {
+                formData.append('selectedAlergiaIds[]', id);
+            });
+            
             try {
                 await api.updatePlato(editingDishId, formData);
                 displayMessage('Plato actualizado con éxito.', 'success');
@@ -345,6 +429,8 @@ function PropietarioDashboardPage() {
                 editingDishId = null;
                 currentDishImagePreview.innerHTML = '';
                 editDishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
+                editDishPreparacionTextarea.value = ''; // Clear preparacion
+                populateAlergiasCheckboxes(editDishAlergiasCheckboxesContainer); // Reset checkboxes
                 fetchRestaurantAndDishes();
             } catch (error) {
                 displayMessage(error.message || 'Error al actualizar el plato.', 'error');

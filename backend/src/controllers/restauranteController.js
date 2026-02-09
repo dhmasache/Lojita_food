@@ -1,4 +1,4 @@
-const { Restaurante, Usuario, sequelize } = require('../models');
+const { Restaurante, Usuario, Canton, DeliveryApp, RestauranteDeliveryApp, sequelize } = require('../models');
 const { Op } = require('sequelize');
 
 // Crear un nuevo restaurante
@@ -24,7 +24,7 @@ exports.createRestaurante = async (req, res) => {
             return res.status(401).json({ error: 'Usuario no autenticado para crear un restaurante.' });
         }
 
-        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud } = req.body;
+        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud, cantonId, horarioLunesViernesApertura, horarioLunesViernesCierre, horarioSabadoDomingoApertura, horarioSabadoDomingoCierre, deliveryAppIds } = req.body;
 
         // Multer pone la información del archivo en req.file
         let imageUrl = null;
@@ -47,8 +47,19 @@ exports.createRestaurante = async (req, res) => {
             imageUrl, // Nuevo campo
             latitud: latitud || null, // Guardar latitud
             longitud: longitud || null, // Guardar longitud
+            cantonId: cantonId || null,
+            horarioLunesViernesApertura: horarioLunesViernesApertura || null,
+            horarioLunesViernesCierre: horarioLunesViernesCierre || null,
+            horarioSabadoDomingoApertura: horarioSabadoDomingoApertura || null,
+            horarioSabadoDomingoCierre: horarioSabadoDomingoCierre || null,
             propietarioId
         });
+
+        // Asegurarse de que deliveryAppIds sea un array
+        const parsedDeliveryAppIds = Array.isArray(deliveryAppIds) ? deliveryAppIds : (deliveryAppIds ? [deliveryAppIds] : []);
+        if (parsedDeliveryAppIds.length > 0) {
+            await restaurante.setDeliveryApps(parsedDeliveryAppIds);
+        }
         res.status(201).json(restaurante);
     } catch (error) {
         // Mejorar manejo de errores de validación de Sequelize
@@ -66,7 +77,7 @@ exports.createRestaurante = async (req, res) => {
 // Obtener todos los restaurantes
 exports.getRestaurantes = async (req, res) => {
     try {
-        const { search, propietarioId } = req.query; // Obtener propietarioId de la query
+        const { search, propietarioId, cantonId } = req.query; // Obtener propietarioId y cantonId de la query
         let whereClause = {};
 
         if (search) {
@@ -80,9 +91,18 @@ exports.getRestaurantes = async (req, res) => {
             whereClause.propietarioId = propietarioId;
         }
 
+        // Si se proporciona cantonId, añadirlo a la cláusula WHERE
+        if (cantonId) {
+            whereClause.cantonId = cantonId;
+        }
+
         const restaurantes = await Restaurante.findAll({
             where: whereClause,
-            include: { model: Usuario, as: 'propietario', attributes: ['id', 'nombre', 'email'] }
+            include: [
+                { model: Usuario, as: 'propietario', attributes: ['id', 'nombre', 'email'] },
+                { model: Canton, attributes: ['id', 'nombre'] },
+                { model: DeliveryApp, attributes: ['idApp', 'nombre', 'url'], through: { attributes: [] } } // Include DeliveryApp through the join table, without join table attributes
+            ]
         });
         res.json(restaurantes);
     } catch (error) {
@@ -94,7 +114,11 @@ exports.getRestaurantes = async (req, res) => {
 exports.getRestauranteById = async (req, res) => {
     try {
         const restaurante = await Restaurante.findByPk(req.params.id, {
-             include: { model: Usuario, as: 'propietario', attributes: ['id', 'nombre', 'email'] }
+             include: [
+                { model: Usuario, as: 'propietario', attributes: ['id', 'nombre', 'email'] },
+                { model: Canton, attributes: ['id', 'nombre'] },
+                { model: DeliveryApp, attributes: ['idApp', 'nombre', 'url'], through: { attributes: [] } } // Include DeliveryApp through the join table, without join table attributes
+            ]
         });
         if (restaurante) {
             res.json(restaurante);
@@ -120,8 +144,8 @@ exports.updateRestaurante = async (req, res) => {
             return res.status(403).json({ error: 'Acceso denegado. No tienes permiso para modificar este restaurante.' });
         }
         
-        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud } = req.body;
-        let updateData = { nombre, direccion, telefono, horarioApertura, horarioCierre, descripcion, latitud, longitud };
+        const { nombre, direccion, telefono, email, horarioApertura, horarioCierre, descripcion, latitud, longitud, cantonId, horarioLunesViernesApertura, horarioLunesViernesCierre, horarioSabadoDomingoApertura, horarioSabadoDomingoCierre, deliveryAppIds } = req.body;
+        let updateData = { nombre, direccion, telefono, horarioApertura, horarioCierre, descripcion, latitud, longitud, cantonId, horarioLunesViernesApertura, horarioLunesViernesCierre, horarioSabadoDomingoApertura, horarioSabadoDomingoCierre };
 
         // 1. Manejo de imagen
         if (req.file) { // Si se sube un nuevo archivo
@@ -141,7 +165,14 @@ exports.updateRestaurante = async (req, res) => {
         // 3. Conversión de email de string vacío a null
         updateData.email = email || null;
 
-        // 4. Manejo de propietarioId (solo si es admin y se proporciona)
+        // 4. Conversión de cantonId y horarios de string vacío a null
+        updateData.cantonId = cantonId || null;
+        updateData.horarioLunesViernesApertura = horarioLunesViernesApertura || null;
+        updateData.horarioLunesViernesCierre = horarioLunesViernesCierre || null;
+        updateData.horarioSabadoDomingoApertura = horarioSabadoDomingoApertura || null;
+        updateData.horarioSabadoDomingoCierre = horarioSabadoDomingoCierre || null;
+
+        // 5. Manejo de propietarioId (solo si es admin y se proporciona)
         if (req.usuario.rol === 'admin' && req.body.propietarioId !== undefined) {
             if (req.body.propietarioId) {
                 const owner = await Usuario.findByPk(req.body.propietarioId);
@@ -160,6 +191,13 @@ exports.updateRestaurante = async (req, res) => {
 
         if (updated) {
             const updatedRestaurante = await Restaurante.findByPk(req.params.id);
+            // Asegurarse de que deliveryAppIds sea un array
+            const parsedDeliveryAppIds = Array.isArray(deliveryAppIds) ? deliveryAppIds : (deliveryAppIds ? [deliveryAppIds] : []);
+            if (parsedDeliveryAppIds.length > 0) {
+                await updatedRestaurante.setDeliveryApps(parsedDeliveryAppIds);
+            } else {
+                await updatedRestaurante.setDeliveryApps([]); // Clear all associations if none selected
+            }
             res.json(updatedRestaurante);
         } else {
             // Si updated es 0, significa que no se encontraron cambios o el ID no existe.

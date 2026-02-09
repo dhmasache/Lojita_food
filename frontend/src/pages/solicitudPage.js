@@ -36,6 +36,29 @@ function SolicitudPage() {
                     <label for="emailRestaurante">Email del Restaurante</label>
                     <input type="email" id="emailRestaurante" name="emailRestaurante">
                 </div>
+                <div class="form-group">
+                    <label for="cantonId">Cantón</label>
+                    <select id="cantonId" name="cantonId" required>
+                        <option value="">Selecciona un Cantón</option>
+                        <!-- Options will be loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="horarioLunesViernesApertura">Horario L-V Apertura</label>
+                    <input type="time" id="horarioLunesViernesApertura" name="horarioLunesViernesApertura" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioLunesViernesCierre">Horario L-V Cierre</label>
+                    <input type="time" id="horarioLunesViernesCierre" name="horarioLunesViernesCierre" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioSabadoDomingoApertura">Horario S-D Apertura</label>
+                    <input type="time" id="horarioSabadoDomingoApertura" name="horarioSabadoDomingoApertura" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioSabadoDomingoCierre">Horario S-D Cierre</label>
+                    <input type="time" id="horarioSabadoDomingoCierre" name="horarioSabadoDomingoCierre" required>
+                </div>
                 
                 <!-- Map Integration (Leaflet) for Address -->
                 <div class="form-group">
@@ -77,6 +100,11 @@ function SolicitudPage() {
     // Form elements
     const form = page.querySelector('#solicitud-form');
     const emailRestauranteInput = page.querySelector('#emailRestaurante');
+    const cantonSelect = page.querySelector('#cantonId');
+    const horarioLunesViernesAperturaInput = page.querySelector('#horarioLunesViernesApertura');
+    const horarioLunesViernesCierreInput = page.querySelector('#horarioLunesViernesCierre');
+    const horarioSabadoDomingoAperturaInput = page.querySelector('#horarioSabadoDomingoApertura');
+    const horarioSabadoDomingoCierreInput = page.querySelector('#horarioSabadoDomingoCierre');
     const restaurantImageFileInput = page.querySelector('#restaurantImageSolicitud');
     const restaurantImageNameDisplay = page.querySelector('#restaurant-image-name-display');
 
@@ -112,6 +140,22 @@ function SolicitudPage() {
         displayAddress.textContent = address;
     };
 
+    // Function to fetch cantones and populate the select dropdown
+    const populateCantonesSelect = async () => {
+        try {
+            const cantones = await api.getCantones();
+            cantones.forEach(canton => {
+                const option = document.createElement('option');
+                option.value = canton.id;
+                option.textContent = canton.nombre;
+                cantonSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching cantones:', error);
+            displayMessage('Error al cargar los cantones.', 'error');
+        }
+    };
+
     // Initialize map immediately when the form is present
     const defaultLocation = { lat: -3.99268, lng: -79.20788 }; // Default to Loja, Ecuador
     currentLeafletMapInstance = initializeLeafletMap(
@@ -121,14 +165,16 @@ function SolicitudPage() {
         true,
         onLeafletLocationChangeCallback
     );
-    // Force Leaflet to recalculate its size
-    if (currentLeafletMapInstance) {
-        setTimeout(() => {
-            currentLeafletMapInstance.invalidateSize();
-        }, 0); 
-    }
-
-    // Event listener for map search input
+            // Force Leaflet to recalculate its size
+            if (currentLeafletMapInstance) {
+                setTimeout(() => {
+                    currentLeafletMapInstance.invalidateSize();
+                }, 0); 
+            }
+    
+            populateCantonesSelect(); // Call to populate cantones
+    
+            // Event listener for map search input
     mapSearchAddressInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -160,6 +206,11 @@ function SolicitudPage() {
         formData.append('latitud', latitudInput.value);
         formData.append('longitud', longitudInput.value);
         formData.append('email', emailRestauranteInput.value); // Añadir email
+        formData.append('cantonId', cantonSelect.value);
+        formData.append('horarioLunesViernesApertura', horarioLunesViernesAperturaInput.value);
+        formData.append('horarioLunesViernesCierre', horarioLunesViernesCierreInput.value);
+        formData.append('horarioSabadoDomingoApertura', horarioSabadoDomingoAperturaInput.value);
+        formData.append('horarioSabadoDomingoCierre', horarioSabadoDomingoCierreInput.value);
 
         // Añadir imagen si se seleccionó una
         if (restaurantImageFileInput.files.length > 0) {
@@ -178,6 +229,13 @@ function SolicitudPage() {
             form.reset(); // Limpiar el formulario
             restaurantImageNameDisplay.textContent = 'Ningún archivo seleccionado'; // Reset file name display
             
+            // Reset new hourly fields
+            horarioLunesViernesAperturaInput.value = '';
+            horarioLunesViernesCierreInput.value = '';
+            horarioSabadoDomingoAperturaInput.value = '';
+            horarioSabadoDomingoCierreInput.value = '';
+            cantonSelect.value = ''; // Reset canton select
+
             // Reset map to default after submission
             setLeafletMapLocation(defaultLocation);
             onLeafletLocationChangeCallback(defaultLocation.lat, defaultLocation.lat, 'Ubicación predeterminada (Loja)');

@@ -32,16 +32,38 @@ function RestaurantFormPage(params) {
                     <input type="email" id="email" name="email">
                 </div>
                 <div class="form-group">
-                    <label for="horarioApertura">Horario Apertura</label>
-                    <input type="time" id="horarioApertura" name="horarioApertura" required>
+                    <label for="cantonId">Cantón</label>
+                    <select id="cantonId" name="cantonId" required>
+                        <option value="">Selecciona un Cantón</option>
+                        <!-- Options will be loaded dynamically -->
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="horarioCierre">Horario Cierre</label>
-                    <input type="time" id="horarioCierre" name="horarioCierre" required>
+                    <label for="horarioLunesViernesApertura">Horario L-V Apertura</label>
+                    <input type="time" id="horarioLunesViernesApertura" name="horarioLunesViernesApertura" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioLunesViernesCierre">Horario L-V Cierre</label>
+                    <input type="time" id="horarioLunesViernesCierre" name="horarioLunesViernesCierre" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioSabadoDomingoApertura">Horario S-D Apertura</label>
+                    <input type="time" id="horarioSabadoDomingoApertura" name="horarioSabadoDomingoApertura" required>
+                </div>
+                <div class="form-group">
+                    <label for="horarioSabadoDomingoCierre">Horario S-D Cierre</label>
+                    <input type="time" id="horarioSabadoDomingoCierre" name="horarioSabadoDomingoCierre" required>
                 </div>
                 <div class="form-group">
                     <label for="descripcion">Descripción</label>
                     <textarea id="descripcion" name="descripcion"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Aplicaciones de Delivery (Selecciona todas las que apliquen)</label>
+                    <div id="delivery-apps-checkboxes" class="checkbox-group">
+                        <!-- Delivery App checkboxes will be loaded here -->
+                        <p>Cargando aplicaciones de delivery...</p>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="esTradicional-checkbox">Es Tradicional</label>
@@ -86,9 +108,13 @@ function RestaurantFormPage(params) {
     const nombreInput = page.querySelector('#nombre');
     const telefonoInput = page.querySelector('#telefono');
     const emailInput = page.querySelector('#email');
-    const horarioAperturaInput = page.querySelector('#horarioApertura');
-    const horarioCierreInput = page.querySelector('#horarioCierre');
+    const cantonSelect = page.querySelector('#cantonId');
+    const horarioLunesViernesAperturaInput = page.querySelector('#horarioLunesViernesApertura');
+    const horarioLunesViernesCierreInput = page.querySelector('#horarioLunesViernesCierre');
+    const horarioSabadoDomingoAperturaInput = page.querySelector('#horarioSabadoDomingoApertura');
+    const horarioSabadoDomingoCierreInput = page.querySelector('#horarioSabadoDomingoCierre');
     const descripcionTextarea = page.querySelector('#descripcion');
+    const deliveryAppsCheckboxesContainer = page.querySelector('#delivery-apps-checkboxes');
     const esTradicionalCheckbox = page.querySelector('#esTradicional-checkbox');
     const currentImagePreview = page.querySelector('#current-image-preview');
     const imageUrlFileInput = page.querySelector('#imageUrlFile'); // Changed ID
@@ -116,6 +142,50 @@ function RestaurantFormPage(params) {
         displayAddress.textContent = address;
     };
 
+    // Function to fetch cantones and populate the select dropdown
+    const populateCantonesSelect = async () => {
+        try {
+            const cantones = await api.getCantones();
+            cantones.forEach(canton => {
+                const option = document.createElement('option');
+                option.value = canton.id;
+                option.textContent = canton.nombre;
+                cantonSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error fetching cantones:', error);
+            formMessage.textContent = 'Error al cargar los cantones.';
+            formMessage.classList.add('error');
+            formMessage.style.display = 'block';
+        }
+    };
+
+    const populateDeliveryAppsCheckboxes = async () => {
+        deliveryAppsCheckboxesContainer.innerHTML = '<p>Cargando aplicaciones de delivery...</p>';
+        try {
+            const deliveryApps = await api.getDeliveryApps();
+            deliveryAppsCheckboxesContainer.innerHTML = ''; // Clear loading message
+            if (deliveryApps.length === 0) {
+                deliveryAppsCheckboxesContainer.innerHTML = '<p>No hay aplicaciones de delivery disponibles.</p>';
+                return;
+            }
+            deliveryApps.forEach(app => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'checkbox-item';
+                checkboxDiv.innerHTML = `
+                    <input type="checkbox" id="deliveryApp-${app.idApp}" name="deliveryAppIds" value="${app.idApp}">
+                    <label for="deliveryApp-${app.idApp}">${app.nombre}</label>
+                `;
+                deliveryAppsCheckboxesContainer.appendChild(checkboxDiv);
+            });
+        } catch (error) {
+            console.error('Error fetching delivery apps:', error);
+            formMessage.textContent = 'Error al cargar las aplicaciones de delivery.';
+            formMessage.classList.add('error');
+            formMessage.style.display = 'block';
+        }
+    };
+
     // Load restaurant data if in edit mode
     const loadRestaurantData = async () => {
         try {
@@ -124,10 +194,23 @@ function RestaurantFormPage(params) {
                 nombreInput.value = currentRestaurant.nombre;
                 telefonoInput.value = currentRestaurant.telefono;
                 emailInput.value = currentRestaurant.email;
-                horarioAperturaInput.value = currentRestaurant.horarioApertura;
-                horarioCierreInput.value = currentRestaurant.horarioCierre;
+                cantonSelect.value = currentRestaurant.cantonId;
+                horarioLunesViernesAperturaInput.value = currentRestaurant.horarioLunesViernesApertura;
+                horarioLunesViernesCierreInput.value = currentRestaurant.horarioLunesViernesCierre;
+                horarioSabadoDomingoAperturaInput.value = currentRestaurant.horarioSabadoDomingoApertura;
+                horarioSabadoDomingoCierreInput.value = currentRestaurant.horarioSabadoDomingoCierre;
                 descripcionTextarea.value = currentRestaurant.descripcion;
                 esTradicionalCheckbox.checked = currentRestaurant.esTradicional;
+
+                // Pre-select delivery apps
+                if (currentRestaurant.DeliveryApps && currentRestaurant.DeliveryApps.length > 0) {
+                    currentRestaurant.DeliveryApps.forEach(app => {
+                        const checkbox = page.querySelector(`#deliveryApp-${app.idApp}`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
 
                 if (currentRestaurant.imageUrl) {
                     currentImagePreview.src = currentRestaurant.imageUrl;
@@ -200,6 +283,13 @@ function RestaurantFormPage(params) {
         formData.set('direccion', restaurantAddressInput.value);
         formData.set('esTradicional', esTradicionalCheckbox.checked ? 'true' : 'false');
 
+        // Collect selected delivery app IDs
+        const selectedDeliveryAppIds = Array.from(deliveryAppsCheckboxesContainer.querySelectorAll('input[name="deliveryAppIds"]:checked'))
+                                            .map(checkbox => checkbox.value);
+        selectedDeliveryAppIds.forEach(id => {
+            formData.append('deliveryAppIds[]', id);
+        });
+
         // Basic validation for map location
         if (!formData.get('latitud') || !formData.get('longitud') || !formData.get('direccion')) {
             formMessage.textContent = 'Por favor, selecciona la ubicación del restaurante en el mapa o busca una dirección.';
@@ -248,6 +338,9 @@ function RestaurantFormPage(params) {
         // but for new mode, we need to manually call the callback once map is initialized
         onLeafletLocationChangeCallback(defaultLocation.lat, defaultLocation.lng, 'Ubicación predeterminada (Loja)');
     }
+
+    populateCantonesSelect(); // Call to populate cantones
+    populateDeliveryAppsCheckboxes(); // Call to populate delivery apps
 
     return page;
 }

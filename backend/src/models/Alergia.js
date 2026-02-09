@@ -1,26 +1,21 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
+const sequelize = require('../../config/database'); // Corregir la importación de sequelize
 
 const Alergia = sequelize.define('Alergia', {
-  idAlergia: {
+  id: { // Renombrar a 'id' para consistencia
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    comment: 'id de la alergia'
   },
   nombre: {
     type: DataTypes.STRING,
     allowNull: false,
-    comment: 'nombre del alérgeno (ej: maní, gluten, lactosa)'
+    unique: true // Asegurar que los nombres de alérgenos sean únicos
   },
-  descripcion: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    comment: 'información adicional sobre la alergia'
-  }
+  // La columna 'descripcion' ya no se incluye en el modelo
 }, {
-  tableName: 'alergias',
-  timestamps: true
+  tableName: 'Alergias', // Corregir a 'Alergias' para consistencia
+  timestamps: true // Mantener timestamps si son útiles para el registro de alergias
 });
 
 module.exports = Alergia;

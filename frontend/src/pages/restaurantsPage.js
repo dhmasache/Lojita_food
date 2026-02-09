@@ -7,12 +7,14 @@ function RestaurantsPage() {
     const page = document.createElement('div');
     page.className = 'restaurants-page-container'; // Usar solo la clase específica de la página
 
-    // Extract search term from URL
+    // Extract search term and canton info from URL
     const urlParams = new URLSearchParams(window.location.search);
     const searchTerm = urlParams.get('search');
+    const cantonId = urlParams.get('cantonId');
+    const cantonNombre = urlParams.get('cantonNombre');
 
     page.innerHTML = `
-        <h1>Explorar Restaurantes</h1>
+        <h1>Explorar Restaurantes ${cantonNombre ? `en ${cantonNombre}` : ''}</h1>
         <p>Descubre los mejores sabores de Loja. Aquí tienes una guía completa de todos nuestros restaurantes.</p>
         ${searchTerm ? `<p class="search-status">Resultados de búsqueda para: <strong>"${searchTerm}"</strong></p>` : ''}
 
@@ -35,12 +37,24 @@ function RestaurantsPage() {
         }, 5000);
     };
 
-    const fetchAllRestaurants = async (searchParam = '') => { // Accept optional searchParam
+    const fetchAllRestaurants = async (searchParam = '', cantonFilterId = null) => { // Accept optional searchParam and cantonFilterId
         restaurantsListContainer.innerHTML = '<p>Cargando restaurantes...</p>';
         try {
-            const restaurantes = await api.getRestaurantes(searchParam); // Pass searchParam to API
+            let endpoint = '/restaurantes';
+            const params = new URLSearchParams();
+            if (searchParam) {
+                params.append('search', searchParam);
+            }
+            if (cantonFilterId) {
+                params.append('cantonId', cantonFilterId);
+            }
+            if (params.toString()) {
+                endpoint += `?${params.toString()}`;
+            }
+
+            const restaurantes = await api.getRestaurantes(endpoint); // Pass modified endpoint to API
             if (restaurantes.length === 0) {
-                restaurantsListContainer.innerHTML = `<p>No hay restaurantes disponibles ${searchParam ? `para "${searchParam}"` : 'para explorar'}.</p>`;
+                restaurantsListContainer.innerHTML = `<p>No hay restaurantes disponibles ${searchParam ? `para "${searchParam}"` : ''} ${cantonNombre ? `en ${cantonNombre}` : ''} para explorar.</p>`;
                 return;
             }
 
@@ -53,9 +67,18 @@ function RestaurantsPage() {
                     <div class="card-content">
                         <h3>${restaurante.nombre}</h3>
                         <p>${restaurante.descripcion ? restaurante.descripcion.substring(0, 70) + '...' : 'Sin descripción.'}</p>
+                        <div class="delivery-apps-list">
+                            ${restaurante.DeliveryApps && restaurante.DeliveryApps.length > 0 ? 
+                                restaurante.DeliveryApps.map(app => `<span class="delivery-app-tag">${app.nombre}</span>`).join('') : 
+                                '<span class="no-delivery-apps">No disponible en apps de delivery</span>'}
+                        </div>
                         <div class="restaurant-item-footer">
                             <span>⭐ ${restaurante.calificacionPromedio || 'N/A'}</span>
-                            <span>🕒 ${restaurante.horarioApertura} - ${restaurante.horarioCierre}</span>
+                            ${restaurante.Canton ? `<span>📍 ${restaurante.Canton.nombre}</span>` : ''}
+                            ${restaurante.horarioLunesViernesApertura && restaurante.horarioLunesViernesCierre ? 
+                                `<span>L-V: ${restaurante.horarioLunesViernesApertura} - ${restaurante.horarioLunesViernesCierre}</span>` : ''}
+                            ${restaurante.horarioSabadoDomingoApertura && restaurante.horarioSabadoDomingoCierre ? 
+                                `<span>S-D: ${restaurante.horarioSabadoDomingoApertura} - ${restaurante.horarioSabadoDomingoCierre}</span>` : ''}
                         </div>
                         <button class="btn btn-primary view-restaurant-btn" data-id="${restaurante.id}">Ver Detalles</button>
                     </div>
@@ -67,8 +90,8 @@ function RestaurantsPage() {
                 button.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
                     // TODO: Implement navigation to a specific restaurant detail page if available
-                    console.log(`Ver detalles del restaurante con ID: ${id}`);
-                    // Example: window.history.pushState({}, '', `/restaurante/${id}`); router();
+                    window.history.pushState({}, '', `/restaurante/${id}`);
+                    router();
                 });
             });
 
@@ -79,7 +102,7 @@ function RestaurantsPage() {
         }
     };
 
-    fetchAllRestaurants(searchTerm); // Pass the search term on initial load
+    fetchAllRestaurants(searchTerm, cantonId); // Pass the search term and cantonId on initial load
 
     return page;
 }

@@ -21,6 +21,10 @@ const Plato = sequelize.define('Plato', {
     imagenUrl: {
         type: DataTypes.STRING(255),
     },
+    preparacion: {
+        type: DataTypes.TEXT,
+        allowNull: true, // Allow null if not all dishes have detailed preparation
+    },
     // restauranteId se definirá en las asociaciones
 }, {
     tableName: 'Platos',

@@ -45,6 +45,13 @@ function EditProfilePage() {
                     <label for="confirm-password">Confirmar Nueva Contraseña</label>
                     <input type="password" id="confirm-password" name="confirm-password">
                 </div>
+                <div class="form-group">
+                    <label>Mis Alergias (Selecciona todas las que apliquen)</label>
+                    <div id="alergias-checkboxes" class="checkbox-group">
+                        <!-- Allergy checkboxes will be loaded here -->
+                        <p>Cargando alergias...</p>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label>Imagen de Perfil Actual</label>
@@ -69,6 +76,7 @@ function EditProfilePage() {
 
     const profileMessage = page.querySelector('#profile-message');
     const editProfileForm = page.querySelector('#edit-profile-form');
+    const alergiasCheckboxesContainer = page.querySelector('#alergias-checkboxes');
     const imagenPerfilInput = page.querySelector('#imagenPerfil');
     const profileImageNameDisplay = page.querySelector('#profile-image-name-display');
     const removeProfileImageBtn = page.querySelector('#remove-profile-image-btn');
@@ -83,7 +91,55 @@ function EditProfilePage() {
         }, 5000);
     };
 
-    // Event listener for file input change to display file name
+    // Function to fetch alergias and populate the checkboxes
+    const populateAlergiasCheckboxes = async (selectedAlergiaIds = []) => {
+        alergiasCheckboxesContainer.innerHTML = '<p>Cargando alergias...</p>';
+        try {
+            const alergias = await api.getAlergias();
+            alergiasCheckboxesContainer.innerHTML = ''; // Clear loading message
+            if (alergias.length === 0) {
+                alergiasCheckboxesContainer.innerHTML = '<p>No hay alergias disponibles.</p>';
+                return;
+            }
+            alergias.forEach(alergia => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'checkbox-item';
+                checkboxDiv.innerHTML = `
+                    <input type="checkbox" id="alergia-${alergia.id}" name="selectedAlergiaIds" value="${alergia.id}" ${selectedAlergiaIds.includes(alergia.id.toString()) ? 'checked' : ''}>
+                    <label for="alergia-${alergia.id}">${alergia.nombre}</label>
+                `;
+                alergiasCheckboxesContainer.appendChild(checkboxDiv);
+            });
+        } catch (error) {
+            console.error('Error fetching alergias:', error);
+            displayMessage('Error al cargar las alergias.', 'error');
+        }
+    };
+
+    // Function to load full user data and populate form
+    const loadUserData = async () => {
+        try {
+            const fullUser = await api.getUsuarioById(user.id);
+            if (fullUser) {
+                editProfileForm.elements.nombre.value = fullUser.nombre;
+                editProfileForm.elements.email.value = fullUser.email;
+                editProfileForm.elements.telefono.value = fullUser.telefono || '';
+
+                // Pre-select user's allergies
+                const userAlergiaIds = fullUser.Alergias ? fullUser.Alergias.map(a => a.id) : [];
+                await populateAlergiasCheckboxes(userAlergiaIds);
+                
+                // Update local storage with full user data including allergies
+                localStorage.setItem('lojita_user', JSON.stringify(fullUser));
+            }
+        } catch (error) {
+            console.error('Error loading user data:', error);
+            displayMessage('Error al cargar los datos del perfil.', 'error');
+        }
+    };
+
+    // Call to populate alergias and load user data on page load
+    loadUserData();
     imagenPerfilInput.addEventListener('change', (e) => {
         if (e.target.files.length > 0) {
             profileImageNameDisplay.textContent = e.target.files[0].name;
@@ -138,6 +194,13 @@ function EditProfilePage() {
             formData.append('imagenPerfil', imagenPerfilInput.files[0]);
         }
         
+        // Collect selected allergy IDs
+        const selectedAlergiaIds = Array.from(alergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
+                                            .map(checkbox => checkbox.value);
+        selectedAlergiaIds.forEach(id => {
+            formData.append('selectedAlergiaIds[]', id);
+        });
+
         try {
             const updatedUser = await api.updateUsuario(user.id, formData);
             localStorage.setItem('lojita_user', JSON.stringify(updatedUser)); // Actualizar info en localStorage

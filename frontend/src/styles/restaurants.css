@@ -61,6 +61,11 @@
     margin-top: 0;
     margin-bottom: 0;
     box-shadow: none;
+    transition: transform 0.3s ease-in-out;
+}
+
+.restaurant-item:hover .restaurant-image {
+    transform: scale(1.05);
 }
 
 .restaurant-item .card-content {

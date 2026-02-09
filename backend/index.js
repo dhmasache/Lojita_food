@@ -17,7 +17,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 const restauranteRoutes = require('./src/routes/restauranteRoutes');
 const usuarioRoutes = require('./src/routes/usuarioRoutes');
 const platoRoutes = require('./src/routes/platoRoutes');
-const pedidoRoutes = require('./src/routes/pedidoRoutes');
 const reseniaRoutes = require('./src/routes/reseniaRoutes');
 const cantonRoutes = require('./src/routes/cantonRoutes');
 const alergiaRoutes = require('./src/routes/alergiaRoutes');
@@ -34,7 +33,6 @@ app.get("/", (req, res) => {
 app.use('/api/restaurantes', restauranteRoutes);
 app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/platos', platoRoutes);
-app.use('/api/pedidos', pedidoRoutes);
 app.use('/api/resenias', reseniaRoutes);
 app.use('/api/cantones', cantonRoutes);
 app.use('/api/alergias', alergiaRoutes);
