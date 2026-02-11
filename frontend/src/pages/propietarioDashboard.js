@@ -49,11 +49,11 @@ function PropietarioDashboardPage() {
                 </div>
             </div>
 
-            <!-- Formularios de Platos (ocultos inicialmente) -->
-            <div id="dish-forms-container">
-                <!-- Formulario Añadir Plato -->
-                <div id="add-dish-form-section" class="card" style="display: none;">
-                    <h3>Añadir Nuevo Plato</h3>
+            <!-- Modal para Añadir Plato -->
+            <div id="add-dish-modal" class="modal-overlay" style="display: none;">
+                <div class="modal-content restaurant-form-card">
+                    <button id="close-add-dish-modal" class="close-modal-btn" title="Cerrar">&times;</button>
+                    <h2>Añadir Nuevo Plato</h2>
                     <form id="add-dish-form" enctype="multipart/form-data">
                         <div class="form-group">
                             <label for="dishName">Nombre del Plato</label>
@@ -67,13 +67,7 @@ function PropietarioDashboardPage() {
                             <label for="dishPreparacion">Preparación (Ingredientes)</label>
                             <textarea id="dishPreparacion" name="preparacion" rows="5"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Alérgenos en el Plato (Selecciona todas las que apliquen)</label>
-                            <div id="add-dish-alergias-checkboxes" class="checkbox-group">
-                                <!-- Allergy checkboxes will be loaded here -->
-                                <p>Cargando alérgenos...</p>
-                            </div>
-                        </div>
+                        <!-- Sección de alérgenos eliminada -->
                         <div class="form-group">
                             <label for="dishPrice">Precio</label>
                             <input type="number" id="dishPrice" name="precio" step="0.01" required>
@@ -92,6 +86,7 @@ function PropietarioDashboardPage() {
                         </div>
                     </form>
                 </div>
+            </div>
 
                 <!-- Formulario Editar Plato -->
                 <div id="edit-dish-form-section" class="card" style="display: none;">
@@ -144,9 +139,11 @@ function PropietarioDashboardPage() {
         const editRestaurantBtn = page.querySelector('#edit-restaurant-btn');
         const dishesListDiv = page.querySelector('#dishes-list');
         const addDishFormSection = page.querySelector('#add-dish-form-section');
+        const addDishModal = page.querySelector('#add-dish-modal');
         const addDishForm = page.querySelector('#add-dish-form');
         const addDishBtn = page.querySelector('#add-dish-btn');
         const cancelAddDishBtn = page.querySelector('#cancel-add-dish-btn');
+        const closeAddDishModalBtn = page.querySelector('#close-add-dish-modal');
         const dishImageFileInput = page.querySelector('#dishImage');
         const dishImageNameDisplay = page.querySelector('#dish-image-name-display');
         const addDishPreparacionTextarea = page.querySelector('#dishPreparacion');
@@ -209,17 +206,21 @@ function PropietarioDashboardPage() {
                         <p><strong>Tradicional:</strong> ${currentRestaurant.esTradicional ? 'Sí' : 'No'}</p>
                         ${currentRestaurant.imageUrl ? `<img src="http://localhost:3000${currentRestaurant.imageUrl}" alt="${currentRestaurant.nombre}" class="restaurant-image">` : '<p>No hay imagen principal para el restaurante.</p>'}
                     `;
-                    
                     // Add event listener for edit restaurant button
                     editRestaurantBtn.addEventListener('click', () => {
                         window.history.pushState({}, '', `/admin/restaurantes/editar/${currentRestaurant.id}`); // Reusar el form de admin
                         router();
                     });
 
-                    // Fetch dishes for this restaurant
-                    const dishes = await api.getPlatos(`?restauranteId=${currentRestaurant.id}`);
+                    // Validar que el ID del restaurante es un número válido
+                    if (!currentRestaurant.id || isNaN(Number(currentRestaurant.id))) {
+                        dishesListDiv.innerHTML = '<p class="error">Error: El restaurante no tiene un ID válido. Contacta al administrador.</p>';
+                        return;
+                    }
+                    // Llamar correctamente a la API pasando solo el ID
+                    const dishes = await api.getPlatos(currentRestaurant.id);
                     dishesListDiv.innerHTML = ''; // Limpiar antes de renderizar
-                    if (dishes.length === 0) {
+                    if (!Array.isArray(dishes) || dishes.length === 0) {
                         dishesListDiv.innerHTML = '<p>Aún no tienes platos registrados.</p>';
                     } else {
                         dishes.forEach(dish => {
@@ -248,7 +249,6 @@ function PropietarioDashboardPage() {
                                 addDishFormSection.style.display = 'none';
                                 editDishFormSection.style.display = 'block';
                                 addDishForm.reset(); // Limpiar form añadir plato
-
                                 try {
                                     const dishToEdit = await api.getPlatoById(dishId);
                                     editDishForm.elements.editDishName.value = dishToEdit.nombre;
@@ -312,6 +312,8 @@ function PropietarioDashboardPage() {
             }
         };
 
+        // --- SECCIÓN DE ALERGIAS COMENTADA TEMPORALMENTE ---
+        /*
         // Function to fetch alergias and populate the checkboxes
         const populateAlergiasCheckboxes = async (container, selectedAlergiaIds = []) => {
             container.innerHTML = '<p>Cargando alérgenos...</p>';
@@ -340,21 +342,25 @@ function PropietarioDashboardPage() {
         // Initial calls to populate checkboxes
         populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer);
         // For edit form, it will be populated when edit button is clicked (in fetchRestaurantAndDishes)
+        */
         
+
+        // Mostrar modal al pulsar "Añadir Nuevo Plato"
         addDishBtn.addEventListener('click', () => {
-            addDishFormSection.style.display = 'block';
-            editDishFormSection.style.display = 'none';
+            addDishModal.style.display = 'flex';
             addDishForm.reset();
             dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
-            populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer); // Re-populate for reset
         });
 
-        cancelAddDishBtn.addEventListener('click', () => {
-            addDishFormSection.style.display = 'none';
+        // Cerrar modal con botón X o Cancelar
+        function closeAddDishModal() {
+            addDishModal.style.display = 'none';
             addDishForm.reset();
             dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
-            addDishPreparacionTextarea.value = ''; // Clear preparacion
-        });
+            addDishPreparacionTextarea.value = '';
+        }
+        cancelAddDishBtn.addEventListener('click', closeAddDishModal);
+        closeAddDishModalBtn.addEventListener('click', closeAddDishModal);
 
         cancelEditDishBtn.addEventListener('click', () => {
             editDishFormSection.style.display = 'none';
@@ -376,12 +382,14 @@ function PropietarioDashboardPage() {
             formData.append('restauranteId', currentRestaurant.id);
             formData.append('preparacion', addDishPreparacionTextarea.value);
 
+            // --- Lógica de alergias comentada ---
+            /*
             const selectedAlergiaIds = Array.from(addDishAlergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
                                                 .map(checkbox => checkbox.value);
             selectedAlergiaIds.forEach(id => {
                 formData.append('selectedAlergiaIds[]', id);
             });
-            
+            */
             try {
                 await api.createPlato(formData);
                 displayMessage('Plato creado con éxito.', 'success');
@@ -389,7 +397,7 @@ function PropietarioDashboardPage() {
                 addDishForm.reset();
                 dishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
                 addDishPreparacionTextarea.value = ''; // Clear preparacion
-                populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer); // Reset checkboxes
+                //populateAlergiasCheckboxes(addDishAlergiasCheckboxesContainer); // Reset checkboxes (comentado)
                 fetchRestaurantAndDishes();
             } catch (error) {
                 displayMessage(error.message || 'Error al crear el plato.', 'error');
@@ -415,12 +423,14 @@ function PropietarioDashboardPage() {
 
             formData.append('preparacion', editDishPreparacionTextarea.value);
 
+            // --- Lógica de alergias comentada ---
+            /*
             const selectedAlergiaIds = Array.from(editDishAlergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
                                                 .map(checkbox => checkbox.value);
             selectedAlergiaIds.forEach(id => {
                 formData.append('selectedAlergiaIds[]', id);
             });
-            
+            */
             try {
                 await api.updatePlato(editingDishId, formData);
                 displayMessage('Plato actualizado con éxito.', 'success');
@@ -430,7 +440,7 @@ function PropietarioDashboardPage() {
                 currentDishImagePreview.innerHTML = '';
                 editDishImageNameDisplay.textContent = 'Ningún archivo seleccionado';
                 editDishPreparacionTextarea.value = ''; // Clear preparacion
-                populateAlergiasCheckboxes(editDishAlergiasCheckboxesContainer); // Reset checkboxes
+                //populateAlergiasCheckboxes(editDishAlergiasCheckboxesContainer); // Reset checkboxes (comentado)
                 fetchRestaurantAndDishes();
             } catch (error) {
                 displayMessage(error.message || 'Error al actualizar el plato.', 'error');

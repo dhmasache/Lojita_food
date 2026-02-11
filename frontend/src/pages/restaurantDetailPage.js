@@ -47,10 +47,17 @@ function RestaurantDetailPage(params) {
             const restaurante = await api.getRestauranteById(restaurantId);
             loadingMessageDiv.style.display = 'none'; // Clear loading message
 
-            const [dishes, loggedInUser] = await Promise.all([
-                api.getPlatos(restaurantId),
-                currentUser ? api.getUsuarioById(currentUser.id) : Promise.resolve(null)
-            ]);
+            // Obtener platos siempre (público), pero solo obtener usuario si está logueado
+            const dishes = await api.getPlatos(restaurantId);
+            let loggedInUser = null;
+            if (currentUser) {
+                try {
+                    loggedInUser = await api.getUsuarioById(currentUser.id);
+                } catch (e) {
+                    // Si falla (por permisos), ignorar y seguir como usuario público
+                    loggedInUser = null;
+                }
+            }
 
             const userAlergiaIds = loggedInUser && loggedInUser.Alergias ? loggedInUser.Alergias.map(a => a.id.toString()) : [];
             
@@ -59,9 +66,7 @@ function RestaurantDetailPage(params) {
 
                 restaurantDetailsDiv.innerHTML = `
                     <img src="${restaurante.imageUrl ? `http://localhost:3000${restaurante.imageUrl}` : '/Logo_Lojitafood.png'}" alt="${restaurante.nombre}" class="restaurant-image-main">
-                    
                     <h2 class="restaurant-title">${restaurante.nombre}</h2>
-                    
                     <div class="detail-section">
                         <div class="detail-item"><strong>Dirección:</strong> <span>${restaurante.direccion}</span></div>
                         ${restaurante.Canton ? `<div class="detail-item"><strong>Cantón:</strong> <span>${restaurante.Canton.nombre}</span></div>` : ''}
@@ -73,12 +78,10 @@ function RestaurantDetailPage(params) {
                             `<div class="detail-item"><strong>Horario S-D:</strong> <span>${restaurante.horarioSabadoDomingoApertura} - ${restaurante.horarioSabadoDomingoCierre}</span></div>` : ''}
                         <div class="detail-item"><strong>Tradicional:</strong> <span>${restaurante.esTradicional ? 'Sí' : 'No'}</span></div>
                     </div>
-
                     <div class="detail-section description-section">
                         <h3>Descripción</h3>
                         <p class="description">${restaurante.descripcion || 'Sin descripción detallada.'}</p>
                     </div>
-
                     <div class="detail-section delivery-apps-section">
                         <h3>Disponible en Apps de Delivery</h3>
                         <div class="delivery-apps-list">
@@ -87,17 +90,13 @@ function RestaurantDetailPage(params) {
                                 '<p class="no-delivery-apps">No disponible en apps de delivery.</p>'}
                         </div>
                     </div>
-
-                    <div class="detail-section rating-section">
-                        <h3>Calificación Promedio</h3>
-                        <p class="rating">${restaurante.calificacionPromedio ? `⭐ ${parseFloat(restaurante.calificacionPromedio).toFixed(1)}` : 'N/A'}</p>
-                    </div>
-
                     <div class="detail-section dishes-section">
                         <h3>Nuestros Platos</h3>
                         <div id="restaurant-dishes-list" class="dishes-grid">
                             ${dishes.length === 0 ? '<p>No hay platos disponibles en este restaurante.</p>' : ''}
                         </div>
+                        <!-- Botón solo para admin o propietario -->
+                        ${loggedInUser && (loggedInUser.rol === 'admin' || (loggedInUser.rol === 'propietario' && loggedInUser.RestauranteId == restaurantId)) ? `<button id="add-dish-btn" class="btn btn-primary">Agregar Plato</button>` : ''}
                     </div>
                 `;
                 
@@ -133,9 +132,12 @@ function RestaurantDetailPage(params) {
         }
     };
 
-    // Defer the execution of fetchRestaurantDetails until the page is potentially in the DOM
+    // Ejecutar fetchRestaurantDetails solo cuando el elemento esté en el DOM
     if (restaurantId) {
-        setTimeout(fetchRestaurantDetails, 0); // Execute after current call stack
+        // requestAnimationFrame asegura que el nodo esté en el DOM tras el appendChild del router
+        requestAnimationFrame(() => {
+            fetchRestaurantDetails();
+        });
     } else {
         // These elements need to be queried after page.innerHTML is set
         const localErrorMessageDiv = page.querySelector('#error-message');

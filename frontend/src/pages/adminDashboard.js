@@ -187,7 +187,10 @@ function AdminDashboardPage() {
                             ${restaurante.estadoAprobacion}
                         </span>
                     </td>
-                    <td><button class="btn btn-edit-small" data-id="${restaurante.id}">Editar</button></td>
+                    <td>
+                        <button class="btn btn-edit-small" data-id="${restaurante.id}">Editar</button>
+                        <button class="btn btn-primary btn-manage-dishes" data-id="${restaurante.id}">Gestionar Platos</button>
+                    </td>
                 `;
                 restaurantsTableBody.appendChild(row);
             });
@@ -196,6 +199,14 @@ function AdminDashboardPage() {
                 button.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
                     window.history.pushState({}, '', `/admin/restaurantes/editar/${id}`);
+                    router();
+                });
+            });
+            // Evento para gestionar platos
+            restaurantsTableBody.querySelectorAll('.btn-manage-dishes').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.target.dataset.id;
+                    window.history.pushState({}, '', `/admin/restaurantes/${id}/platos`);
                     router();
                 });
             });

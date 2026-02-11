@@ -1,3 +1,33 @@
+/* --- Mejora visual para la sección de perfil --- */
+.profile-section-modern {
+    padding-bottom: 2.5rem;
+}
+.profile-info-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    margin-bottom: 1.5rem;
+}
+.profile-info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    font-size: 1.15rem;
+    color: var(--color-dark-text);
+    background: var(--color-background-light);
+    border-radius: 8px;
+    padding: 0.7rem 1.2rem;
+    box-shadow: var(--shadow-xs);
+}
+.profile-icon {
+    font-size: 1.5rem;
+    margin-right: 0.3rem;
+}
+.profile-btn-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+}
 /* frontend/src/styles/clientDashboard.css */
 
 .client-dashboard-container {

@@ -29,7 +29,7 @@ const renderHeaderContent = (navLinksElement, navRightElement) => {
     // Center Links: Always show base links
     let centerLinksHtml = `
         <a href="/">Inicio</a>
-        <a href="/restaurantes">Restaurantes</a>
+        <!-- <a href="/restaurantes">Restaurantes</a> -->
         <a href="/cantones">Cantones</a>
         <a href="/about">Nosotros</a>
     `;

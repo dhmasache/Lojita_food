@@ -89,7 +89,6 @@ function RestaurantsPage() {
             restaurantsListContainer.querySelectorAll('.view-restaurant-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const id = e.target.dataset.id;
-                    // TODO: Implement navigation to a specific restaurant detail page if available
                     window.history.pushState({}, '', `/restaurante/${id}`);
                     router();
                 });

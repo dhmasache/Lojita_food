@@ -45,6 +45,8 @@ export const HomePage = () => {
         </div>
     `;
 
+    // --- SECCIÓN DE RESTAURANTES DESTACADOS COMENTADA ---
+    /*
     // Featured Restaurants Section
     const featuredSection = document.createElement('section');
     featuredSection.className = 'featured-section';
@@ -89,10 +91,11 @@ export const HomePage = () => {
             </div>
         </div>
     `;
+    */
 
     pageElement.appendChild(heroSection);
     pageElement.appendChild(categorySection);
-    pageElement.appendChild(featuredSection);
+    //pageElement.appendChild(featuredSection); // Comentado
 
     // Add event listener for the search form
     const searchForm = heroSection.querySelector('#search-form');

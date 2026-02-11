@@ -32,13 +32,13 @@ function RegisterPage() {
                 <span class="error-text" id="password-error" style="display: none;"></span>
             </div>
             
-            <div class="form-group">
-                <label>Mis Alergias (Selecciona todas las que apliquen)</label>
-                <div id="alergias-checkboxes" class="checkbox-group">
-                    <!-- Allergy checkboxes will be loaded here -->
-                    <p>Cargando alergias...</p>
-                </div>
-            </div>
+                <!-- <div class="form-group">
+                    <label>Mis Alergias (Selecciona todas las que apliquen)</label>
+                    <div id="alergias-checkboxes" class="checkbox-group">
+                        <!-- Allergy checkboxes will be loaded here -->
+                        <p></p>
+                    </div>
+                </div> 
             
             <button type="submit" class="btn btn-primary">Crear Cuenta</button>
             <p class="sub-text">
@@ -54,7 +54,7 @@ function RegisterPage() {
     const nombreInput = page.querySelector('#nombre');
     const emailInput = page.querySelector('#email');
     const passwordInput = page.querySelector('#password');
-    const alergiasCheckboxesContainer = page.querySelector('#alergias-checkboxes');
+    // const alergiasCheckboxesContainer = page.querySelector('#alergias-checkboxes'); // Comentado porque la sección está deshabilitada
 
     const nombreError = page.querySelector('#nombre-error');
     const emailError = page.querySelector('#email-error');
@@ -62,6 +62,8 @@ function RegisterPage() {
 
     const toggleButton = page.querySelector('.password-toggle-btn');
 
+    // --- Sección de alergias deshabilitada ---
+    /*
     // Function to fetch alergias and populate the checkboxes
     const populateAlergiasCheckboxes = async () => {
         alergiasCheckboxesContainer.innerHTML = '<p>Cargando alergias...</p>';
@@ -84,15 +86,15 @@ function RegisterPage() {
             });
         } catch (error) {
             console.error('Error fetching alergias:', error);
-            generalErrorMessage.textContent = 'Error al cargar las alergias.';
+                // const alergiasCheckboxesContainer = page.querySelector('#alergias-checkboxes');
             generalErrorMessage.style.display = 'block';
         }
     };
-
     // Call to populate alergias on page load
     populateAlergiasCheckboxes();
+    */
 
-    // --- Validation Functions ---
+                        // alergiasCheckboxesContainer.innerHTML = ''; // Clear loading message
     const validateNombre = () => {
         if (nombreInput.value.trim() === '') {
             nombreError.textContent = 'El nombre es obligatorio.';
@@ -167,25 +169,17 @@ function RegisterPage() {
         const nombre = nombreInput.value;
         const email = emailInput.value;
         const password = passwordInput.value;
-        const selectedAlergiaIds = Array.from(alergiasCheckboxesContainer.querySelectorAll('input[name="selectedAlergiaIds"]:checked'))
-                                            .map(checkbox => checkbox.value);
-
         try {
-            const userData = { nombre, email, password, selectedAlergiaIds };
+            const userData = { nombre, email, password };
             await api.register(userData);
-            
             // Guardar el email en localStorage para la página de verificación
             localStorage.setItem('registeredEmailForVerification', email);
-
             successMessage.textContent = '¡Registro exitoso! Se ha enviado un código de verificación a tu correo. Redirigiendo para verificar...';
             successMessage.style.display = 'block';
-
             setTimeout(() => {
                 window.history.pushState({}, '', '/verify-account');
                 router();
             }, 3000); // Dar más tiempo para leer el mensaje
-
-
         } catch (error) {
             generalErrorMessage.textContent = error.message || 'Error al registrarse. Inténtalo de nuevo.';
             generalErrorMessage.style.display = 'block';

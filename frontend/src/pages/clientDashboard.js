@@ -29,41 +29,25 @@ function ClientDashboardPage() {
         <div id="client-message" class="message" style="display: none;"></div>
 
         <div class="dashboard-content">
-            <!-- Sección de Información del Perfil -->
-            <div class="profile-section card">
+            <!-- Sección de Información del Perfil mejorada -->
+            <div class="profile-section card profile-section-modern">
                 <h2>Mi Perfil</h2>
-                <p><strong>Nombre:</strong> ${user.nombre}</p>
-                <p><strong>Email:</strong> ${user.email}</p>
-                <p><strong>Teléfono:</strong> ${user.telefono || 'No especificado'}</p>
-                <button id="edit-profile-btn" class="btn btn-secondary">Editar Perfil</button>
+                <div class="profile-info-grid">
+                    <div class="profile-info-item"><span class="profile-icon">👤</span><span><strong>Nombre:</strong> ${user.nombre}</span></div>
+                    <div class="profile-info-item"><span class="profile-icon">✉️</span><span><strong>Email:</strong> ${user.email}</span></div>
+                    <div class="profile-info-item"><span class="profile-icon">📞</span><span><strong>Teléfono:</strong> ${user.telefono || 'No especificado'}</span></div>
+                </div>
+                <div class="profile-btn-row">
+                    <button id="edit-profile-btn" class="btn btn-secondary">Editar Perfil</button>
+                </div>
             </div>
 
-            <!-- Sección de Acciones -->
+            <!-- Sección de Acciones (solo registro restaurante) -->
             <div class="actions-section card">
                 <h2>Mis Acciones</h2>
                 <div id="restaurant-registration-status">
                     <!-- El estado de registro del restaurante se cargará aquí -->
                     <p>Cargando estado de registro de restaurante...</p>
-                </div>
-                <button id="view-orders-btn" class="btn btn-primary">Ver Mis Pedidos</button>
-                <!-- Otros botones de acción aquí si son necesarios -->
-            </div>
-
-            <!-- Sección de Pedidos Recientes (Placeholder) -->
-            <div class="orders-section card">
-                <h2>Mis Pedidos Recientes</h2>
-                <div id="orders-list">
-                    <p>Aún no tienes pedidos.</p>
-                    <!-- Aquí se cargarán los pedidos dinámicamente -->
-                </div>
-            </div>
-
-            <!-- Sección de Direcciones de Envío (Placeholder) -->
-            <div class="shipping-address-section card">
-                <h2>Mis Direcciones de Envío</h2>
-                <div id="shipping-addresses-list">
-                    <p>Aún no tienes direcciones guardadas.</p>
-                    <!-- Aquí se cargarán las direcciones dinámicamente -->
                 </div>
             </div>
         </div>
@@ -71,7 +55,7 @@ function ClientDashboardPage() {
 
     const clientMessage = page.querySelector('#client-message');
     const restaurantRegistrationStatus = page.querySelector('#restaurant-registration-status');
-    const viewOrdersBtn = page.querySelector('#view-orders-btn');
+    // const viewOrdersBtn = page.querySelector('#view-orders-btn'); // Eliminado
     const editProfileBtn = page.querySelector('#edit-profile-btn');
 
     const displayMessage = (msg, type) => {
@@ -144,10 +128,7 @@ function ClientDashboardPage() {
         router();
     });
 
-    viewOrdersBtn.addEventListener('click', () => {
-        displayMessage('Funcionalidad de visualización de pedidos no implementada aún.', 'info');
-        // router('/my-orders'); // Si tuviéramos una ruta para pedidos
-    });
+
 
 
     return page;
